@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Asistente Virtual ATC - Centro de Mandos VENTO</title>
+    <title>Centro de Mandos ATC - EVA Inteligente</title>
     <style>
         :root {
             --vento-orange: #ff6600; /* Naranja Vento */
@@ -14,7 +14,7 @@
             --text-muted: #999999;  /* Gris claro para textos secundarios */
             --border-color: #262626;/* Líneas de división discretas */
             --bg-main: #f8f9fa;     /* Blanco grisáceo para el fondo del panel principal */
-            --bg-chat-user: #333333; /* Fondo chat del asesor */
+            --bg-chat-user: #333333;
         }
 
         body, html {
@@ -34,9 +34,11 @@
             position: relative;
         }
 
-        /* Menú Lateral (Estilo Vento con Animación) */
+        /* ==========================================
+           MENÚ LATERAL (SIDEBAR)
+           ========================================== */
         .sidebar {
-            width: 320px; /* Ajustado ligeramente para dar mejor espacio al chat */
+            width: 290px;
             background-color: var(--bg-sidebar);
             color: var(--text-light);
             display: flex;
@@ -47,9 +49,8 @@
             z-index: 10;
         }
 
-        /* Clase para ocultar el menú lateral empujándolo a la izquierda */
         .sidebar.collapsed {
-            margin-left: -320px;
+            margin-left: -290px;
         }
 
         .sidebar-header {
@@ -61,7 +62,8 @@
             border-bottom: 1px solid var(--border-color);
         }
 
-        .avatar {
+        /* Avatar clickable que lleva al Home */
+        .avatar-clickable {
             width: 45px;
             height: 45px;
             background: linear-gradient(135deg, #ff6600, #333333);
@@ -74,200 +76,34 @@
             font-size: 1.1rem;
             box-shadow: 0 0 8px rgba(255, 102, 0, 0.4);
             color: var(--text-light);
-        }
-
-        .assistant-info h2 {
-            margin: 0;
-            font-size: 1.05rem;
-            letter-spacing: 0.5px;
-        }
-
-        .assistant-info span {
-            font-size: 0.8rem;
-            color: var(--vento-orange);
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            margin-top: 2px;
-        }
-
-        .assistant-info span::before {
-            content: '';
-            display: inline-block;
-            width: 7px;
-            height: 7px;
-            background-color: var(--vento-orange);
-            border-radius: 50%;
-            box-shadow: 0 0 5px var(--vento-orange);
-        }
-
-        /* Widget de Búsqueda */
-        .search-widget {
-            padding: 15px 15px 5px 15px;
-        }
-
-        .search-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 10px 12px;
-            background-color: var(--bg-sidebar-header);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            color: var(--text-light);
-            font-size: 0.85rem;
-            outline: none;
-            transition: all 0.2s ease;
-        }
-
-        .search-input:focus {
-            border-color: var(--vento-orange);
-            background-color: #000000;
-            box-shadow: 0 0 5px rgba(255, 102, 0, 0.2);
-        }
-
-        .search-input::placeholder {
-            color: #666666;
-        }
-
-        /* Cuerpo del menú (Sección de Módulos) */
-        .menu-section {
-            padding: 15px 10px 5px 10px;
-            overflow-y: auto;
-            max-height: 220px; /* Limitamos altura para priorizar el chat abajo */
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .menu-label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            padding-left: 8px;
-            margin-bottom: 12px;
-            letter-spacing: 1px;
-            display: block;
-            font-weight: 600;
-        }
-
-        .menu-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 14px;
-            color: #cccccc;
-            text-decoration: none;
-            border-radius: 6px;
-            margin-bottom: 6px;
-            font-size: 0.85rem;
-            transition: all 0.2s ease;
             cursor: pointer;
-        }
-
-        .menu-item:hover {
-            background-color: var(--bg-hover);
-            color: var(--text-light);
-        }
-
-        .menu-item.active {
-            background-color: var(--vento-orange);
-            color: var(--text-light);
-            font-weight: 600;
-        }
-
-        .menu-item span.arrow {
-            font-size: 0.8rem;
-            opacity: 0.7;
-        }
-
-        /* SECCIÓN DEL CHAT DE EVA EN SIDEBAR */
-        .eva-chat-section {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            background-color: #0b0b0b;
-        }
-
-        .chat-container {
-            flex-grow: 1;
-            padding: 15px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .msg {
-            max-width: 85%;
-            padding: 10px 12px;
-            border-radius: 8px;
-            font-size: 0.82rem;
-            line-height: 1.4;
-            word-wrap: break-word;
-        }
-
-        .msg.eva {
-            background-color: var(--bg-card);
-            color: var(--text-light);
-            align-self: flex-start;
-            border-left: 3px solid var(--vento-orange);
-        }
-
-        .msg.user {
-            background-color: var(--bg-chat-user);
-            color: var(--text-light);
-            align-self: flex-end;
+            transition: transform 0.2s ease;
         }
         
-        .chat-input-area {
-            padding: 12px;
-            background-color: var(--bg-card);
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            gap: 8px;
+        .avatar-clickable:hover {
+            transform: scale(1.05);
         }
 
-        .chat-input {
-            flex-grow: 1;
-            padding: 8px 12px;
-            background-color: var(--bg-dark);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            color: white;
-            font-size: 0.82rem;
-            outline: none;
-        }
+        .assistant-info h2 { margin: 0; font-size: 1.05rem; letter-spacing: 0.5px; }
+        .assistant-info span { font-size: 0.8rem; color: var(--vento-orange); display: flex; align-items: center; gap: 5px; margin-top: 2px; }
+        .assistant-info span::before { content: ''; display: inline-block; width: 7px; height: 7px; background-color: var(--vento-orange); border-radius: 50%; box-shadow: 0 0 5px var(--vento-orange); }
 
-        .chat-input:focus { border-color: var(--vento-orange); }
+        /* Buscador del menú */
+        .search-widget { padding: 15px 15px 5px 15px; }
+        .search-input { width: 100%; padding: 10px 12px; background-color: var(--bg-sidebar-header); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-light); font-size: 0.85rem; outline: none; box-sizing: border-box; }
+        .search-input:focus { border-color: var(--vento-orange); background-color: #000000; }
 
-        .send-btn {
-            background-color: var(--vento-orange);
-            border: none;
-            color: white;
-            padding: 0 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 0.8rem;
-            transition: background 0.2s;
-        }
-        .send-btn:hover { background-color: #e65500; }
+        /* Lista de herramientas */
+        .menu-section { padding: 15px 10px; flex-grow: 1; overflow-y: auto; }
+        .menu-label { font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); padding-left: 8px; margin-bottom: 12px; letter-spacing: 1px; display: block; font-weight: 600; }
+        .menu-item { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; color: #cccccc; text-decoration: none; border-radius: 6px; margin-bottom: 6px; font-size: 0.9rem; transition: all 0.2s ease; cursor: pointer; }
+        .menu-item:hover { background-color: var(--bg-hover); color: var(--text-light); }
+        .menu-item.active { background-color: var(--vento-orange); color: var(--text-light); font-weight: 600; }
+        .sidebar-footer { padding: 12px; background-color: var(--bg-sidebar-header); font-size: 0.75rem; color: #555555; text-align: center; border-top: 1px solid var(--border-color); }
 
-        .sidebar-footer {
-            padding: 10px;
-            background-color: var(--bg-sidebar-header);
-            font-size: 0.7rem;
-            color: #555555;
-            text-align: center;
-            border-top: 1px solid var(--border-color);
-            letter-spacing: 0.5px;
-        }
-
-        /* Panel de Visualización Principal */
+        /* ==========================================
+           PANEL CENTRAL / CONTENIDO
+           ========================================== */
         .main-content {
             flex-grow: 1;
             display: flex;
@@ -276,7 +112,7 @@
             position: relative;
         }
 
-        /* Botón Flotante para Abrir/Cerrar el Menú */
+        /* Botón hamburguesa */
         .toggle-menu-btn {
             position: absolute;
             top: 15px;
@@ -293,74 +129,115 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-            transition: all 0.2s ease;
             z-index: 100;
         }
 
-        .toggle-menu-btn:hover {
-            background-color: #e65500;
-            transform: scale(1.05);
-        }
-
+        /* PANTALLA HOME CENTRAL (Chat en Grande de EVA) */
         .welcome-screen {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            width: 100%;
             height: 100%;
-            color: #222222;
-            text-align: center;
-            padding: 20px;
+            background-color: #ffffff;
             box-sizing: border-box;
         }
 
-        .welcome-screen h1 {
-            margin-bottom: 12px;
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: #111111;
-            margin-top: 40px;
+        .home-header {
+            padding: 20px 20px 20px 70px; /* Margen para no chocar con el botón hamburguesa */
+            border-bottom: 1px solid #e0e0e0;
+            background-color: #fafafa;
         }
+        .home-header h1 { margin: 0; font-size: 1.6rem; color: #111; }
+        .home-header p { margin: 5px 0 0 0; color: #666; font-size: 0.9rem; }
 
-        .welcome-screen p {
-            color: #666666;
-            max-width: 480px;
-            line-height: 1.6;
-            font-size: 0.95rem;
-            margin-top: 0;
+        /* Chat del Home */
+        .home-chat-area { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background-color: #f4f5f7; }
+        .home-chat-input-container { padding: 15px 20px; background-color: #ffffff; border-top: 1px solid #e0e0e0; display: flex; gap: 10px; }
+        .home-input { flex-grow: 1; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.95rem; outline: none; }
+        .home-input:focus { border-color: var(--vento-orange); }
+        .home-send-btn { background-color: var(--vento-orange); border: none; color: white; padding: 0 25px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+
+        /* Estilo general de burbujas en el panel grande */
+        .msg-large { max-width: 70%; padding: 12px 16px; border-radius: 8px; font-size: 0.95rem; line-height: 1.5; }
+        .msg-large.eva { background-color: #1a1a1a; color: white; align-self: flex-start; border-left: 4px solid var(--vento-orange); }
+        .msg-large.user { background-color: #e3e3e3; color: #111; align-self: flex-end; }
+
+        .content-frame { width: 100%; height: 100%; border: none; display: none; background-color: #ffffff; }
+
+        /* ==========================================
+           WIDGET FLOTANTE (Abajo a la derecha)
+           ========================================== */
+        .eva-floating-trigger {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--vento-orange), #ff4500);
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 4px 15px rgba(255, 102, 0, 0.4);
+            color: white;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 9999;
+            transition: transform 0.2s ease;
         }
+        .eva-floating-trigger:hover { transform: scale(1.08); }
 
-        .content-frame {
-            width: 100%;
-            height: 100%;
-            border: none;
+        .widget-asistente {
+            position: fixed;
+            bottom: 95px;
+            right: 25px;
+            width: 360px;
+            height: 500px;
+            background-color: var(--bg-sidebar);
+            border-radius: 12px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.4);
+            border: 1px solid var(--border-color);
             display: none;
-            background-color: #ffffff;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 9999;
         }
+
+        .widget-header { padding: 12px 15px; background-color: var(--bg-sidebar-header); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-color); }
+        .widget-title { color: white; font-size: 0.9rem; margin: 0; font-weight: 600; }
+        .widget-close { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1rem; }
+        
+        .widget-chat-container { flex-grow: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background-color: #0b0b0b; }
+        .widget-input-area { padding: 10px; background-color: var(--bg-sidebar-header); border-top: 1px solid var(--border-color); display: flex; gap: 8px; }
+        .widget-input { flex-grow: 1; padding: 8px 12px; background-color: #000; border: 1px solid var(--border-color); border-radius: 6px; color: white; font-size: 0.85rem; outline: none; }
+        .widget-send-btn { background-color: var(--vento-orange); border: none; color: white; padding: 0 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
+
+        /* Burbujas del Widget Chico */
+        .msg-small { max-width: 80%; padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; line-height: 1.4; }
+        .msg-small.eva { background-color: var(--bg-sidebar-header); color: white; align-self: flex-start; border-left: 3px solid var(--vento-orange); }
+        .msg-small.user { background-color: var(--bg-chat-user); color: white; align-self: flex-end; }
     </style>
 </head>
 <body>
 
     <div class="dashboard-container">
         
-        <!-- Menú Lateral Configurado con el Chat integrado -->
+        <!-- Menú Lateral -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <div class="avatar">EVA</div>
+                <!-- Al darle clic al logo de EVA, activa la pantalla Home -->
+                <div class="avatar-clickable" onclick="goHome()" title="Ir al Home de EVA">EVA</div>
                 <div class="assistant-info">
                     <h2>EVA Inteligente</h2>
                     <span>Soporte ATC Activo</span>
                 </div>
             </div>
 
-            <!-- Widget de Búsqueda de Módulos -->
             <div class="search-widget">
-                <div class="search-wrapper">
-                    <input type="text" id="menuSearch" class="search-input" placeholder="Buscar herramienta..." onkeyup="filterMenu()">
-                </div>
+                <input type="text" id="menuSearch" class="search-input" placeholder="Buscar herramienta..." onkeyup="filterMenu()">
             </div>
 
-            <!-- Listado de Opciones Operativas -->
             <nav class="menu-section" id="menuSection">
                 <span class="menu-label" id="sectionLabel">Módulos de Atención</span>
                 
@@ -380,149 +257,177 @@
                 </div>
             </nav>
 
-            <!-- CONVERSACIÓN INTERACTIVA CON EVA (AQUÍ ESCRIBE EL ASESOR) -->
-            <div class="eva-chat-section">
-                <span class="menu-label" style="padding: 12px 0 0 18px; margin-bottom: 5px;">Consultas Rápidas</span>
-                <div class="chat-container" id="chatContainer">
-                    <div class="msg eva">
-                        ¡Hola! Escribe tu duda aquí abajo (ej: garantía, batería, primer servicio) y te daré la información de inmediato.
-                    </div>
-                </div>
-                <div class="chat-input-area">
-                    <input type="text" id="chatInput" class="chat-input" placeholder="Pregúntale a EVA..." onkeypress="handleKeyPress(event)">
-                    <button class="send-btn" onclick="sendMessage()">Enviar</button>
-                </div>
-            </div>
-
-            <div class="sidebar-footer">
-                VENTO MOTORCYCLES © 2026
-            </div>
+            <div class="sidebar-footer">VENTO MOTORCYCLES © 2026</div>
         </aside>
 
-        <!-- Contenedor Principal (Derecho) -->
+        <!-- Panel de Visualización Central -->
         <main class="main-content">
             
-            <!-- Botón de Control (Hamburguesa / Cerrar) -->
-            <button class="toggle-menu-btn" id="toggleBtn" onclick="toggleSidebar()" title="Mostrar/Ocultar Menú">
-                ✕
-            </button>
+            <button class="toggle-menu-btn" id="toggleBtn" onclick="toggleSidebar()">✕</button>
 
-            <!-- Pantalla de Bienvenida -->
+            <!-- VISTA 1: HOME DE EVA (Chat Grande) -->
             <div id="welcomeScreen" class="welcome-screen">
-                <div class="avatar" style="width: 75px; height: 75px; font-size: 1.8rem; margin-bottom: 20px;">EVA</div>
-                <h1>Centro de Mandos ATC</h1>
-                <p>Selecciona la herramienta operativa en el panel izquierdo o realiza consultas directas con EVA en el chat inferior.</p>
+                <div class="home-header">
+                    <h1>Centro de Mandos ATC — Consulta a EVA</h1>
+                    <p>Escribe palabras clave (ej: garantía, batería, servicios) para obtener respuestas inmediatas del repositorio oficial.</p>
+                </div>
+                <div class="home-chat-area" id="homeChatArea">
+                    <div class="msg-large eva">
+                        ¡Hola! Soy EVA. Puedes consultarme tus dudas operativas directo desde este panel central, o usar el widget flotante si estás dentro de algún módulo. ¿En qué te ayudo hoy?
+                    </div>
+                </div>
+                <div class="home-chat-input-container">
+                    <input type="text" id="homeChatInput" class="home-input" placeholder="Escribe tu duda aquí..." onkeypress="if(event.key === 'Enter') sendHomeMessage()">
+                    <button class="home-send-btn" onclick="sendHomeMessage()">Consultar</button>
+                </div>
             </div>
 
-            <!-- Visor del Iframe Central -->
+            <!-- VISTA 2: Visor de las páginas externas (Iframe) -->
             <iframe id="appFrame" class="content-frame" src=""></iframe>
         </main>
 
     </div>
 
-    <script>
-        // Base de Datos de Conocimiento Operativo
-        const baseConocimiento = [
-            { claves: ["garantia", "bateria"], respuesta: "🔋 La garantía de la batería es de 6 meses o 6,000 km. Recuerda validar que no tenga accesorios eléctricos extras instalados." },
-            { claves: ["primer", "servicio", "mantenimiento"], respuesta: "🔧 El primer servicio se hace a los 500 km o 30 días (lo que ocurra primero). ¡Es indispensable para la vigencia de la garantía!" },
-            { claves: ["documentos", "factura"], respuesta: "📄 Para solicitud de documentos, pide al cliente su VIN, INE y comprobante de compra, y valídalo en la plataforma de facturación." }
-        ];
+    <!-- ==========================================
+       ESTRUCTURA DEL WIDGET FLOTANTE
+       ========================================== -->
+    <div class="eva-floating-trigger" onclick="toggleWidget()">EVA</div>
 
-        // Función para abrir y cerrar el menú lateral
+    <div class="widget-asistente" id="evaWidget">
+        <div class="widget-header">
+            <h3 class="widget-title">EVA — Asistente de Bolsillo</h3>
+            <button class="widget-close" onclick="toggleWidget()">✕</button>
+        </div>
+        <div class="widget-chat-container" id="widgetChatArea">
+            <div class="msg-small eva">
+                ¡Hola! Te acompaño en esta pestaña. Consúltame lo que necesites sin salir de tu ventana de trabajo.
+            </div>
+        </div>
+        <div class="widget-input-area">
+            <input type="text" id="widgetChatInput" class="widget-input" placeholder="Pregunta rápida..." onkeypress="if(event.key === 'Enter') sendWidgetMessage()">
+            <button class="widget-send-btn" onclick="sendWidgetMessage()">Enviar</button>
+        </div>
+    </div>
+
+    <!-- ==========================================
+       LÓGICA OPERATIVA (JAVASCRIPT)
+       ========================================== -->
+    <script>
+        // ¡¡PEGA AQUÍ TU URL DE IMPLEMENTACIÓN DE GOOGLE APPS SCRIPT!!
+        const URL_GOOGLE_SCRIPT = "PEGA_AQUÍ_TU_URL_DE_APPS_SCRIPT";
+
+        // Función para regresar al Home al hacer clic en el Avatar izquierdo
+        function goHome() {
+            document.getElementById('appFrame').style.display = 'none';
+            document.getElementById('welcomeScreen').style.display = 'flex';
+            
+            // Quita la selección activa de los botones del menú
+            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+        }
+
+        // Mostrar/Ocultar Menú Lateral
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const toggleBtn = document.getElementById('toggleBtn');
-            
             sidebar.classList.toggle('collapsed');
-            
-            if (sidebar.classList.contains('collapsed')) {
-                toggleBtn.innerHTML = "☰";
-            } else {
-                toggleBtn.innerHTML = "✕";
-            }
+            toggleBtn.innerHTML = sidebar.classList.contains('collapsed') ? "☰" : "✕";
         }
 
-        // Función para cargar las páginas en el iframe central
+        // Abrir páginas en el visor central
         function loadPage(element, url) {
-            const items = document.querySelectorAll('.menu-item');
-            items.forEach(item => item.classList.remove('active'));
+            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
             element.classList.add('active');
 
             document.getElementById('welcomeScreen').style.display = 'none';
             const frame = document.getElementById('appFrame');
             frame.style.display = 'block';
-
             frame.src = url;
         }
 
-        // Lógica del Widget de Búsqueda (Filtrado en tiempo real)
-        function filterMenu() {
-            const input = document.getElementById('menuSearch');
-            const filter = input.value.toUpperCase();
-            const menuSection = document.getElementById('menuSection');
-            const items = menuSection.getElementsByClassName('menu-item');
-            const label = document.getElementById('sectionLabel');
-            let visibleCount = 0;
-
-            for (let i = 0; i < items.length; i++) {
-                const textSpan = items[i].querySelector('.item-text');
-                if (textSpan) {
-                    const textValue = textSpan.textContent || textSpan.innerText;
-                    if (textValue.toUpperCase().indexOf(filter) > -1) {
-                        items[i].style.display = "";
-                        visibleCount++;
-                    } else {
-                        items[i].style.display = "none";
-                    }
-                }
-            }
-
-            label.style.display = (visibleCount === 0) ? "none" : "";
+        // Mostrar/Ocultar Widget Flotante
+        function toggleWidget() {
+            const widget = document.getElementById('evaWidget');
+            widget.style.display = (widget.style.display === 'flex') ? 'none' : 'flex';
         }
 
-        // LÓGICA DE RESPUESTA DEL CHAT DE EVA
-        function handleKeyPress(e) {
-            if (e.key === 'Enter') sendMessage();
-        }
-
-        function sendMessage() {
-            const input = document.getElementById('chatInput');
+        // ACCIÓN: Enviar Mensaje desde el HOME GRANDE
+        function sendHomeMessage() {
+            const input = document.getElementById('homeChatInput');
             const texto = input.value.trim();
             if (!texto) return;
 
-            const chatContainer = document.getElementById('chatContainer');
-
-            // 1. Añadir mensaje del asesor al chat
+            const container = document.getElementById('homeChatArea');
             const userDiv = document.createElement('div');
-            userDiv.className = 'msg user';
+            userDiv.className = 'msg-large user';
             userDiv.innerText = texto;
-            chatContainer.appendChild(userDiv);
+            container.appendChild(userDiv);
             input.value = '';
+            container.scrollTop = container.scrollHeight;
 
-            // 2. Buscar respuesta en la base de datos
-            let respuestaEva = "🤖 Lo siento, aún no tengo información cargada sobre ese tema. Avísale a tu supervisor para que lo agregue a mi base de conocimientos.";
-            const textoLimpio = texto.toLowerCase();
-            
-            for (let item of baseConocimiento) {
-                let coincidencia = item.claves.some(clave => textoLimpio.includes(clave));
-                if (coincidencia) {
-                    respuestaEva = item.respuesta;
-                    break;
-                }
+            // Consultar a Google Sheets
+            consultarBaseSheets(texto, function(respuesta) {
+                const evaDiv = document.createElement('div');
+                evaDiv.className = 'msg-large eva';
+                evaDiv.innerText = respuesta;
+                container.appendChild(evaDiv);
+                container.scrollTop = container.scrollHeight;
+            });
+        }
+
+        // ACCIÓN: Enviar Mensaje desde el WIDGET COMPACTO FLOTANTE
+        function sendWidgetMessage() {
+            const input = document.getElementById('widgetChatInput');
+            const texto = input.value.trim();
+            if (!texto) return;
+
+            const container = document.getElementById('widgetChatArea');
+            const userDiv = document.createElement('div');
+            userDiv.className = 'msg-small user';
+            userDiv.innerText = texto;
+            container.appendChild(userDiv);
+            input.value = '';
+            container.scrollTop = container.scrollHeight;
+
+            // Consultar a Google Sheets
+            consultarBaseSheets(texto, function(respuesta) {
+                const evaDiv = document.createElement('div');
+                evaDiv.className = 'msg-small eva';
+                evaDiv.innerText = respuesta;
+                container.appendChild(evaDiv);
+                container.scrollTop = container.scrollHeight;
+            });
+        }
+
+        // FUNCIÓN MADRE: Conexión limpia con Google Sheets
+        function consultarBaseSheets(preguntaUsuario, callback) {
+            if(URL_GOOGLE_SCRIPT === "PEGA_AQUÍ_TU_URL_DE_APPS_SCRIPT") {
+                callback("⚠️ Error: No has configurado la URL de tu Google Apps Script en el código HTML.");
+                return;
             }
 
-            // 3. Respuesta simulada con retraso de procesamiento orgánico
-            setTimeout(() => {
-                const evaDiv = document.createElement('div');
-                evaDiv.className = 'msg eva';
-                evaDiv.innerText = respuestaEva;
-                chatContainer.appendChild(evaDiv);
-                chatContainer.scrollTop = chatContainer.scrollHeight; 
-            }, 400);
+            fetch(URL_GOOGLE_SCRIPT, {
+                method: 'POST',
+                body: JSON.stringify({ pregunta: preguntaUsuario })
+            })
+            .then(response => response.json())
+            .then(data => {
+                callback(data.respuesta);
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                callback("🤖 Hubo un problema al conectar con la base de datos de Google Sheets.");
+            });
+        }
 
-            chatContainer.scrollTop = chatContainer.scrollHeight;
+        // Filtrado del menú de herramientas
+        function filterMenu() {
+            const input = document.getElementById('menuSearch').value.toUpperCase();
+            const items = document.getElementById('menuSection').getElementsByClassName('menu-item');
+            for (let i = 0; i < items.length; i++) {
+                const text = items[i].querySelector('.item-text').textContent || items[i].querySelector('.item-text').innerText;
+                items[i].style.display = (text.toUpperCase().indexOf(input) > -1) ? "" : "none";
+            }
         }
     </script>
-
 </body>
 </html>
