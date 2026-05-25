@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asistente Virtual ATC - Centro de Mandos VENTO</title>
+    <style>
+        :root {
+            --vento-orange: #ff6600; /* Naranja Vento */
+            --bg-sidebar: #111111;  /* Negro Absoluto */
+            --bg-sidebar-header: #1a1a1a; /* Gris muy oscuro */
+            --bg-hover: #262626;    /* Gris Medio para hover */
+            --text-light: #ffffff;  /* Blanco */
+            --text-muted: #999999;  /* Gris claro para textos secundarios */
+            --border-color: #262626;/* Líneas de división discretas */
+            --bg-main: #f8f9fa;     /* Blanco grisáceo para el fondo del panel principal */
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            overflow: hidden;
+            background-color: var(--bg-main);
+        }
+
+        .dashboard-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Menú Lateral (Estilo Vento) */
+        .sidebar {
+            width: 290px;
+            background-color: var(--bg-sidebar);
+            color: var(--text-light);
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border-color);
+            flex-shrink: 0;
+        }
+
+        .sidebar-header {
+            padding: 20px 15px;
+            background-color: var(--bg-sidebar-header);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #ff6600, #333333);
+            border: 2px solid var(--vento-orange);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            box-shadow: 0 0 8px rgba(255, 102, 0, 0.4);
+            color: var(--text-light);
+        }
+
+        .assistant-info h2 {
+            margin: 0;
+            font-size: 1.05rem;
+            letter-spacing: 0.5px;
+        }
+
+        .assistant-info span {
+            font-size: 0.8rem;
+            color: var(--vento-orange);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 2px;
+        }
+
+        .assistant-info span::before {
+            content: '';
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            background-color: var(--vento-orange);
+            border-radius: 50%;
+            box-shadow: 0 0 5px var(--vento-orange);
+        }
+
+        /* Widget de Búsqueda Integrado */
+        .search-widget {
+            padding: 15px 15px 5px 15px;
+        }
+
+        .search-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 12px;
+            background-color: var(--bg-sidebar-header);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-light);
+            font-size: 0.85rem;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            border-color: var(--vento-orange);
+            background-color: #000000;
+            box-shadow: 0 0 5px rgba(255, 102, 0, 0.2);
+        }
+
+        .search-input::placeholder {
+            color: #666666;
+        }
+
+        /* Cuerpo del menú */
+        .menu-section {
+            padding: 15px 10px;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .menu-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            padding-left: 8px;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+            display: block;
+            font-weight: 600;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 11px 14px;
+            color: #cccccc;
+            text-decoration: none;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            background-color: var(--bg-hover);
+            color: var(--text-light);
+        }
+
+        .menu-item.active {
+            background-color: var(--vento-orange);
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        .menu-item span.arrow {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .sidebar-footer {
+            padding: 12px;
+            background-color: var(--bg-sidebar-header);
+            font-size: 0.75rem;
+            color: #555555;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            letter-spacing: 0.5px;
+        }
+
+        /* Panel de Visualización Principal */
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .welcome-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #222222;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .welcome-screen h1 {
+            margin-bottom: 12px;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #111111;
+        }
+
+        .welcome-screen p {
+            color: #666666;
+            max-width: 480px;
+            line-height: 1.6;
+            font-size: 0.95rem;
+            margin-top: 0;
+        }
+
+        .content-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: none;
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        
+        <!-- Menú Lateral -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="avatar">EVA</div>
+                <div class="assistant-info">
+                    <h2>EVA Inteligente</h2>
+                    <span>Soporte ATC Activo</span>
+                </div>
+            </div>
+
+            <!-- Widget de Búsqueda -->
+            <div class="search-widget">
+                <div class="search-wrapper">
+                    <input type="text" id="menuSearch" class="search-input" placeholder="Buscar herramienta o duda..." onkeyup="filterMenu()">
+                </div>
+            </div>
+
+            <!-- Listado de Opciones -->
+            <nav class="menu-section" id="menuSection">
+                <span class="menu-label" id="sectionLabel">Módulos de Atención</span>
+                
+                <div class="menu-item" onclick="loadPage(this, 'https://supervisor1atcvento-ctrl.github.io/segmentador-de-agencias/')">
+                    <span class="item-text">Segmentador ATC</span>
+                    <span class="arrow">➔</span>
+                </div>
+                
+                <div class="menu-item" onclick="loadPage(this, 'https://supervisor1atcvento-ctrl.github.io/buscador-de-cesves/')">
+                    <span class="item-text">Buscador CESVE</span>
+                    <span class="arrow">➔</span>
+                </div>
+
+                <div class="menu-item" onclick="loadPage(this, 'https://ayuda.vento.com/a/dashboard/73000005485')">
+                    <span class="item-text">Dudas y Preguntas Frecuentes</span>
+                    <span class="arrow">➔</span>
+                </div>
+
+                <div class="menu-item" onclick="window.open('https://ayuda.vento.com/a/dashboard/73000005485', 'popup', 'width=1000,height=800,menubar=no,toolbar=no')">
+                    <span class="item-text">Herramienta Externa</span>
+                    <span class="arrow">↗</span>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                VENTO MOTORCYCLES © 2026
+            </div>
+        </aside>
+
+        <!-- Contenedor Principal (Derecho) -->
+        <main class="main-content">
+            <!-- Pantalla de Bienvenida -->
+            <div id="welcomeScreen" class="welcome-screen">
+                <div class="avatar" style="width: 75px; height: 75px; font-size: 1.8rem; margin-bottom: 20px;">EVA</div>
+                <h1>Centro de Mandos ATC</h1>
+                <p>Selecciona o busca la herramienta operativa en el panel izquierdo. Todo el contenido se visualizará aquí de forma centralizada.</p>
+            </div>
+
+            <!-- Visor del Iframe -->
+            <iframe id="appFrame" class="content-frame" src=""></iframe>
+        </main>
+
+    </div>
+
+    <script>
+        // Función para cargar las páginas en el iframe central
+        function loadPage(element, url) {
+            const items = document.querySelectorAll('.menu-item');
+            items.forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
+
+            document.getElementById('welcomeScreen').style.display = 'none';
+            const frame = document.getElementById('appFrame');
+            frame.style.display = 'block';
+
+            frame.src = url;
+        }
+
+        // Lógica del Widget de Búsqueda (Filtrado en tiempo real)
+        function filterMenu() {
+            const input = document.getElementById('menuSearch');
+            const filter = input.value.toUpperCase();
+            const menuSection = document.getElementById('menuSection');
+            const items = menuSection.getElementsByClassName('menu-item');
+            const label = document.getElementById('sectionLabel');
+            let visibleCount = 0;
+
+            for (let i = 0; i < items.length; i++) {
+                const textSpan = items[i].querySelector('.item-text');
+                if (textSpan) {
+                    const textValue = textSpan.textContent || textSpan.innerText;
+                    if (textValue.toUpperCase().indexOf(filter) > -1) {
+                        items[i].style.display = "";
+                        visibleCount++;
+                    } else {
+                        items[i].style.display = "none";
+                    }
+                }
+            }
+
+            // Ocultar la etiqueta de la sección si no hay elementos visibles
+            if (visibleCount === 0) {
+                label.style.display = "none";
+            } else {
+                label.style.display = "";
+            }
+        }
+    </script>
+
+</body>
+</html>
