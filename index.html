@@ -30,9 +30,10 @@
             display: flex;
             width: 100%;
             height: 100%;
+            position: relative;
         }
 
-        /* Menú Lateral (Estilo Vento) */
+        /* Menú Lateral (Estilo Vento con Animación) */
         .sidebar {
             width: 290px;
             background-color: var(--bg-sidebar);
@@ -41,6 +42,13 @@
             flex-direction: column;
             border-right: 1px solid var(--border-color);
             flex-shrink: 0;
+            transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10;
+        }
+
+        /* Clase para ocultar el menú lateral empujándolo a la izquierda */
+        .sidebar.collapsed {
+            margin-left: -290px;
         }
 
         .sidebar-header {
@@ -92,7 +100,7 @@
             box-shadow: 0 0 5px var(--vento-orange);
         }
 
-        /* Widget de Búsqueda Integrado */
+        /* Widget de Búsqueda */
         .search-widget {
             padding: 15px 15px 5px 15px;
         }
@@ -189,6 +197,33 @@
             display: flex;
             flex-direction: column;
             height: 100%;
+            position: relative;
+        }
+
+        /* Botón Flotante para Abrir/Cerrar el Menú */
+        .toggle-menu-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            width: 40px;
+            height: 40px;
+            background-color: var(--vento-orange);
+            border: none;
+            border-radius: 6px;
+            color: var(--text-light);
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            transition: all 0.2s ease;
+            z-index: 100;
+        }
+
+        .toggle-menu-btn:hover {
+            background-color: #e65500;
+            transform: scale(1.05);
         }
 
         .welcome-screen {
@@ -200,6 +235,7 @@
             color: #222222;
             text-align: center;
             padding: 20px;
+            box-sizing: border-box;
         }
 
         .welcome-screen h1 {
@@ -207,6 +243,7 @@
             font-size: 2.2rem;
             font-weight: 700;
             color: #111111;
+            margin-top: 40px; /* Espacio para el botón de colapsar */
         }
 
         .welcome-screen p {
@@ -231,7 +268,7 @@
     <div class="dashboard-container">
         
         <!-- Menú Lateral -->
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <div class="avatar">EVA</div>
                 <div class="assistant-info">
@@ -279,6 +316,12 @@
 
         <!-- Contenedor Principal (Derecho) -->
         <main class="main-content">
+            
+            <!-- Botón de Control (Hamburguesa / Cerrar) -->
+            <button class="toggle-menu-btn" id="toggleBtn" onclick="toggleSidebar()" title="Mostrar/Ocultar Menú">
+                ✕
+            </button>
+
             <!-- Pantalla de Bienvenida -->
             <div id="welcomeScreen" class="welcome-screen">
                 <div class="avatar" style="width: 75px; height: 75px; font-size: 1.8rem; margin-bottom: 20px;">EVA</div>
@@ -293,6 +336,22 @@
     </div>
 
     <script>
+        // Función para abrir y cerrar el menú lateral
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.getElementById('toggleBtn');
+            
+            sidebar.classList.toggle('collapsed');
+            
+            // Cambia el icono del botón dependiendo del estado del menú
+            if (sidebar.classList.contains('collapsed')) {
+                toggleBtn.innerHTML = "☰";
+                toggleBtn.style.left = "15px"; // Se mantiene fijo en la esquina superior izquierda
+            } else {
+                toggleBtn.innerHTML = "✕";
+            }
+        }
+
         // Función para cargar las páginas en el iframe central
         function loadPage(element, url) {
             const items = document.querySelectorAll('.menu-item');
@@ -328,7 +387,6 @@
                 }
             }
 
-            // Ocultar la etiqueta de la sección si no hay elementos visibles
             if (visibleCount === 0) {
                 label.style.display = "none";
             } else {
