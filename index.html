@@ -14,6 +14,7 @@
             --text-muted: #999999;  /* Gris claro para textos secundarios */
             --border-color: #262626;/* Líneas de división discretas */
             --bg-main: #f8f9fa;     /* Blanco grisáceo para el fondo del panel principal */
+            --bg-chat-user: #333333; /* Fondo chat del asesor */
         }
 
         body, html {
@@ -35,7 +36,7 @@
 
         /* Menú Lateral (Estilo Vento con Animación) */
         .sidebar {
-            width: 290px;
+            width: 320px; /* Ajustado ligeramente para dar mejor espacio al chat */
             background-color: var(--bg-sidebar);
             color: var(--text-light);
             display: flex;
@@ -48,7 +49,7 @@
 
         /* Clase para ocultar el menú lateral empujándolo a la izquierda */
         .sidebar.collapsed {
-            margin-left: -290px;
+            margin-left: -320px;
         }
 
         .sidebar-header {
@@ -133,11 +134,12 @@
             color: #666666;
         }
 
-        /* Cuerpo del menú */
+        /* Cuerpo del menú (Sección de Módulos) */
         .menu-section {
-            padding: 15px 10px;
-            flex-grow: 1;
+            padding: 15px 10px 5px 10px;
             overflow-y: auto;
+            max-height: 220px; /* Limitamos altura para priorizar el chat abajo */
+            border-bottom: 1px solid var(--border-color);
         }
 
         .menu-label {
@@ -155,12 +157,12 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 11px 14px;
+            padding: 10px 14px;
             color: #cccccc;
             text-decoration: none;
             border-radius: 6px;
             margin-bottom: 6px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             transition: all 0.2s ease;
             cursor: pointer;
         }
@@ -181,10 +183,84 @@
             opacity: 0.7;
         }
 
-        .sidebar-footer {
+        /* SECCIÓN DEL CHAT DE EVA EN SIDEBAR */
+        .eva-chat-section {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background-color: #0b0b0b;
+        }
+
+        .chat-container {
+            flex-grow: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .msg {
+            max-width: 85%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        .msg.eva {
+            background-color: var(--bg-card);
+            color: var(--text-light);
+            align-self: flex-start;
+            border-left: 3px solid var(--vento-orange);
+        }
+
+        .msg.user {
+            background-color: var(--bg-chat-user);
+            color: var(--text-light);
+            align-self: flex-end;
+        }
+        
+        .chat-input-area {
             padding: 12px;
+            background-color: var(--bg-card);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-input {
+            flex-grow: 1;
+            padding: 8px 12px;
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: white;
+            font-size: 0.82rem;
+            outline: none;
+        }
+
+        .chat-input:focus { border-color: var(--vento-orange); }
+
+        .send-btn {
+            background-color: var(--vento-orange);
+            border: none;
+            color: white;
+            padding: 0 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.8rem;
+            transition: background 0.2s;
+        }
+        .send-btn:hover { background-color: #e65500; }
+
+        .sidebar-footer {
+            padding: 10px;
             background-color: var(--bg-sidebar-header);
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #555555;
             text-align: center;
             border-top: 1px solid var(--border-color);
@@ -243,7 +319,7 @@
             font-size: 2.2rem;
             font-weight: 700;
             color: #111111;
-            margin-top: 40px; /* Espacio para el botón de colapsar */
+            margin-top: 40px;
         }
 
         .welcome-screen p {
@@ -267,7 +343,7 @@
 
     <div class="dashboard-container">
         
-        <!-- Menú Lateral -->
+        <!-- Menú Lateral Configurado con el Chat integrado -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <div class="avatar">EVA</div>
@@ -277,14 +353,14 @@
                 </div>
             </div>
 
-            <!-- Widget de Búsqueda -->
+            <!-- Widget de Búsqueda de Módulos -->
             <div class="search-widget">
                 <div class="search-wrapper">
-                    <input type="text" id="menuSearch" class="search-input" placeholder="Buscar herramienta o duda..." onkeyup="filterMenu()">
+                    <input type="text" id="menuSearch" class="search-input" placeholder="Buscar herramienta..." onkeyup="filterMenu()">
                 </div>
             </div>
 
-            <!-- Listado de Opciones -->
+            <!-- Listado de Opciones Operativas -->
             <nav class="menu-section" id="menuSection">
                 <span class="menu-label" id="sectionLabel">Módulos de Atención</span>
                 
@@ -299,15 +375,24 @@
                 </div>
 
                 <div class="menu-item" onclick="loadPage(this, 'https://ayuda.vento.com/a/dashboard/73000005485')">
-                    <span class="item-text">Dudas y Preguntas Frecuentes</span>
+                    <span class="item-text">Dudas y FAQ</span>
                     <span class="arrow">➔</span>
                 </div>
-
-                <div class="menu-item" onclick="window.open('https://ayuda.vento.com/a/dashboard/73000005485', 'popup', 'width=1000,height=800,menubar=no,toolbar=no')">
-                    <span class="item-text">Herramienta Externa</span>
-                    <span class="arrow">↗</span>
-                </div>
             </nav>
+
+            <!-- CONVERSACIÓN INTERACTIVA CON EVA (AQUÍ ESCRIBE EL ASESOR) -->
+            <div class="eva-chat-section">
+                <span class="menu-label" style="padding: 12px 0 0 18px; margin-bottom: 5px;">Consultas Rápidas</span>
+                <div class="chat-container" id="chatContainer">
+                    <div class="msg eva">
+                        ¡Hola! Escribe tu duda aquí abajo (ej: garantía, batería, primer servicio) y te daré la información de inmediato.
+                    </div>
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" id="chatInput" class="chat-input" placeholder="Pregúntale a EVA..." onkeypress="handleKeyPress(event)">
+                    <button class="send-btn" onclick="sendMessage()">Enviar</button>
+                </div>
+            </div>
 
             <div class="sidebar-footer">
                 VENTO MOTORCYCLES © 2026
@@ -326,16 +411,23 @@
             <div id="welcomeScreen" class="welcome-screen">
                 <div class="avatar" style="width: 75px; height: 75px; font-size: 1.8rem; margin-bottom: 20px;">EVA</div>
                 <h1>Centro de Mandos ATC</h1>
-                <p>Selecciona o busca la herramienta operativa en el panel izquierdo. Todo el contenido se visualizará aquí de forma centralizada.</p>
+                <p>Selecciona la herramienta operativa en el panel izquierdo o realiza consultas directas con EVA en el chat inferior.</p>
             </div>
 
-            <!-- Visor del Iframe -->
+            <!-- Visor del Iframe Central -->
             <iframe id="appFrame" class="content-frame" src=""></iframe>
         </main>
 
     </div>
 
     <script>
+        // Base de Datos de Conocimiento Operativo
+        const baseConocimiento = [
+            { claves: ["garantia", "bateria"], respuesta: "🔋 La garantía de la batería es de 6 meses o 6,000 km. Recuerda validar que no tenga accesorios eléctricos extras instalados." },
+            { claves: ["primer", "servicio", "mantenimiento"], respuesta: "🔧 El primer servicio se hace a los 500 km o 30 días (lo que ocurra primero). ¡Es indispensable para la vigencia de la garantía!" },
+            { claves: ["documentos", "factura"], respuesta: "📄 Para solicitud de documentos, pide al cliente su VIN, INE y comprobante de compra, y valídalo en la plataforma de facturación." }
+        ];
+
         // Función para abrir y cerrar el menú lateral
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
@@ -343,10 +435,8 @@
             
             sidebar.classList.toggle('collapsed');
             
-            // Cambia el icono del botón dependiendo del estado del menú
             if (sidebar.classList.contains('collapsed')) {
                 toggleBtn.innerHTML = "☰";
-                toggleBtn.style.left = "15px"; // Se mantiene fijo en la esquina superior izquierda
             } else {
                 toggleBtn.innerHTML = "✕";
             }
@@ -387,11 +477,50 @@
                 }
             }
 
-            if (visibleCount === 0) {
-                label.style.display = "none";
-            } else {
-                label.style.display = "";
+            label.style.display = (visibleCount === 0) ? "none" : "";
+        }
+
+        // LÓGICA DE RESPUESTA DEL CHAT DE EVA
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const texto = input.value.trim();
+            if (!texto) return;
+
+            const chatContainer = document.getElementById('chatContainer');
+
+            // 1. Añadir mensaje del asesor al chat
+            const userDiv = document.createElement('div');
+            userDiv.className = 'msg user';
+            userDiv.innerText = texto;
+            chatContainer.appendChild(userDiv);
+            input.value = '';
+
+            // 2. Buscar respuesta en la base de datos
+            let respuestaEva = "🤖 Lo siento, aún no tengo información cargada sobre ese tema. Avísale a tu supervisor para que lo agregue a mi base de conocimientos.";
+            const textoLimpio = texto.toLowerCase();
+            
+            for (let item of baseConocimiento) {
+                let coincidencia = item.claves.some(clave => textoLimpio.includes(clave));
+                if (coincidencia) {
+                    respuestaEva = item.respuesta;
+                    break;
+                }
             }
+
+            // 3. Respuesta simulada con retraso de procesamiento orgánico
+            setTimeout(() => {
+                const evaDiv = document.createElement('div');
+                evaDiv.className = 'msg eva';
+                evaDiv.innerText = respuestaEva;
+                chatContainer.appendChild(evaDiv);
+                chatContainer.scrollTop = chatContainer.scrollHeight; 
+            }, 400);
+
+            chatContainer.scrollTop = chatContainer.scrollHeight;
         }
     </script>
 
