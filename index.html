@@ -6,14 +6,14 @@
     <title>Centro de Mandos ATC - EVA Inteligente</title>
     <style>
         :root {
-            --vento-orange: #ff6600; /* Naranja Vento */
-            --bg-sidebar: #111111;  /* Negro Absoluto */
-            --bg-sidebar-header: #1a1a1a; /* Gris muy oscuro */
-            --bg-hover: #262626;    /* Gris Medio para hover */
-            --text-light: #ffffff;  /* Blanco */
-            --text-muted: #999999;  /* Gris claro para textos secundarios */
-            --border-color: #262626;/* Líneas de división discretas */
-            --bg-main: #f8f9fa;     /* Blanco grisáceo para el fondo del panel principal */
+            --vento-orange: #ff6600;
+            --bg-sidebar: #111111;
+            --bg-sidebar-header: #1a1a1a;
+            --bg-hover: #262626;
+            --text-light: #ffffff;
+            --text-muted: #999999;
+            --border-color: #262626;
+            --bg-main: #f8f9fa;
             --bg-chat-user: #333333;
         }
 
@@ -26,6 +26,12 @@
             overflow: hidden;
             background-color: var(--bg-main);
         }
+
+        /* Scrollbars personalizadas */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--vento-orange); }
 
         .dashboard-container {
             display: flex;
@@ -62,7 +68,6 @@
             border-bottom: 1px solid var(--border-color);
         }
 
-        /* Avatar clickable que lleva al Home */
         .avatar-clickable {
             width: 45px;
             height: 45px;
@@ -80,20 +85,16 @@
             transition: transform 0.2s ease;
         }
         
-        .avatar-clickable:hover {
-            transform: scale(1.05);
-        }
+        .avatar-clickable:hover { transform: scale(1.05); }
 
         .assistant-info h2 { margin: 0; font-size: 1.05rem; letter-spacing: 0.5px; }
         .assistant-info span { font-size: 0.8rem; color: var(--vento-orange); display: flex; align-items: center; gap: 5px; margin-top: 2px; }
         .assistant-info span::before { content: ''; display: inline-block; width: 7px; height: 7px; background-color: var(--vento-orange); border-radius: 50%; box-shadow: 0 0 5px var(--vento-orange); }
 
-        /* Buscador del menú */
         .search-widget { padding: 15px 15px 5px 15px; }
         .search-input { width: 100%; padding: 10px 12px; background-color: var(--bg-sidebar-header); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-light); font-size: 0.85rem; outline: none; box-sizing: border-box; }
         .search-input:focus { border-color: var(--vento-orange); background-color: #000000; }
 
-        /* Lista de herramientas */
         .menu-section { padding: 15px 10px; flex-grow: 1; overflow-y: auto; }
         .menu-label { font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); padding-left: 8px; margin-bottom: 12px; letter-spacing: 1px; display: block; font-weight: 600; }
         .menu-item { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; color: #cccccc; text-decoration: none; border-radius: 6px; margin-bottom: 6px; font-size: 0.9rem; transition: all 0.2s ease; cursor: pointer; }
@@ -112,7 +113,6 @@
             position: relative;
         }
 
-        /* Botón hamburguesa */
         .toggle-menu-btn {
             position: absolute;
             top: 15px;
@@ -132,7 +132,6 @@
             z-index: 100;
         }
 
-        /* PANTALLA HOME CENTRAL (Chat en Grande de EVA) */
         .welcome-screen {
             display: flex;
             flex-direction: column;
@@ -143,22 +142,22 @@
         }
 
         .home-header {
-            padding: 20px 20px 20px 70px; /* Margen para no chocar con el botón hamburguesa */
+            padding: 20px 20px 20px 70px;
             border-bottom: 1px solid #e0e0e0;
             background-color: #fafafa;
         }
         .home-header h1 { margin: 0; font-size: 1.6rem; color: #111; }
         .home-header p { margin: 5px 0 0 0; color: #666; font-size: 0.9rem; }
 
-        /* Chat del Home */
-        .home-chat-area { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background-color: #f4f5f7; }
+        .home-chat-area { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background-color: #f4f5f7; scroll-behavior: smooth; }
         .home-chat-input-container { padding: 15px 20px; background-color: #ffffff; border-top: 1px solid #e0e0e0; display: flex; gap: 10px; }
         .home-input { flex-grow: 1; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.95rem; outline: none; }
         .home-input:focus { border-color: var(--vento-orange); }
-        .home-send-btn { background-color: var(--vento-orange); border: none; color: white; padding: 0 25px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .home-send-btn { background-color: var(--vento-orange); border: none; color: white; padding: 0 25px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: opacity 0.2s; }
+        .home-send-btn:hover { opacity: 0.9; }
 
         /* Estilo general de burbujas en el panel grande */
-        .msg-large { max-width: 70%; padding: 12px 16px; border-radius: 8px; font-size: 0.95rem; line-height: 1.5; }
+        .msg-large { max-width: 70%; padding: 12px 16px; border-radius: 8px; font-size: 0.95rem; line-height: 1.5; word-wrap: break-word; }
         .msg-large.eva { background-color: #1a1a1a; color: white; align-self: flex-start; border-left: 4px solid var(--vento-orange); }
         .msg-large.user { background-color: #e3e3e3; color: #111; align-self: flex-end; }
 
@@ -208,15 +207,25 @@
         .widget-title { color: white; font-size: 0.9rem; margin: 0; font-weight: 600; }
         .widget-close { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1rem; }
         
-        .widget-chat-container { flex-grow: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background-color: #0b0b0b; }
+        .widget-chat-container { flex-grow: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background-color: #0b0b0b; scroll-behavior: smooth; }
         .widget-input-area { padding: 10px; background-color: var(--bg-sidebar-header); border-top: 1px solid var(--border-color); display: flex; gap: 8px; }
         .widget-input { flex-grow: 1; padding: 8px 12px; background-color: #000; border: 1px solid var(--border-color); border-radius: 6px; color: white; font-size: 0.85rem; outline: none; }
-        .widget-send-btn { background-color: var(--vento-orange); border: none; color: white; padding: 0 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
+        .widget-send-btn { background-color: var(--vento-orange); border: none; color: white; padding: 0 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; transition: opacity 0.2s; }
+        .widget-send-btn:hover { opacity: 0.9; }
 
         /* Burbujas del Widget Chico */
-        .msg-small { max-width: 80%; padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; line-height: 1.4; }
+        .msg-small { max-width: 80%; padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; line-height: 1.4; word-wrap: break-word; }
         .msg-small.eva { background-color: var(--bg-sidebar-header); color: white; align-self: flex-start; border-left: 3px solid var(--vento-orange); }
         .msg-small.user { background-color: var(--bg-chat-user); color: white; align-self: flex-end; }
+
+        /* Animación de carga */
+        .loading-text { font-style: italic; opacity: 0.7; }
+        @keyframes pulse {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
+        }
+        .is-loading { animation: pulse 1.5s infinite; }
     </style>
 </head>
 <body>
@@ -276,8 +285,8 @@
                     </div>
                 </div>
                 <div class="home-chat-input-container">
-                    <input type="text" id="homeChatInput" class="home-input" placeholder="Escribe tu duda aquí..." onkeypress="if(event.key === 'Enter') sendHomeMessage()">
-                    <button class="home-send-btn" onclick="sendHomeMessage()">Consultar</button>
+                    <input type="text" id="homeChatInput" class="home-input" placeholder="Escribe tu duda aquí..." onkeypress="if(event.key === 'Enter') handleMessage('home')">
+                    <button class="home-send-btn" onclick="handleMessage('home')">Consultar</button>
                 </div>
             </div>
 
@@ -303,8 +312,8 @@
             </div>
         </div>
         <div class="widget-input-area">
-            <input type="text" id="widgetChatInput" class="widget-input" placeholder="Pregunta rápida..." onkeypress="if(event.key === 'Enter') sendWidgetMessage()">
-            <button class="widget-send-btn" onclick="sendWidgetMessage()">Enviar</button>
+            <input type="text" id="widgetChatInput" class="widget-input" placeholder="Pregunta rápida..." onkeypress="if(event.key === 'Enter') handleMessage('widget')">
+            <button class="widget-send-btn" onclick="handleMessage('widget')">Enviar</button>
         </div>
     </div>
 
@@ -312,13 +321,9 @@
        LÓGICA OPERATIVA (JAVASCRIPT)
        ========================================== -->
     <script>
-        // ==========================================
-        // CONFIGURACIÓN DE APIS — CONEXIÓN NGROK / ANYTHINGLLM
-        // ==========================================
-        // Déjala exactamente así, cortada después de .dev"
-            const ANYTHINGLLM_BASE_URL = "https://willpower-onstage-condiment.ngrok-free.dev";
-            const ANYTHINGLLM_API_KEY  = "RHGR7AQ-EPT4G3N-QDDDVKF-RYHAX5Q";
-            const WORKSPACE_SLUG       = "eva-atc";     
+        const ANYTHINGLLM_BASE_URL = "https://willpower-onstage-condiment.ngrok-free.dev";
+        const ANYTHINGLLM_API_KEY  = "RHGR7AQ-EPT4G3N-QDDDVKF-RYHAX5Q";
+        const WORKSPACE_SLUG       = "eva-atc";     
 
         function goHome() {
             document.getElementById('appFrame').style.display = 'none';
@@ -348,86 +353,90 @@
             widget.style.display = (widget.style.display === 'flex') ? 'none' : 'flex';
         }
 
-        function sendHomeMessage() {
-            const input = document.getElementById('homeChatInput');
+        // --- LÓGICA UNIFICADA DE CHAT ---
+        function handleMessage(context) {
+            const isHome = context === 'home';
+            const inputId = isHome ? 'homeChatInput' : 'widgetChatInput';
+            const areaId = isHome ? 'homeChatArea' : 'widgetChatArea';
+            const baseClass = isHome ? 'msg-large' : 'msg-small';
+            
+            const input = document.getElementById(inputId);
             const texto = input.value.trim();
             if (!texto) return;
 
-            const container = document.getElementById('homeChatArea');
-            const userDiv = document.createElement('div');
-            userDiv.className = 'msg-large user';
-            userDiv.innerText = texto;
-            container.appendChild(userDiv);
-            input.value = '';
-            container.scrollTop = container.scrollHeight;
+            const container = document.getElementById(areaId);
 
+            // 1. Mostrar mensaje del usuario
+            appendBubble(container, texto, `${baseClass} user`);
+            input.value = '';
+
+            // 2. Mostrar indicador de "EVA procesando..."
+            const loadingId = 'loading-' + Date.now();
+            appendBubble(container, 'EVA está procesando tu consulta...', `${baseClass} eva loading-text is-loading`, loadingId);
+
+            // 3. Consultar a la API
             consultarAnythingLLM(texto, function(respuesta) {
-                const evaDiv = document.createElement('div');
-                evaDiv.className = 'msg-large eva';
-                evaDiv.innerText = respuesta;
-                container.appendChild(evaDiv);
-                container.scrollTop = container.scrollHeight;
+                // Eliminar el indicador de carga
+                const loadingBubble = document.getElementById(loadingId);
+                if (loadingBubble) loadingBubble.remove();
+
+                // Formatear saltos de línea para que se lea mejor y agregar la burbuja
+                const formattedResponse = respuesta.replace(/\n/g, '<br>');
+                appendBubble(container, formattedResponse, `${baseClass} eva`, null, true);
             });
         }
 
-        function sendWidgetMessage() {
-            const input = document.getElementById('widgetChatInput');
-            const texto = input.value.trim();
-            if (!texto) return;
-
-            const container = document.getElementById('widgetChatArea');
-            const userDiv = document.createElement('div');
-            userDiv.className = 'msg-small user';
-            userDiv.innerText = texto;
-            container.appendChild(userDiv);
-            input.value = '';
+        function appendBubble(container, text, className, id = null, isHTML = false) {
+            const div = document.createElement('div');
+            div.className = className;
+            if (id) div.id = id;
+            
+            if (isHTML) {
+                div.innerHTML = text;
+            } else {
+                div.innerText = text;
+            }
+            
+            container.appendChild(div);
             container.scrollTop = container.scrollHeight;
-
-            consultarAnythingLLM(texto, function(respuesta) {
-                const evaDiv = document.createElement('div');
-                evaDiv.className = 'msg-small eva';
-                evaDiv.innerText = respuesta;
-                container.appendChild(evaDiv);
-                container.scrollTop = container.scrollHeight;
-            });
         }
 
+        // --- CONEXIÓN API ---
         function consultarAnythingLLM(preguntaUsuario, callback) {
-    // Usamos el endpoint global que es el más estable para la app de escritorio
-    const urlEndpoint = `${ANYTHINGLLM_BASE_URL}/api/v1/chat`;
+            const urlEndpoint = `${ANYTHINGLLM_BASE_URL}/api/v1/chat`;
 
-    fetch(urlEndpoint, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${ANYTHINGLLM_API_KEY}`
-        },
-        body: JSON.stringify({
-            message: preguntaUsuario,
-            mode: "query",
-            workspaceSlug: WORKSPACE_SLUG
-        })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`Error en servidor: ${response.status}`);
+            fetch(urlEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${ANYTHINGLLM_API_KEY}`
+                },
+                body: JSON.stringify({
+                    message: preguntaUsuario,
+                    mode: "query",
+                    workspaceSlug: WORKSPACE_SLUG
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Error en servidor: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                const respuestaFinal = data.textResponse || data.reply;
+                if (respuestaFinal) {
+                    callback(respuestaFinal);
+                } else {
+                    console.log("Datos recibidos:", data);
+                    callback("🤖 EVA procesó la pregunta, pero el formato de respuesta falló.");
+                }
+            })
+            .catch(error => {
+                console.error("Error completo:", error);
+                callback("🤖 No pude conectarme con EVA. Verifica el estado del servidor local o ngrok.");
+            });
         }
-        return response.json();
-    })
-    .then(data => {
-        const respuestaFinal = data.textResponse || data.reply;
-        if (respuestaFinal) {
-            callback(respuestaFinal);
-        } else {
-            console.log("Datos recibidos:", data);
-            callback("🤖 EVA procesó la pregunta, pero el formato de respuesta falló.");
-        }
-    })
-    .catch(error => {
-        console.error("Error completo:", error);
-        callback("🤖 No pude conectarme con EVA. Verifica el estado del servidor local.");
-    });
-}
         
         function filterMenu() {
             const input = document.getElementById('menuSearch').value.toUpperCase();
