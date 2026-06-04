@@ -402,8 +402,7 @@ function consultarAnythingLLM(preguntaUsuario, callback) {
         },
         body: JSON.stringify({
             message: preguntaUsuario,
-            mode: "chat", // Modo conversación utilizando el historial
-            userId: "atc_advisor" // Identificador obligatorio para el hilo en AnythingLLM
+            mode: "query" // Cambia temporalmente de "chat" a "query" para forzar la lectura de los manuales
         })
     })
     .then(response => {
@@ -413,19 +412,17 @@ function consultarAnythingLLM(preguntaUsuario, callback) {
         return response.json();
     })
     .then(data => {
-        // Algunas versiones responden con 'textResponse' y otras con 'reply'
-        const respuestaFinal = data.textResponse || data.reply || (data.apiResponse && data.apiResponse.textResponse);
-        
-        if (respuestaFinal) {
-            callback(respuestaFinal);
+        // Estructura oficial estándar de AnythingLLM
+        if (data && data.textResponse) {
+            callback(data.textResponse);
         } else {
-            console.log("Estructura de datos recibida:", data);
-            callback("🤖 EVA recibió una respuesta con un formato desconocido del servidor.");
+            console.log("Datos recibidos:", data);
+            callback("🤖 EVA procesó la pregunta, pero el formato de respuesta falló.");
         }
     })
     .catch(error => {
-        console.error("Error al conectar con AnythingLLM:", error);
-        callback("🤖 No pude conectarme con EVA. Asegúrate de que la terminal de ngrok y AnythingLLM estén abiertos en la PC principal.");
+        console.error("Error completo:", error);
+        callback("🤖 No pude conectarme con EVA. Verifica el estado del servidor local.");
     });
 }
 
