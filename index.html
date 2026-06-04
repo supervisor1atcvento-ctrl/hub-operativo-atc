@@ -392,7 +392,8 @@
         }
 
 function consultarAnythingLLM(preguntaUsuario, callback) {
-    const urlEndpoint = `${ANYTHINGLLM_BASE_URL}/workspace/${WORKSPACE_SLUG}/chat`;
+    // Apuntamos al endpoint global de chat del sistema
+    const urlEndpoint = `${ANYTHINGLLM_BASE_URL}/v1/chat`;
 
     fetch(urlEndpoint, {
         method: 'POST',
@@ -402,7 +403,8 @@ function consultarAnythingLLM(preguntaUsuario, callback) {
         },
         body: JSON.stringify({
             message: preguntaUsuario,
-            mode: "query" // Cambia temporalmente de "chat" a "query" para forzar la lectura de los manuales
+            mode: "query", // Puedes usar "chat" si requieres mantener memoria temporal del hilo
+            workspaceSlug: WORKSPACE_SLUG // Pasamos el slug directamente dentro del cuerpo
         })
     })
     .then(response => {
@@ -412,17 +414,18 @@ function consultarAnythingLLM(preguntaUsuario, callback) {
         return response.json();
     })
     .then(data => {
-        // Estructura oficial estándar de AnythingLLM
-        if (data && data.textResponse) {
-            callback(data.textResponse);
+        // Captura el formato estándar o alternativo de respuesta de la API
+        const respuestaFinal = data.textResponse || data.reply;
+        if (respuestaFinal) {
+            callback(respuestaFinal);
         } else {
             console.log("Datos recibidos:", data);
-            callback("🤖 EVA procesó la pregunta, pero el formato de respuesta falló.");
+            callback("🤖 EVA recibió una respuesta con un formato desconocido.");
         }
     })
     .catch(error => {
         console.error("Error completo:", error);
-        callback("🤖 No pude conectarme con EVA. Verifica el estado del servidor local.");
+        callback("🤖 No pude conectarme con EVA. Verifica el estado del servidor local gg.");
     });
 }
 
