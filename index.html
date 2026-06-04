@@ -393,19 +393,18 @@
         }
 
 function consultarAnythingLLM(preguntaUsuario, callback) {
-    // Apuntamos al endpoint global de chat del sistema
-    const urlEndpoint = `${ANYTHINGLLM_BASE_URL}`;
+    // Aquí forzamos la ruta oficial exacta combinando tu url de ngrok con el endpoint correcto
+    const urlEndpoint = "https://willpower-onstage-condiment.ngrok-free.dev/api/v1/workspace/eva---base-tecnica/chat";
 
     fetch(urlEndpoint, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${ANYTHINGLLM_API_KEY}`
+            'Authorization': 'Bearer RHGR7AQ-EPT4G3N-QDDDVKF-RYHAX5Q' // Tu API Key actual
         },
         body: JSON.stringify({
             message: preguntaUsuario,
-            mode: "query", // Puedes usar "chat" si requieres mantener memoria temporal del hilo
-            workspaceSlug: WORKSPACE_SLUG // Pasamos el slug directamente dentro del cuerpo
+            mode: "query"
         })
     })
     .then(response => {
@@ -415,18 +414,16 @@ function consultarAnythingLLM(preguntaUsuario, callback) {
         return response.json();
     })
     .then(data => {
-        // Captura el formato estándar o alternativo de respuesta de la API
-        const respuestaFinal = data.textResponse || data.reply;
-        if (respuestaFinal) {
-            callback(respuestaFinal);
+        if (data && data.textResponse) {
+            callback(data.textResponse);
         } else {
             console.log("Datos recibidos:", data);
-            callback("🤖 EVA recibió una respuesta con un formato desconocido.");
+            callback("🤖 EVA procesó la pregunta, pero el formato de respuesta falló.");
         }
     })
     .catch(error => {
         console.error("Error completo:", error);
-        callback("🤖 No pude conectarme con EVA. Verifica el estado del servidor local gg.");
+        callback("🤖 No pude conectarme con EVA. Verifica el estado del servidor local.");
     });
 }
 
