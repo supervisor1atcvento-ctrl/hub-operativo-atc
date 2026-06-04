@@ -318,7 +318,7 @@
         // Déjala exactamente así, cortada después de .dev"
             const ANYTHINGLLM_BASE_URL = "https://willpower-onstage-condiment.ngrok-free.dev";
             const ANYTHINGLLM_API_KEY  = "RHGR7AQ-EPT4G3N-QDDDVKF-RYHAX5Q";
-            const WORKSPACE_SLUG       = "eva---base-tecnica";         
+            const WORKSPACE_SLUG       = "eva-atc";         
 
         function goHome() {
             document.getElementById('appFrame').style.display = 'none';
@@ -393,8 +393,8 @@
         }
 
 function consultarAnythingLLM(preguntaUsuario, callback) {
-    // Aquí forzamos la ruta oficial exacta combinando tu url de ngrok con el endpoint correcto
-    const urlEndpoint = "https://willpower-onstage-condiment.ngrok-free.dev/api/v1/workspace/eva---base-tecnica/chat";
+    // Usamos el nuevo slug limpio "eva-atc" directamente en la URL
+    const urlEndpoint = "https://willpower-onstage-condiment.ngrok-free.dev/api/v1/workspace/eva-atc/chat";
 
     fetch(urlEndpoint, {
         method: 'POST',
