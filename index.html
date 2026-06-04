@@ -393,18 +393,17 @@
         }
 
 function consultarAnythingLLM(preguntaUsuario, callback) {
-    // Usamos el nuevo slug limpio "eva-atc" directamente en la URL
     const urlEndpoint = "https://willpower-onstage-condiment.ngrok-free.dev/api/v1/workspace/eva-atc/chat";
 
     fetch(urlEndpoint, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer RHGR7AQ-EPT4G3N-QDDDVKF-RYHAX5Q' // Tu API Key actual
+            'Authorization': 'Bearer RHGR7AQ-EPT4G3N-QDDDVKF-RYHAX5Q'
         },
         body: JSON.stringify({
             message: preguntaUsuario,
-            mode: "query"
+            mode: "chat" // Cambia a "query" si elegiste Modo Consulta en la app
         })
     })
     .then(response => {
