@@ -393,7 +393,8 @@
         }
 
 function consultarAnythingLLM(preguntaUsuario, callback) {
-    const urlEndpoint = "https://willpower-onstage-condiment.ngrok-free.dev/api/v1/workspace/eva-atc/chat";
+    // Usamos el endpoint de chat global en lugar de la ruta por workspace
+    const urlEndpoint = "https://willpower-onstage-condiment.ngrok-free.dev/api/v1/chat";
 
     fetch(urlEndpoint, {
         method: 'POST',
@@ -403,7 +404,8 @@ function consultarAnythingLLM(preguntaUsuario, callback) {
         },
         body: JSON.stringify({
             message: preguntaUsuario,
-            mode: "chat" // Cambia a "query" si elegiste Modo Consulta en la app
+            mode: "query", // Indica que busque en la base de datos vectorial del espacio
+            workspaceSlug: "eva-atc" // Enviamos el identificador limpio dentro del JSON
         })
     })
     .then(response => {
@@ -413,10 +415,12 @@ function consultarAnythingLLM(preguntaUsuario, callback) {
         return response.json();
     })
     .then(data => {
-        if (data && data.textResponse) {
-            callback(data.textResponse);
+        // Captura la respuesta estándar del endpoint global
+        const respuestaFinal = data.textResponse || data.reply;
+        if (respuestaFinal) {
+            callback(respuestaFinal);
         } else {
-            console.log("Datos recibidos:", data);
+            console.log("Estructura de datos recibida:", data);
             callback("🤖 EVA procesó la pregunta, pero el formato de respuesta falló.");
         }
     })
@@ -424,7 +428,6 @@ function consultarAnythingLLM(preguntaUsuario, callback) {
         console.error("Error completo:", error);
         callback("🤖 No pude conectarme con EVA. Verifica el estado del servidor local.");
     });
-}
 
         function filterMenu() {
             const input = document.getElementById('menuSearch').value.toUpperCase();
