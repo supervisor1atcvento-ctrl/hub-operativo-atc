@@ -315,9 +315,10 @@
         // ==========================================
         // CONFIGURACIÓN DE APIS — CONEXIÓN NGROK / ANYTHINGLLM
         // ==========================================
-        const ANYTHINGLLM_BASE_URL = "https://willpower-onstage-condiment.ngrok-free.dev/api/v1"; 
-        const ANYTHINGLLM_API_KEY  = "RHGR7AQ-EPT4G3N-QDDDVKF-RYHAX5Q"; 
-        const WORKSPACE_SLUG       = "eva---base-tecnica";         
+        // Déjala exactamente así, cortada después de .dev"
+            const ANYTHINGLLM_BASE_URL = "https://willpower-onstage-condiment.ngrok-free.dev";
+            const ANYTHINGLLM_API_KEY  = "RHGR7AQ-EPT4G3N-QDDDVKF-RYHAX5Q";
+            const WORKSPACE_SLUG       = "eva---base-tecnica";         
 
         function goHome() {
             document.getElementById('appFrame').style.display = 'none';
