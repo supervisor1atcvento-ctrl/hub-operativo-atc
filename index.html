@@ -226,7 +226,6 @@
         <!-- Menú Lateral -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <!-- Al darle clic al logo de EVA, activa la pantalla Home -->
                 <div class="avatar-clickable" onclick="goHome()" title="Ir al Home de EVA">EVA</div>
                 <div class="assistant-info">
                     <h2>EVA Inteligente</h2>
@@ -314,23 +313,18 @@
        ========================================== -->
     <script>
         // ==========================================
-        // CONFIGURACIÓN DE APIS — ANYTHINGLLM
+        // CONFIGURACIÓN DE APIS — CONEXIÓN NGROK / ANYTHINGLLM
         // ==========================================
-        // Si usas la app de escritorio, la URL por defecto es http://localhost:3001
-        const ANYTHINGLLM_BASE_URL = "http://localhost:3001/api/v1"; 
-        const ANYTHINGLLM_API_KEY  = "F2TZMTA-2XKMEEY-P7ZJPYX-8CMDBEF"; // API Key proporcionada
-        const WORKSPACE_SLUG       = "eva-base-tecnica";         // Asegúrate de que coincida con el slug de tu workspace
+        const ANYTHINGLLM_BASE_URL = "https://willpower-onstage-condiment.ngrok-free.dev/api/v1"; 
+        const ANYTHINGLLM_API_KEY  = "F2TZMTA-2XKMEEY-P7ZJPYX-8CMDBEF"; 
+        const WORKSPACE_SLUG       = "eva-base-tecnica";         
 
-        // Función para regresar al Home al hacer clic en el Avatar izquierdo
         function goHome() {
             document.getElementById('appFrame').style.display = 'none';
             document.getElementById('welcomeScreen').style.display = 'flex';
-            
-            // Quita la selección activa de los botones del menú
             document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
         }
 
-        // Mostrar/Ocultar Menú Lateral
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const toggleBtn = document.getElementById('toggleBtn');
@@ -338,7 +332,6 @@
             toggleBtn.innerHTML = sidebar.classList.contains('collapsed') ? "☰" : "✕";
         }
 
-        // Abrir páginas en el visor central
         function loadPage(element, url) {
             document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
             element.classList.add('active');
@@ -349,13 +342,11 @@
             frame.src = url;
         }
 
-        // Mostrar/Ocultar Widget Flotante
         function toggleWidget() {
             const widget = document.getElementById('evaWidget');
             widget.style.display = (widget.style.display === 'flex') ? 'none' : 'flex';
         }
 
-        // ACCIÓN: Enviar Mensaje desde el HOME GRANDE
         function sendHomeMessage() {
             const input = document.getElementById('homeChatInput');
             const texto = input.value.trim();
@@ -369,7 +360,6 @@
             input.value = '';
             container.scrollTop = container.scrollHeight;
 
-            // Consultar a AnythingLLM
             consultarAnythingLLM(texto, function(respuesta) {
                 const evaDiv = document.createElement('div');
                 evaDiv.className = 'msg-large eva';
@@ -379,7 +369,6 @@
             });
         }
 
-        // ACCIÓN: Enviar Mensaje desde el WIDGET COMPACTO FLOTANTE
         function sendWidgetMessage() {
             const input = document.getElementById('widgetChatInput');
             const texto = input.value.trim();
@@ -393,7 +382,6 @@
             input.value = '';
             container.scrollTop = container.scrollHeight;
 
-            // Consultar a AnythingLLM
             consultarAnythingLLM(texto, function(respuesta) {
                 const evaDiv = document.createElement('div');
                 evaDiv.className = 'msg-small eva';
@@ -403,7 +391,6 @@
             });
         }
 
-        // FUNCIÓN MADRE: Conexión limpia con AnythingLLM
         function consultarAnythingLLM(preguntaUsuario, callback) {
             const urlEndpoint = `${ANYTHINGLLM_BASE_URL}/workspace/${WORKSPACE_SLUG}/chat`;
 
@@ -415,7 +402,7 @@
                 },
                 body: JSON.stringify({
                     message: preguntaUsuario,
-                    mode: "chat" // "chat" recuerda el historial, "query" solo consulta los documentos
+                    mode: "chat"
                 })
             })
             .then(response => {
@@ -425,7 +412,6 @@
                 return response.json();
             })
             .then(data => {
-                // AnythingLLM devuelve la respuesta en la propiedad 'textResponse'
                 if (data && data.textResponse) {
                     callback(data.textResponse);
                 } else {
@@ -434,11 +420,10 @@
             })
             .catch(error => {
                 console.error("Error al conectar con AnythingLLM:", error);
-                callback("🤖 No pude conectarme con EVA. Asegúrate de que AnythingLLM esté abierto y ejecutándose en segundo plano, o verifica que no tengas problemas de CORS.");
+                callback("🤖 No pude conectarme con EVA. Asegúrate de que la terminal de ngrok y AnythingLLM estén abiertos en la PC principal, o verifica la URL del túnel.");
             });
         }
 
-        // Filtrado del menú de herramientas
         function filterMenu() {
             const input = document.getElementById('menuSearch').value.toUpperCase();
             const items = document.getElementById('menuSection').getElementsByClassName('menu-item');
