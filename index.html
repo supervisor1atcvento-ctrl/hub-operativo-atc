@@ -391,38 +391,43 @@
             });
         }
 
-        function consultarAnythingLLM(preguntaUsuario, callback) {
-            const urlEndpoint = `${ANYTHINGLLM_BASE_URL}/workspace/${WORKSPACE_SLUG}/chat`;
+function consultarAnythingLLM(preguntaUsuario, callback) {
+    const urlEndpoint = `${ANYTHINGLLM_BASE_URL}/workspace/${WORKSPACE_SLUG}/chat`;
 
-            fetch(urlEndpoint, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${ANYTHINGLLM_API_KEY}`
-                },
-                body: JSON.stringify({
-                    message: preguntaUsuario,
-                    mode: "chat"
-                })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Error en servidor: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data && data.textResponse) {
-                    callback(data.textResponse);
-                } else {
-                    callback("🤖 EVA recibió una respuesta vacía del servidor.");
-                }
-            })
-            .catch(error => {
-                console.error("Error al conectar con AnythingLLM:", error);
-                callback("🤖 No pude conectarme con EVA. Asegúrate de que la terminal de ngrok y AnythingLLM estén abiertos en la PC principal, o verifica la URL del túnel.");
-            });
+    fetch(urlEndpoint, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${ANYTHINGLLM_API_KEY}`
+        },
+        body: JSON.stringify({
+            message: preguntaUsuario,
+            mode: "chat", // Modo conversación utilizando el historial
+            userId: "atc_advisor" // Identificador obligatorio para el hilo en AnythingLLM
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`Error en servidor: ${response.status}`);
         }
+        return response.json();
+    })
+    .then(data => {
+        // Algunas versiones responden con 'textResponse' y otras con 'reply'
+        const respuestaFinal = data.textResponse || data.reply || (data.apiResponse && data.apiResponse.textResponse);
+        
+        if (respuestaFinal) {
+            callback(respuestaFinal);
+        } else {
+            console.log("Estructura de datos recibida:", data);
+            callback("🤖 EVA recibió una respuesta con un formato desconocido del servidor.");
+        }
+    })
+    .catch(error => {
+        console.error("Error al conectar con AnythingLLM:", error);
+        callback("🤖 No pude conectarme con EVA. Asegúrate de que la terminal de ngrok y AnythingLLM estén abiertos en la PC principal.");
+    });
+}
 
         function filterMenu() {
             const input = document.getElementById('menuSearch').value.toUpperCase();
