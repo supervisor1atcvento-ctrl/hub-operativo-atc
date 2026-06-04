@@ -313,8 +313,13 @@
        LÓGICA OPERATIVA (JAVASCRIPT)
        ========================================== -->
     <script>
-        // ¡¡PEGA AQUÍ TU URL DE IMPLEMENTACIÓN DE GOOGLE APPS SCRIPT!!
-        const URL_GOOGLE_SCRIPT = "PEGA_AQUÍ_TU_URL_DE_APPS_SCRIPT";
+        // ==========================================
+        // CONFIGURACIÓN DE APIS — ANYTHINGLLM
+        // ==========================================
+        // Si usas la app de escritorio, la URL por defecto es http://localhost:3001
+        const ANYTHINGLLM_BASE_URL = "http://localhost:3001/api/v1"; 
+        const ANYTHINGLLM_API_KEY  = "F2TZMTA-2XKMEEY-P7ZJPYX-8CMDBEF"; // API Key proporcionada
+        const WORKSPACE_SLUG       = "eva-base-tecnica";         // Asegúrate de que coincida con el slug de tu workspace
 
         // Función para regresar al Home al hacer clic en el Avatar izquierdo
         function goHome() {
@@ -364,8 +369,8 @@
             input.value = '';
             container.scrollTop = container.scrollHeight;
 
-            // Consultar a Google Sheets
-            consultarBaseSheets(texto, function(respuesta) {
+            // Consultar a AnythingLLM
+            consultarAnythingLLM(texto, function(respuesta) {
                 const evaDiv = document.createElement('div');
                 evaDiv.className = 'msg-large eva';
                 evaDiv.innerText = respuesta;
@@ -388,8 +393,8 @@
             input.value = '';
             container.scrollTop = container.scrollHeight;
 
-            // Consultar a Google Sheets
-            consultarBaseSheets(texto, function(respuesta) {
+            // Consultar a AnythingLLM
+            consultarAnythingLLM(texto, function(respuesta) {
                 const evaDiv = document.createElement('div');
                 evaDiv.className = 'msg-small eva';
                 evaDiv.innerText = respuesta;
@@ -398,24 +403,38 @@
             });
         }
 
-        // FUNCIÓN MADRE: Conexión limpia con Google Sheets
-        function consultarBaseSheets(preguntaUsuario, callback) {
-            if(URL_GOOGLE_SCRIPT === "PEGA_AQUÍ_TU_URL_DE_APPS_SCRIPT") {
-                callback("⚠️ Error: No has configurado la URL de tu Google Apps Script en el código HTML.");
-                return;
-            }
+        // FUNCIÓN MADRE: Conexión limpia con AnythingLLM
+        function consultarAnythingLLM(preguntaUsuario, callback) {
+            const urlEndpoint = `${ANYTHINGLLM_BASE_URL}/workspace/${WORKSPACE_SLUG}/chat`;
 
-            fetch(URL_GOOGLE_SCRIPT, {
+            fetch(urlEndpoint, {
                 method: 'POST',
-                body: JSON.stringify({ pregunta: preguntaUsuario })
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${ANYTHINGLLM_API_KEY}`
+                },
+                body: JSON.stringify({
+                    message: preguntaUsuario,
+                    mode: "chat" // "chat" recuerda el historial, "query" solo consulta los documentos
+                })
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Error en servidor: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
-                callback(data.respuesta);
+                // AnythingLLM devuelve la respuesta en la propiedad 'textResponse'
+                if (data && data.textResponse) {
+                    callback(data.textResponse);
+                } else {
+                    callback("🤖 EVA recibió una respuesta vacía del servidor.");
+                }
             })
             .catch(error => {
-                console.error("Error:", error);
-                callback("🤖 Hubo un problema al conectar con la base de datos de Google Sheets.");
+                console.error("Error al conectar con AnythingLLM:", error);
+                callback("🤖 No pude conectarme con EVA. Asegúrate de que AnythingLLM esté abierto y ejecutándose en segundo plano, o verifica que no tengas problemas de CORS.");
             });
         }
 
