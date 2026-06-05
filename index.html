@@ -309,7 +309,7 @@
         // =========================================================
         // CONFIGURACIÓN DE CONEXIÓN (ACTUALIZADA)
         // =========================================================
-        const ANYTHINGLLM_BASE_URL = "https://willpower-onstage-condiment.ngrok-free.dev/api/v1";
+        const ANYTHINGLLM_BASE_URL = "https://willpower-onstage-condiment.ngrok-free.dev";
         
         // 👇 PEGA AQUÍ LA NUEVA API KEY QUE GENERASTE 👇
         const ANYTHINGLLM_API_KEY  = "VY5QWDC-KE84TVZ-KE1BAET-BN6MHBE"; 
@@ -389,7 +389,7 @@
         }
 
         function consultarAnythingLLM(preguntaUsuario, callback) {
-            const urlEndpoint = `${ANYTHINGLLM_BASE_URL}/api/v1/workspace/${WORKSPACE_SLUG}/chat`;
+            const urlEndpoint = `${ANYTHINGLLM_BASE_URL}/api/v1/workspace/${WORKSPACE_SLUG}`;
 
             fetch(urlEndpoint, {
                 method: 'POST',
