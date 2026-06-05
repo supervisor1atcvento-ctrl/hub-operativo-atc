@@ -2,45 +2,449 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Buscador de Slugs</title>
-</head>
-<body style="font-family: Arial; padding: 20px;">
-    <h2>Autopsia - Fase 2: Cazando el Slug</h2>
-    <p>Abre la consola (F12) y da clic en el botón.</p>
-    
-    <button onclick="buscarSlug()" style="padding: 10px; cursor: pointer; background: #ff6600; color: white; border: none; border-radius: 5px;">
-        🔍 Revelar mi Slug Exacto
-    </button>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centro de Mandos ATC - EVA Inteligente</title>
+    <style>
+        :root {
+            --vento-orange: #ff6600;
+            --bg-sidebar: #111111;
+            --bg-sidebar-header: #1a1a1a;
+            --bg-hover: #262626;
+            --text-light: #ffffff;
+            --text-muted: #999999;
+            --border-color: #262626;
+            --bg-main: #f8f9fa;
+            --bg-chat-user: #333333;
+        }
 
-    <script>
-        const apiKey = "VY5QWDC-KE84TVZ-KE1BAET-BN6MHBE";
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            overflow: hidden;
+            background-color: var(--bg-main);
+        }
+
+        /* Scrollbars personalizadas */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--vento-orange); }
+
+        .dashboard-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        /* ==========================================
+           MENÚ LATERAL (SIDEBAR)
+           ========================================== */
+        .sidebar {
+            width: 290px;
+            background-color: var(--bg-sidebar);
+            color: var(--text-light);
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border-color);
+            flex-shrink: 0;
+            transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10;
+        }
+
+        .sidebar.collapsed {
+            margin-left: -290px;
+        }
+
+        .sidebar-header {
+            padding: 20px 15px;
+            background-color: var(--bg-sidebar-header);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .avatar-clickable {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #ff6600, #333333);
+            border: 2px solid var(--vento-orange);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            box-shadow: 0 0 8px rgba(255, 102, 0, 0.4);
+            color: var(--text-light);
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
         
-        function buscarSlug() {
-            console.log("Consultando la base de datos de AnythingLLM...");
+        .avatar-clickable:hover { transform: scale(1.05); }
+
+        .assistant-info h2 { margin: 0; font-size: 1.05rem; letter-spacing: 0.5px; }
+        .assistant-info span { font-size: 0.8rem; color: var(--vento-orange); display: flex; align-items: center; gap: 5px; margin-top: 2px; }
+        .assistant-info span::before { content: ''; display: inline-block; width: 7px; height: 7px; background-color: var(--vento-orange); border-radius: 50%; box-shadow: 0 0 5px var(--vento-orange); }
+
+        .search-widget { padding: 15px 15px 5px 15px; }
+        .search-input { width: 100%; padding: 10px 12px; background-color: var(--bg-sidebar-header); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-light); font-size: 0.85rem; outline: none; box-sizing: border-box; }
+        .search-input:focus { border-color: var(--vento-orange); background-color: #000000; }
+
+        .menu-section { padding: 15px 10px; flex-grow: 1; overflow-y: auto; }
+        .menu-label { font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); padding-left: 8px; margin-bottom: 12px; letter-spacing: 1px; display: block; font-weight: 600; }
+        .menu-item { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; color: #cccccc; text-decoration: none; border-radius: 6px; margin-bottom: 6px; font-size: 0.9rem; transition: all 0.2s ease; cursor: pointer; }
+        .menu-item:hover { background-color: var(--bg-hover); color: var(--text-light); }
+        .menu-item.active { background-color: var(--vento-orange); color: var(--text-light); font-weight: 600; }
+        .sidebar-footer { padding: 12px; background-color: var(--bg-sidebar-header); font-size: 0.75rem; color: #555555; text-align: center; border-top: 1px solid var(--border-color); }
+
+        /* ==========================================
+           PANEL CENTRAL / CONTENIDO
+           ========================================== */
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            position: relative;
+        }
+
+        .toggle-menu-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            width: 40px;
+            height: 40px;
+            background-color: var(--vento-orange);
+            border: none;
+            border-radius: 6px;
+            color: var(--text-light);
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            z-index: 100;
+        }
+
+        .welcome-screen {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            box-sizing: border-box;
+        }
+
+        .home-header {
+            padding: 20px 20px 20px 70px;
+            border-bottom: 1px solid #e0e0e0;
+            background-color: #fafafa;
+        }
+        .home-header h1 { margin: 0; font-size: 1.6rem; color: #111; }
+        .home-header p { margin: 5px 0 0 0; color: #666; font-size: 0.9rem; }
+
+        .home-chat-area { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background-color: #f4f5f7; scroll-behavior: smooth; }
+        .home-chat-input-container { padding: 15px 20px; background-color: #ffffff; border-top: 1px solid #e0e0e0; display: flex; gap: 10px; }
+        .home-input { flex-grow: 1; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.95rem; outline: none; }
+        .home-input:focus { border-color: var(--vento-orange); }
+        .home-send-btn { background-color: var(--vento-orange); border: none; color: white; padding: 0 25px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: opacity 0.2s; }
+        .home-send-btn:hover { opacity: 0.9; }
+
+        /* Estilo general de burbujas en el panel grande */
+        .msg-large { max-width: 70%; padding: 12px 16px; border-radius: 8px; font-size: 0.95rem; line-height: 1.5; word-wrap: break-word; }
+        .msg-large.eva { background-color: #1a1a1a; color: white; align-self: flex-start; border-left: 4px solid var(--vento-orange); }
+        .msg-large.user { background-color: #e3e3e3; color: #111; align-self: flex-end; }
+
+        .content-frame { width: 100%; height: 100%; border: none; display: none; background-color: #ffffff; }
+
+        /* ==========================================
+           WIDGET FLOTANTE (Abajo a la derecha)
+           ========================================== */
+        .eva-floating-trigger {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--vento-orange), #ff4500);
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 4px 15px rgba(255, 102, 0, 0.4);
+            color: white;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 9999;
+            transition: transform 0.2s ease;
+        }
+        .eva-floating-trigger:hover { transform: scale(1.08); }
+
+        .widget-asistente {
+            position: fixed;
+            bottom: 95px;
+            right: 25px;
+            width: 360px;
+            height: 500px;
+            background-color: var(--bg-sidebar);
+            border-radius: 12px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.4);
+            border: 1px solid var(--border-color);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 9999;
+        }
+
+        .widget-header { padding: 12px 15px; background-color: var(--bg-sidebar-header); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-color); }
+        .widget-title { color: white; font-size: 0.9rem; margin: 0; font-weight: 600; }
+        .widget-close { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1rem; }
+        
+        .widget-chat-container { flex-grow: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background-color: #0b0b0b; scroll-behavior: smooth; }
+        .widget-input-area { padding: 10px; background-color: var(--bg-sidebar-header); border-top: 1px solid var(--border-color); display: flex; gap: 8px; }
+        .widget-input { flex-grow: 1; padding: 8px 12px; background-color: #000; border: 1px solid var(--border-color); border-radius: 6px; color: white; font-size: 0.85rem; outline: none; }
+        .widget-send-btn { background-color: var(--vento-orange); border: none; color: white; padding: 0 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; transition: opacity 0.2s; }
+        .widget-send-btn:hover { opacity: 0.9; }
+
+        /* Burbujas del Widget Chico */
+        .msg-small { max-width: 80%; padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; line-height: 1.4; word-wrap: break-word; }
+        .msg-small.eva { background-color: var(--bg-sidebar-header); color: white; align-self: flex-start; border-left: 3px solid var(--vento-orange); }
+        .msg-small.user { background-color: var(--bg-chat-user); color: white; align-self: flex-end; }
+
+        /* Animación de carga */
+        .loading-text { font-style: italic; opacity: 0.7; }
+        @keyframes pulse {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
+        }
+        .is-loading { animation: pulse 1.5s infinite; }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        
+        <!-- Menú Lateral -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="avatar-clickable" onclick="goHome()" title="Ir al Home de EVA">EVA</div>
+                <div class="assistant-info">
+                    <h2>EVA Inteligente</h2>
+                    <span>Soporte ATC Activo</span>
+                </div>
+            </div>
+
+            <div class="search-widget">
+                <input type="text" id="menuSearch" class="search-input" placeholder="Buscar herramienta..." onkeyup="filterMenu()">
+            </div>
+
+            <nav class="menu-section" id="menuSection">
+                <span class="menu-label" id="sectionLabel">Módulos de Atención</span>
+                
+                <div class="menu-item" onclick="loadPage(this, 'https://supervisor1atcvento-ctrl.github.io/segmentador-de-agencias/')">
+                    <span class="item-text">Segmentador ATC</span>
+                    <span class="arrow">➔</span>
+                </div>
+                
+                <div class="menu-item" onclick="loadPage(this, 'https://supervisor1atcvento-ctrl.github.io/buscador-de-cesves/')">
+                    <span class="item-text">Buscador CESVE</span>
+                    <span class="arrow">➔</span>
+                </div>
+
+                <div class="menu-item" onclick="loadPage(this, 'https://ayuda.vento.com/a/dashboard/73000005485')">
+                    <span class="item-text">Dudas y FAQ</span>
+                    <span class="arrow">➔</span>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">VENTO MOTORCYCLES © 2026</div>
+        </aside>
+
+        <!-- Panel de Visualización Central -->
+        <main class="main-content">
             
-            // Hacemos una petición GET a la ruta de workspaces
-            fetch("http://localhost:3001/api/v1/workspaces", {
-                method: 'GET',
-                headers: { 
-                    'Authorization': `Bearer ${apiKey}`,
-                    'Accept': 'application/json'
-                }
+            <button class="toggle-menu-btn" id="toggleBtn" onclick="toggleSidebar()">✕</button>
+
+            <!-- VISTA 1: HOME DE EVA (Chat Grande) -->
+            <div id="welcomeScreen" class="welcome-screen">
+                <div class="home-header">
+                    <h1>Centro de Mandos ATC — Consulta a EVA</h1>
+                    <p>Escribe palabras clave (ej: garantía, batería, servicios) para obtener respuestas inmediatas del repositorio oficial.</p>
+                </div>
+                <div class="home-chat-area" id="homeChatArea">
+                    <div class="msg-large eva">
+                        ¡Hola! Soy EVA. Puedes consultarme tus dudas operativas directo desde este panel central, o usar el widget flotante si estás dentro de algún módulo. ¿En qué te ayudo hoy?
+                    </div>
+                </div>
+                <div class="home-chat-input-container">
+                    <input type="text" id="homeChatInput" class="home-input" placeholder="Escribe tu duda aquí..." onkeypress="if(event.key === 'Enter') handleMessage('home')">
+                    <button class="home-send-btn" onclick="handleMessage('home')">Consultar</button>
+                </div>
+            </div>
+
+            <!-- VISTA 2: Visor de las páginas externas (Iframe) -->
+            <iframe id="appFrame" class="content-frame" src=""></iframe>
+        </main>
+
+    </div>
+
+    <!-- ==========================================
+       ESTRUCTURA DEL WIDGET FLOTANTE
+       ========================================== -->
+    <div class="eva-floating-trigger" onclick="toggleWidget()">EVA</div>
+
+    <div class="widget-asistente" id="evaWidget">
+        <div class="widget-header">
+            <h3 class="widget-title">EVA — Asistente de Bolsillo</h3>
+            <button class="widget-close" onclick="toggleWidget()">✕</button>
+        </div>
+        <div class="widget-chat-container" id="widgetChatArea">
+            <div class="msg-small eva">
+                ¡Hola! Te acompaño en esta pestaña. Consúltame lo que necesites sin salir de tu ventana de trabajo.
+            </div>
+        </div>
+        <div class="widget-input-area">
+            <input type="text" id="widgetChatInput" class="widget-input" placeholder="Pregunta rápida..." onkeypress="if(event.key === 'Enter') handleMessage('widget')">
+            <button class="widget-send-btn" onclick="handleMessage('widget')">Enviar</button>
+        </div>
+    </div>
+
+    <!-- ==========================================
+       LÓGICA OPERATIVA (JAVASCRIPT)
+       ========================================== -->
+    <script>
+        const ANYTHINGLLM_BASE_URL = "https://willpower-onstage-condiment.ngrok-free.dev";
+        const ANYTHINGLLM_API_KEY  = "RHGR7AQ-EPT4G3N-QDDDVKF-RYHAX5Q";
+        const WORKSPACE_SLUG       = "assistant-chats";     
+
+        function goHome() {
+            document.getElementById('appFrame').style.display = 'none';
+            document.getElementById('welcomeScreen').style.display = 'flex';
+            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.getElementById('toggleBtn');
+            sidebar.classList.toggle('collapsed');
+            toggleBtn.innerHTML = sidebar.classList.contains('collapsed') ? "☰" : "✕";
+        }
+
+        function loadPage(element, url) {
+            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
+
+            document.getElementById('welcomeScreen').style.display = 'none';
+            const frame = document.getElementById('appFrame');
+            frame.style.display = 'block';
+            frame.src = url;
+        }
+
+        function toggleWidget() {
+            const widget = document.getElementById('evaWidget');
+            widget.style.display = (widget.style.display === 'flex') ? 'none' : 'flex';
+        }
+
+        // --- LÓGICA UNIFICADA DE CHAT ---
+        function handleMessage(context) {
+            const isHome = context === 'home';
+            const inputId = isHome ? 'homeChatInput' : 'widgetChatInput';
+            const areaId = isHome ? 'homeChatArea' : 'widgetChatArea';
+            const baseClass = isHome ? 'msg-large' : 'msg-small';
+            
+            const input = document.getElementById(inputId);
+            const texto = input.value.trim();
+            if (!texto) return;
+
+            const container = document.getElementById(areaId);
+
+            // 1. Mostrar mensaje del usuario
+            appendBubble(container, texto, `${baseClass} user`);
+            input.value = '';
+
+            // 2. Mostrar indicador de "EVA procesando..."
+            const loadingId = 'loading-' + Date.now();
+            appendBubble(container, 'EVA está procesando tu consulta...', `${baseClass} eva loading-text is-loading`, loadingId);
+
+            // 3. Consultar a la API
+            consultarAnythingLLM(texto, function(respuesta) {
+                // Eliminar el indicador de carga
+                const loadingBubble = document.getElementById(loadingId);
+                if (loadingBubble) loadingBubble.remove();
+
+                // Formatear saltos de línea para que se lea mejor y agregar la burbuja
+                const formattedResponse = respuesta.replace(/\n/g, '<br>');
+                appendBubble(container, formattedResponse, `${baseClass} eva`, null, true);
+            });
+        }
+
+        function appendBubble(container, text, className, id = null, isHTML = false) {
+            const div = document.createElement('div');
+            div.className = className;
+            if (id) div.id = id;
+            
+            if (isHTML) {
+                div.innerHTML = text;
+            } else {
+                div.innerText = text;
+            }
+            
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // --- CONEXIÓN API ---
+        function consultarAnythingLLM(preguntaUsuario, callback) {
+            const urlEndpoint = `${ANYTHINGLLM_BASE_URL}/api/v1/chat`;
+
+            fetch(urlEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${ANYTHINGLLM_API_KEY}`
+                },
+                body: JSON.stringify({
+                    message: preguntaUsuario,
+                    mode: "query",
+                    workspaceSlug: WORKSPACE_SLUG
+                })
             })
-            .then(res => res.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Error en servidor: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
-                console.log("✅ ¡Respuesta recibida!");
-                // Extraemos y mostramos los nombres y los slugs
-                if(data.workspaces && data.workspaces.length > 0) {
-                    data.workspaces.forEach(ws => {
-                        console.log(`Nombre visible en la app: "${ws.name}"`);
-                        console.log(`👉 SLUG EXACTO PARA TU CÓDIGO: "${ws.slug}"`);
-                        console.log("-----------------------------------------");
-                    });
+                const respuestaFinal = data.textResponse || data.reply;
+                if (respuestaFinal) {
+                    callback(respuestaFinal);
                 } else {
-                    console.log("No se encontraron espacios de trabajo.");
+                    console.log("Datos recibidos:", data);
+                    callback("🤖 EVA procesó la pregunta, pero el formato de respuesta falló.");
                 }
             })
-            .catch(e => console.error("Fallo de conexión:", e));
+            .catch(error => {
+                console.error("Error completo:", error);
+                callback("🤖 No pude conectarme con EVA. Verifica el estado del servidor local o ngrok.");
+            });
+        }
+        
+        function filterMenu() {
+            const input = document.getElementById('menuSearch').value.toUpperCase();
+            const items = document.getElementById('menuSection').getElementsByClassName('menu-item');
+            for (let i = 0; i < items.length; i++) {
+                const text = items[i].querySelector('.item-text').textContent || items[i].querySelector('.item-text').innerText;
+                items[i].style.display = (text.toUpperCase().indexOf(input) > -1) ? "" : "none";
+            }
         }
     </script>
 </body>
