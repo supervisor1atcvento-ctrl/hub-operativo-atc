@@ -13,16 +13,22 @@
   --card:#ffffff;
   --sidebar:#0f1724;
   --sidebar-2:#0b1220;
-  --glass: rgba(255,255,255,0.6);
   --radius:12px;
   --shadow: 0 8px 24px rgba(15,23,42,0.08);
+  --sidebar-width:300px;
+  --sidebar-collapsed:0px;
 }
 *{box-sizing:border-box}
 html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(--bg) 100%);font-family:Inter,system-ui,Segoe UI,Roboto,-apple-system,Arial;color:#0f1724}
-.dashboard{display:flex;height:100vh;gap:24px;padding:24px}
+.dashboard{display:flex;height:100vh;gap:24px;padding:24px;transition:all .22s ease}
 .sidebar{
-  width:300px;background:linear-gradient(180deg,var(--sidebar),var(--sidebar-2));
-  color:#fff;border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);display:flex;flex-direction:column;flex-shrink:0;
+  width:var(--sidebar-width);min-width:var(--sidebar-width);max-width:var(--sidebar-width);
+  background:linear-gradient(180deg,var(--sidebar),var(--sidebar-2));
+  color:#fff;border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);display:flex;flex-direction:column;flex-shrink:0;transition:all .22s ease;overflow:hidden;
+}
+.sidebar.collapsed{
+  width:var(--sidebar-collapsed);min-width:var(--sidebar-collapsed);max-width:var(--sidebar-collapsed);padding:6px 6px;
+  border-radius:10px;
 }
 .brand{display:flex;align-items:center;gap:12px;margin-bottom:18px}
 .logo{
@@ -43,40 +49,34 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
 .footer{margin-top:auto;padding-top:12px;border-top:1px solid rgba(255,255,255,0.03);font-size:0.82rem;color:rgba(255,255,255,0.6);text-align:center}
 
 /* Main area */
-.main{
-  flex:1;display:flex;flex-direction:column;gap:18px;
-}
-.header{
-  display:flex;align-items:center;justify-content:space-between;padding:18px;border-radius:12px;background:var(--card);box-shadow:var(--shadow);
-}
+.main{flex:1;display:flex;flex-direction:column;gap:18px;transition:all .22s ease}
+.header{display:flex;align-items:center;justify-content:space-between;padding:18px;border-radius:12px;background:var(--card);box-shadow:var(--shadow)}
 .header-left{display:flex;flex-direction:column}
 .header-left h2{margin:0;font-size:1.15rem}
 .header-left p{margin:6px 0 0;color:var(--muted);font-size:0.9rem}
 
-/* Top tabs */
-.tabs{display:flex;gap:10px;align-items:center}
-.tab-btn{
-  padding:10px 14px;border-radius:10px;border:1px solid transparent;background:linear-gradient(180deg,#fff,#fbfdff);cursor:pointer;font-weight:600;color:#0f1724;box-shadow:0 4px 12px rgba(15,23,42,0.04)
+/* Collapse toggle */
+.collapse-btn{
+  background:transparent;border:1px solid #e6eefc;padding:8px 10px;border-radius:10px;cursor:pointer;font-weight:600;color:#0f1724;
+  box-shadow:0 6px 18px rgba(11,92,255,0.04)
 }
-.tab-btn.ghost{background:transparent;border:1px solid #e6eefc;color:var(--muted);font-weight:500}
-.tab-btn.active{background:linear-gradient(90deg,var(--accent),#ff7a00);color:#fff;box-shadow:0 8px 30px rgba(11,92,255,0.12)}
 
 /* Content area */
-.content{
-  display:grid;grid-template-columns:1fr 520px;gap:18px;align-items:start;
-  padding-bottom:24px;
-}
-.panel{
-  background:var(--card);border-radius:12px;padding:18px;box-shadow:var(--shadow);
-}
+.content{display:grid;grid-template-columns:1fr 520px;gap:18px;align-items:start;padding-bottom:24px;transition:all .22s ease}
+.panel{background:var(--card);border-radius:12px;padding:18px;box-shadow:var(--shadow)}
 .panel h3{margin:0 0 8px 0}
 .panel p{margin:0;color:var(--muted)}
 
 /* Right frame container (tickets) */
-.frame-wrap{height:720px;border-radius:10px;overflow:hidden;border:1px solid #e6eefc}
-.frame{
-  width:100%;height:100%;border:0;display:block;background:#fff;
-}
+.frame-wrap{height:calc(100vh - 170px);border-radius:10px;overflow:hidden;border:1px solid #e6eefc}
+.frame{width:100%;height:100%;border:0;display:block;background:#fff}
+
+/* When sidebar collapsed, make content full width */
+.sidebar.collapsed + .main .content{grid-template-columns:1fr;}
+
+/* Hide left panel when collapsed (menu area) */
+.sidebar.collapsed .menu{display:none}
+.sidebar.collapsed .brand h1,.sidebar.collapsed .brand p,.sidebar.collapsed .section-title,.sidebar.collapsed .footer{display:none}
 
 /* Responsive */
 @media (max-width:1100px){
@@ -110,8 +110,7 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
         <span class="item-text">Dudas y FAQ</span><span>➔</span>
       </div>
 
-      <!-- Nuevo: Tickets (también disponible como pestaña superior) -->
-      <div class="menu-item" id="menuTickets" data-url="https://supervisor1atcvento-ctrl.github.io/tickets_atc/" onclick="openTicketsFromMenu(this)">
+      <div class="menu-item" id="menuTickets" data-url="https://supervisor1atcvento-ctrl.github.io/tickets_atc/" onclick="loadPage(this)">
         <span class="item-text">Tickets ATC</span><span>🎫</span>
       </div>
     </nav>
@@ -123,81 +122,52 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
     <div class="header">
       <div class="header-left">
         <h2>Centro de Mandos ATC</h2>
-        <p>Accede a tus herramientas y al sistema de tickets desde un solo lugar</p>
+        <p>Accede a tus herramientas desde un solo lugar</p>
       </div>
 
-      <div class="tabs" role="tablist" aria-label="Acciones rápidas">
-        <button class="tab-btn" onclick="goHome()">Inicio</button>
-        <button class="tab-btn ghost" id="btnOpenTickets" onclick="openTickets()">Abrir Tickets</button>
-        <button class="tab-btn ghost" onclick="openInNewTab()">Abrir en nueva pestaña</button>
+      <div>
+        <button class="collapse-btn" id="collapseToggle" onclick="toggleSidebar()">Minimizar menú</button>
       </div>
     </div>
 
     <div class="content">
-      <section class="panel">
-        <h3>Bienvenido</h3>
-        <p>Selecciona una herramienta en el menú lateral para cargarla en el panel de la derecha. El módulo de Tickets está disponible en su propio frame para acceso rápido.</p>
-
-        <hr style="margin:16px 0;border:none;border-top:1px solid #eef4ff">
-
-        <h4 style="margin:0 0 8px 0">Notas</h4>
-        <ul style="color:var(--muted);margin-top:8px">
-          <li>Si alguna página no carga en el panel, puede deberse a políticas de seguridad (X-Frame-Options). En ese caso se abrirá en una nueva pestaña.</li>
-          <li>Puedes editar o añadir entradas en el menú modificando los elementos con <code>data-url</code>.</li>
-        </ul>
+      <!-- Panel izquierdo reducido: ahora solo un panel informativo compacto -->
+      <section class="panel" id="leftPanel" style="display:none">
+        <h3>Panel</h3>
+        <p style="color:var(--muted)">Este espacio se usa para información adicional si la necesitas.</p>
       </section>
 
       <aside class="panel frame-wrap" id="rightPanel">
-        <iframe id="ticketsFrame" class="frame" src="https://supervisor1atcvento-ctrl.github.io/tickets_atc/" title="Tickets ATC"></iframe>
+        <!-- Carga por defecto el frame de Tickets -->
+        <iframe id="mainFrame" class="frame" src="https://supervisor1atcvento-ctrl.github.io/tickets_atc/" title="Contenido"></iframe>
       </aside>
     </div>
   </main>
 </div>
 
 <script>
-/* Navegación y carga de páginas en el panel derecho */
-function goHome(){
-  // Resetea selección y muestra mensaje de bienvenida
-  document.querySelectorAll('.menu-item').forEach(i=>i.classList.remove('active'));
-  const right = document.getElementById('rightPanel');
-  right.innerHTML = '<div style="padding:28px;color:#374151"><h3>Inicio</h3><p style="color:var(--muted)">Selecciona una herramienta en el menú lateral para cargarla aquí. El módulo de Tickets está disponible en su propio frame.</p></div>';
+/* Toggle sidebar collapse/expand */
+function toggleSidebar(){
+  const sidebar = document.getElementById('sidebar');
+  const btn = document.getElementById('collapseToggle');
+  sidebar.classList.toggle('collapsed');
+  const collapsed = sidebar.classList.contains('collapsed');
+  btn.innerText = collapsed ? 'Expandir menú' : 'Minimizar menú';
+  // Ajuste de accesibilidad: si colapsado, ocultar panel izquierdo (opcional)
+  const leftPanel = document.getElementById('leftPanel');
+  if(leftPanel) leftPanel.style.display = collapsed ? 'none' : 'block';
 }
 
+/* Cargar página en el iframe derecho */
 function loadPage(el){
   document.querySelectorAll('.menu-item').forEach(i=>i.classList.remove('active'));
   el.classList.add('active');
   const url = el.getAttribute('data-url');
-  // Si la URL es la de tickets, delegamos a la función que carga en el iframe
-  if(url && url.includes('/tickets_atc/')){
-    openTickets();
-    return;
+  const frame = document.getElementById('mainFrame');
+  // Si la URL es la de tickets, la cargamos (ya es la por defecto)
+  if(url){
+    frame.src = url;
   }
-  // Crea un iframe temporal en el panel derecho
-  const right = document.getElementById('rightPanel');
-  right.innerHTML = '<iframe class="frame" src="'+url+'" title="Contenido"></iframe>';
-}
-
-/* Tickets: siempre en su propio frame (derecha) */
-function openTickets(){
-  document.querySelectorAll('.menu-item').forEach(i=>i.classList.remove('active'));
-  const menuTickets = document.getElementById('menuTickets');
-  if(menuTickets) menuTickets.classList.add('active');
-  const right = document.getElementById('rightPanel');
-  right.innerHTML = '<iframe id="ticketsFrame" class="frame" src="https://supervisor1atcvento-ctrl.github.io/tickets_atc/" title="Tickets ATC"></iframe>';
-}
-
-/* Si el usuario hace clic en Tickets desde el menú */
-function openTicketsFromMenu(el){
-  openTickets();
-  el.classList.add('active');
-}
-
-/* Abrir la página actualmente visible en nueva pestaña (útil si X-Frame bloquea) */
-function openInNewTab(){
-  const iframe = document.querySelector('#rightPanel iframe');
-  const src = iframe ? iframe.src : '';
-  if(src) window.open(src, '_blank');
-  else window.open('about:blank', '_blank');
 }
 
 /* Helper para añadir entradas dinámicamente */
@@ -211,9 +181,10 @@ function addMenuItem(title, url){
   nav.appendChild(div);
 }
 
-/* Inicial: carga tickets en el frame derecho */
+/* Inicial: marcar Tickets como activo */
 document.addEventListener('DOMContentLoaded', function(){
-  openTickets();
+  const tickets = document.getElementById('menuTickets');
+  if(tickets) tickets.classList.add('active');
 });
 </script>
 </body>
