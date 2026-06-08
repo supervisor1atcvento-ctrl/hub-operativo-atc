@@ -8,96 +8,140 @@
 <style>
 :root{
   --accent:#0b5cff;
+  --accent-2:#ff7a00;
   --muted:#6b7280;
   --bg:#f5f7fb;
   --card:#ffffff;
-  --sidebar:#0f1724;
-  --sidebar-2:#0b1220;
+  --widget-bg:rgba(15,23,36,0.96);
   --radius:12px;
-  --shadow: 0 8px 24px rgba(15,23,42,0.08);
-  --sidebar-width:300px;
-  --sidebar-collapsed:0px;
+  --shadow: 0 10px 30px rgba(15,23,42,0.08);
+  --widget-width:320px;
+  --widget-collapsed-size:56px;
 }
 *{box-sizing:border-box}
 html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(--bg) 100%);font-family:Inter,system-ui,Segoe UI,Roboto,-apple-system,Arial;color:#0f1724}
-.dashboard{display:flex;height:100vh;gap:24px;padding:24px;transition:all .22s ease}
-.sidebar{
-  width:var(--sidebar-width);min-width:var(--sidebar-width);max-width:var(--sidebar-width);
-  background:linear-gradient(180deg,var(--sidebar),var(--sidebar-2));
-  color:#fff;border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);display:flex;flex-direction:column;flex-shrink:0;transition:all .22s ease;overflow:hidden;
-}
-.sidebar.collapsed{
-  width:var(--sidebar-collapsed);min-width:var(--sidebar-collapsed);max-width:var(--sidebar-collapsed);padding:6px 6px;
-  border-radius:10px;
-}
-.brand{display:flex;align-items:center;gap:12px;margin-bottom:18px}
-.logo{
-  width:52px;height:52px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#ff7a00);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:18px;box-shadow:0 6px 18px rgba(11,92,255,0.12)
-}
-.brand h1{font-size:1.05rem;margin:0;font-weight:600}
-.brand p{margin:0;color:rgba(255,255,255,0.85);font-size:0.85rem}
+.app{height:100vh;display:flex;flex-direction:column;}
 
-.section-title{margin-top:12px;margin-bottom:8px;color:rgba(255,255,255,0.65);font-size:0.75rem;text-transform:uppercase;letter-spacing:1px}
+/* Top bar minimal (discreto) */
+.topbar{
+  height:56px;display:flex;align-items:center;justify-content:flex-end;padding:0 14px;background:transparent;
+  gap:10px;
+}
+.topbar .widget-toggle{
+  width:40px;height:40px;border-radius:10px;border:1px solid rgba(15,23,42,0.06);background:#fff;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-weight:700;color:var(--muted);box-shadow:0 6px 18px rgba(11,92,255,0.04);
+}
+.topbar .widget-toggle:active{transform:translateY(1px)}
 
-.menu{display:flex;flex-direction:column;gap:8px;overflow:auto;padding-right:6px}
+/* Iframe full area */
+.frame-wrap{flex:1;padding:12px;display:flex;gap:12px}
+.frame{
+  width:100%;height:100%;border-radius:12px;border:0;box-shadow:var(--shadow);overflow:hidden;background:#fff;
+}
+
+/* Widget flotante (menu) */
+.widget {
+  position:fixed;
+  left:24px;
+  bottom:24px;
+  width:var(--widget-width);
+  max-width:calc(100% - 48px);
+  height:480px;
+  border-radius:14px;
+  background:linear-gradient(180deg,var(--widget-bg), rgba(10,12,16,0.95));
+  color:#fff;
+  box-shadow:0 20px 50px rgba(2,6,23,0.45);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  z-index:9999;
+  transition:transform .22s ease, opacity .18s ease;
+}
+
+/* Collapsed widget (solo icon) */
+.widget.collapsed{
+  width:var(--widget-collapsed-size);
+  height:var(--widget-collapsed-size);
+  border-radius:12px;
+  padding:6px;
+  left:18px;
+  bottom:18px;
+}
+
+/* Header del widget */
+.widget-header{
+  display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.04);
+}
+.widget-title{display:flex;align-items:center;gap:10px}
+.widget-title .logo{
+  width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:14px;
+}
+.widget-title h4{margin:0;font-size:0.95rem}
+.widget-controls{display:flex;gap:8px;align-items:center}
+
+/* Discreto botón minimizar dentro del widget */
+.widget-controls .min-btn{
+  background:transparent;border:1px solid rgba(255,255,255,0.06);padding:6px;border-radius:8px;color:#fff;cursor:pointer;font-weight:600;font-size:0.9rem;
+}
+.widget-controls .close-icon{width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center;cursor:pointer}
+
+/* Contenido del menú */
+.widget-body{padding:12px 12px 16px 12px;overflow:auto;flex:1}
+.menu-section{margin-bottom:10px}
 .menu-item{
-  display:flex;justify-content:space-between;align-items:center;padding:12px;border-radius:10px;background:transparent;color:rgba(255,255,255,0.95);cursor:pointer;border:1px solid transparent;transition:all .18s;
+  display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:transparent;color:#e6eefc;cursor:pointer;margin-bottom:8px;border:1px solid transparent;
 }
-.menu-item:hover{background:rgba(255,255,255,0.03);transform:translateY(-2px)}
-.menu-item.active{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.04);font-weight:600}
+.menu-item:hover{background:rgba(255,255,255,0.02);transform:translateY(-2px)}
+.menu-item.active{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#fff;font-weight:600;border-color:rgba(255,255,255,0.04)}
 
-.footer{margin-top:auto;padding-top:12px;border-top:1px solid rgba(255,255,255,0.03);font-size:0.82rem;color:rgba(255,255,255,0.6);text-align:center}
+/* Footer pequeño en widget */
+.widget-footer{padding:10px 12px;border-top:1px solid rgba(255,255,255,0.03);font-size:0.82rem;color:rgba(255,255,255,0.7);display:flex;justify-content:space-between;align-items:center}
 
-/* Main area */
-.main{flex:1;display:flex;flex-direction:column;gap:18px;transition:all .22s ease}
-.header{display:flex;align-items:center;justify-content:space-between;padding:18px;border-radius:12px;background:var(--card);box-shadow:var(--shadow)}
-.header-left{display:flex;flex-direction:column}
-.header-left h2{margin:0;font-size:1.15rem}
-.header-left p{margin:6px 0 0;color:var(--muted);font-size:0.9rem}
+/* Drag handle when collapsed */
+.widget.collapsed .drag-handle{display:block}
+.drag-handle{display:none;width:100%;height:100%;cursor:grab}
 
-/* Collapse toggle */
-.collapse-btn{
-  background:transparent;border:1px solid #e6eefc;padding:8px 10px;border-radius:10px;cursor:pointer;font-weight:600;color:#0f1724;
-  box-shadow:0 6px 18px rgba(11,92,255,0.04)
-}
-
-/* Content area */
-.content{display:grid;grid-template-columns:1fr 520px;gap:18px;align-items:start;padding-bottom:24px;transition:all .22s ease}
-.panel{background:var(--card);border-radius:12px;padding:18px;box-shadow:var(--shadow)}
-.panel h3{margin:0 0 8px 0}
-.panel p{margin:0;color:var(--muted)}
-
-/* Right frame container (tickets) */
-.frame-wrap{height:calc(100vh - 170px);border-radius:10px;overflow:hidden;border:1px solid #e6eefc}
-.frame{width:100%;height:100%;border:0;display:block;background:#fff}
-
-/* When sidebar collapsed, make content full width */
-.sidebar.collapsed + .main .content{grid-template-columns:1fr;}
-
-/* Hide left panel when collapsed (menu area) */
-.sidebar.collapsed .menu{display:none}
-.sidebar.collapsed .brand h1,.sidebar.collapsed .brand p,.sidebar.collapsed .section-title,.sidebar.collapsed .footer{display:none}
-
-/* Responsive */
-@media (max-width:1100px){
-  .content{grid-template-columns:1fr}
-  .frame-wrap{height:520px}
+/* Responsive adjustments */
+@media (max-width:900px){
+  .widget{left:12px;bottom:12px;width:90%;height:420px}
+  .widget.collapsed{left:12px;bottom:12px}
 }
 </style>
 </head>
 <body>
-<div class="dashboard">
-  <aside class="sidebar" id="sidebar">
-    <div class="brand">
+<div class="app">
+  <!-- Topbar con botón discreto para abrir/cerrar el widget -->
+  <div class="topbar">
+    <button class="widget-toggle" id="topToggle" title="Abrir menú">☰</button>
+  </div>
+
+  <!-- Área principal: iframe ocupa todo el espacio -->
+  <div class="frame-wrap">
+    <iframe id="mainFrame" class="frame" src="https://supervisor1atcvento-ctrl.github.io/tickets_atc/" title="Contenido principal"></iframe>
+  </div>
+</div>
+
+<!-- Widget flotante: menú de enlaces -->
+<aside class="widget" id="menuWidget" role="dialog" aria-label="Menú de herramientas">
+  <div class="widget-header">
+    <div class="widget-title">
       <div class="logo">ATC</div>
       <div>
-        <h1>Centro de Mandos</h1>
-        <p>Portal de herramientas — VENTO</p>
+        <h4 style="margin:0">Centro de Mandos</h4>
+        <div style="font-size:0.78rem;color:rgba(255,255,255,0.75)">Portal de herramientas</div>
       </div>
     </div>
 
-    <div class="section-title">Módulos y páginas</div>
-    <nav class="menu" id="menuSection">
+    <div class="widget-controls">
+      <!-- Botón discreto para minimizar el widget (queda dentro del widget) -->
+      <button class="min-btn" id="minimizeBtn" title="Minimizar menú">Minimizar</button>
+      <div class="close-icon" id="closeWidget" title="Cerrar menú">✕</div>
+    </div>
+  </div>
+
+  <div class="widget-body" id="widgetBody">
+    <div class="menu-section" id="menuSection">
+      <!-- EDITA / DUPLICA estas entradas para añadir tus páginas -->
       <div class="menu-item" data-url="https://supervisor1atcvento-ctrl.github.io/segmentador-de-agencias/" onclick="loadPage(this)">
         <span class="item-text">Segmentador ATC</span><span>➔</span>
       </div>
@@ -113,78 +157,133 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
       <div class="menu-item" id="menuTickets" data-url="https://supervisor1atcvento-ctrl.github.io/tickets_atc/" onclick="loadPage(this)">
         <span class="item-text">Tickets ATC</span><span>🎫</span>
       </div>
-    </nav>
-
-    <div class="footer">VENTO MOTORCYCLES © 2026</div>
-  </aside>
-
-  <main class="main">
-    <div class="header">
-      <div class="header-left">
-        <h2>Centro de Mandos ATC</h2>
-        <p>Accede a tus herramientas desde un solo lugar</p>
-      </div>
-
-      <div>
-        <button class="collapse-btn" id="collapseToggle" onclick="toggleSidebar()">Minimizar menú</button>
-      </div>
+      <!-- FIN de entradas editables -->
     </div>
+  </div>
 
-    <div class="content">
-      <!-- Panel izquierdo reducido: ahora solo un panel informativo compacto -->
-      <section class="panel" id="leftPanel" style="display:none">
-        <h3>Panel</h3>
-        <p style="color:var(--muted)">Este espacio se usa para información adicional si la necesitas.</p>
-      </section>
+  <div class="widget-footer">
+    <div style="font-size:0.85rem">VENTO © 2026</div>
+    <div style="font-size:0.82rem;color:rgba(255,255,255,0.7)">ATC</div>
+  </div>
 
-      <aside class="panel frame-wrap" id="rightPanel">
-        <!-- Carga por defecto el frame de Tickets -->
-        <iframe id="mainFrame" class="frame" src="https://supervisor1atcvento-ctrl.github.io/tickets_atc/" title="Contenido"></iframe>
-      </aside>
-    </div>
-  </main>
-</div>
+  <!-- Drag handle visible cuando está colapsado -->
+  <div class="drag-handle" id="dragHandle" style="display:none"></div>
+</aside>
 
 <script>
-/* Toggle sidebar collapse/expand */
-function toggleSidebar(){
-  const sidebar = document.getElementById('sidebar');
-  const btn = document.getElementById('collapseToggle');
-  sidebar.classList.toggle('collapsed');
-  const collapsed = sidebar.classList.contains('collapsed');
-  btn.innerText = collapsed ? 'Expandir menú' : 'Minimizar menú';
-  // Ajuste de accesibilidad: si colapsado, ocultar panel izquierdo (opcional)
-  const leftPanel = document.getElementById('leftPanel');
-  if(leftPanel) leftPanel.style.display = collapsed ? 'none' : 'block';
+/* ---------- Comportamiento del widget (abrir/colapsar/drag) ---------- */
+const widget = document.getElementById('menuWidget');
+const topToggle = document.getElementById('topToggle');
+const minimizeBtn = document.getElementById('minimizeBtn');
+const closeWidget = document.getElementById('closeWidget');
+const mainFrame = document.getElementById('mainFrame');
+
+/* Estado inicial: widget abierto */
+let isCollapsed = false;
+
+/* Abrir/ocultar widget desde el botón superior */
+topToggle.addEventListener('click', () => {
+  if(widget.classList.contains('collapsed')){
+    expandWidget();
+  } else {
+    collapseWidget();
+  }
+});
+
+/* Minimizar desde el botón dentro del widget */
+minimizeBtn.addEventListener('click', () => {
+  collapseWidget();
+});
+
+/* Cerrar (ocultar completamente) */
+closeWidget.addEventListener('click', () => {
+  widget.style.display = 'none';
+});
+
+/* Funciones para colapsar/expandir */
+function collapseWidget(){
+  widget.classList.add('collapsed');
+  isCollapsed = true;
+  // cuando está colapsado, solo se muestra un icono pequeño; el iframe ya ocupa todo el ancho
+  widget.style.transition = 'width .18s ease, height .18s ease, transform .18s ease';
+}
+function expandWidget(){
+  widget.classList.remove('collapsed');
+  isCollapsed = false;
+  widget.style.display = 'flex';
 }
 
-/* Cargar página en el iframe derecho */
+/* Cargar página en el iframe principal */
 function loadPage(el){
   document.querySelectorAll('.menu-item').forEach(i=>i.classList.remove('active'));
   el.classList.add('active');
   const url = el.getAttribute('data-url');
-  const frame = document.getElementById('mainFrame');
-  // Si la URL es la de tickets, la cargamos (ya es la por defecto)
   if(url){
-    frame.src = url;
+    mainFrame.src = url;
   }
 }
 
-/* Helper para añadir entradas dinámicamente */
-function addMenuItem(title, url){
-  const nav = document.getElementById('menuSection');
-  const div = document.createElement('div');
-  div.className = 'menu-item';
-  div.setAttribute('data-url', url);
-  div.onclick = function(){ loadPage(div); };
-  div.innerHTML = '<span class="item-text">'+title+'</span><span>➔</span>';
-  nav.appendChild(div);
-}
+/* Drag simple para el widget (soporta mouse y touch) */
+(function makeDraggable(el){
+  let isDown = false, startX, startY, origX, origY;
+  el.addEventListener('mousedown', start);
+  el.addEventListener('touchstart', start, {passive:true});
+  function start(e){
+    isDown = true;
+    const p = getEvent(e);
+    startX = p.clientX; startY = p.clientY;
+    const rect = el.getBoundingClientRect();
+    origX = rect.left; origY = rect.top;
+    document.addEventListener('mousemove', move);
+    document.addEventListener('mouseup', up);
+    document.addEventListener('touchmove', move, {passive:false});
+    document.addEventListener('touchend', up);
+  }
+  function move(e){
+    if(!isDown) return;
+    e.preventDefault();
+    const p = getEvent(e);
+    let dx = p.clientX - startX;
+    let dy = p.clientY - startY;
+    let newLeft = Math.max(8, origX + dx);
+    let newTop = Math.max(8, origY + dy);
+    // keep inside viewport
+    const maxLeft = window.innerWidth - el.offsetWidth - 8;
+    const maxTop = window.innerHeight - el.offsetHeight - 8;
+    if(newLeft > maxLeft) newLeft = maxLeft;
+    if(newTop > maxTop) newTop = maxTop;
+    el.style.left = newLeft + 'px';
+    el.style.top = newTop + 'px';
+    el.style.right = 'auto';
+    el.style.bottom = 'auto';
+  }
+  function up(){
+    isDown = false;
+    document.removeEventListener('mousemove', move);
+    document.removeEventListener('mouseup', up);
+    document.removeEventListener('touchmove', move);
+    document.removeEventListener('touchend', up);
+  }
+  function getEvent(e){
+    return e.touches ? e.touches[0] : e;
+  }
+})(widget);
 
-/* Inicial: marcar Tickets como activo */
-document.addEventListener('DOMContentLoaded', function(){
+/* Si el usuario redimensiona la ventana, aseguramos que el widget no quede fuera */
+window.addEventListener('resize', () => {
+  const rect = widget.getBoundingClientRect();
+  const maxLeft = window.innerWidth - widget.offsetWidth - 8;
+  const maxTop = window.innerHeight - widget.offsetHeight - 8;
+  if(rect.left > maxLeft) widget.style.left = Math.max(8, maxLeft) + 'px';
+  if(rect.top > maxTop) widget.style.top = Math.max(8, maxTop) + 'px';
+});
+
+/* Inicial: marcar Tickets como activo y cargar por defecto */
+document.addEventListener('DOMContentLoaded', () => {
   const tickets = document.getElementById('menuTickets');
   if(tickets) tickets.classList.add('active');
+  // widget visible por defecto; si prefieres ocultarlo al inicio, descomenta la línea siguiente:
+  // collapseWidget();
 });
 </script>
 </body>
