@@ -15,38 +15,27 @@
   --widget-bg:rgba(15,23,36,0.96);
   --radius:12px;
   --shadow: 0 10px 30px rgba(15,23,42,0.08);
-  --widget-width:320px;
+  --widget-width:340px;
+  --widget-height:520px;
   --widget-collapsed-size:56px;
 }
 *{box-sizing:border-box}
 html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(--bg) 100%);font-family:Inter,system-ui,Segoe UI,Roboto,-apple-system,Arial;color:#0f1724}
 .app{height:100vh;display:flex;flex-direction:column;}
 
-/* Top bar minimal (discreto) */
-.topbar{
-  height:56px;display:flex;align-items:center;justify-content:flex-end;padding:0 14px;background:transparent;
-  gap:10px;
-}
-.topbar .widget-toggle{
-  width:40px;height:40px;border-radius:10px;border:1px solid rgba(15,23,42,0.06);background:#fff;display:flex;align-items:center;justify-content:center;
-  cursor:pointer;font-weight:700;color:var(--muted);box-shadow:0 6px 18px rgba(11,92,255,0.04);
-}
-.topbar .widget-toggle:active{transform:translateY(1px)}
-
 /* Iframe full area */
-.frame-wrap{flex:1;padding:12px;display:flex;gap:12px}
+.frame-wrap{flex:1;display:block}
 .frame{
-  width:100%;height:100%;border-radius:12px;border:0;box-shadow:var(--shadow);overflow:hidden;background:#fff;
+  width:100%;height:100vh;border:0;display:block;background:#fff;
 }
 
-/* Widget flotante (menu) */
+/* Widget flotante a la derecha */
 .widget {
   position:fixed;
-  left:24px;
+  right:24px;
   bottom:24px;
   width:var(--widget-width);
-  max-width:calc(100% - 48px);
-  height:480px;
+  height:var(--widget-height);
   border-radius:14px;
   background:linear-gradient(180deg,var(--widget-bg), rgba(10,12,16,0.95));
   color:#fff;
@@ -55,7 +44,8 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
   flex-direction:column;
   overflow:hidden;
   z-index:9999;
-  transition:transform .22s ease, opacity .18s ease;
+  transition:transform .22s ease, opacity .18s ease, width .18s ease, height .18s ease;
+  cursor:grab;
 }
 
 /* Collapsed widget (solo icon) */
@@ -64,8 +54,9 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
   height:var(--widget-collapsed-size);
   border-radius:12px;
   padding:6px;
-  left:18px;
+  right:18px;
   bottom:18px;
+  cursor:pointer;
 }
 
 /* Header del widget */
@@ -79,7 +70,7 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
 .widget-title h4{margin:0;font-size:0.95rem}
 .widget-controls{display:flex;gap:8px;align-items:center}
 
-/* Discreto botón minimizar dentro del widget */
+/* Discreto botón dentro del widget */
 .widget-controls .min-btn{
   background:transparent;border:1px solid rgba(255,255,255,0.06);padding:6px;border-radius:8px;color:#fff;cursor:pointer;font-weight:600;font-size:0.9rem;
 }
@@ -103,27 +94,21 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
 
 /* Responsive adjustments */
 @media (max-width:900px){
-  .widget{left:12px;bottom:12px;width:90%;height:420px}
-  .widget.collapsed{left:12px;bottom:12px}
+  .widget{right:12px;bottom:12px;width:90%;height:420px}
+  .widget.collapsed{right:12px;bottom:12px}
 }
 </style>
 </head>
 <body>
 <div class="app">
-  <!-- Topbar con botón discreto para abrir/cerrar el widget -->
-  <div class="topbar">
-    <button class="widget-toggle" id="topToggle" title="Abrir menú">☰</button>
-  </div>
-
-  <!-- Área principal: iframe ocupa todo el espacio -->
   <div class="frame-wrap">
     <iframe id="mainFrame" class="frame" src="https://supervisor1atcvento-ctrl.github.io/tickets_atc/" title="Contenido principal"></iframe>
   </div>
 </div>
 
-<!-- Widget flotante: menú de enlaces -->
-<aside class="widget" id="menuWidget" role="dialog" aria-label="Menú de herramientas">
-  <div class="widget-header">
+<!-- Widget flotante a la derecha -->
+<aside class="widget" id="menuWidget" role="dialog" aria-label="Menú de herramientas" title="Haz clic para abrir o cerrar">
+  <div class="widget-header" id="widgetHeader">
     <div class="widget-title">
       <div class="logo">ATC</div>
       <div>
@@ -133,7 +118,6 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
     </div>
 
     <div class="widget-controls">
-      <!-- Botón discreto para minimizar el widget (queda dentro del widget) -->
       <button class="min-btn" id="minimizeBtn" title="Minimizar menú">Minimizar</button>
       <div class="close-icon" id="closeWidget" title="Cerrar menú">✕</div>
     </div>
@@ -166,37 +150,46 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
     <div style="font-size:0.82rem;color:rgba(255,255,255,0.7)">ATC</div>
   </div>
 
-  <!-- Drag handle visible cuando está colapsado -->
   <div class="drag-handle" id="dragHandle" style="display:none"></div>
 </aside>
 
 <script>
-/* ---------- Comportamiento del widget (abrir/colapsar/drag) ---------- */
 const widget = document.getElementById('menuWidget');
-const topToggle = document.getElementById('topToggle');
+const widgetHeader = document.getElementById('widgetHeader');
 const minimizeBtn = document.getElementById('minimizeBtn');
 const closeWidget = document.getElementById('closeWidget');
 const mainFrame = document.getElementById('mainFrame');
 
-/* Estado inicial: widget abierto */
 let isCollapsed = false;
 
-/* Abrir/ocultar widget desde el botón superior */
-topToggle.addEventListener('click', () => {
+/* Toggle al hacer click sobre el widget (si está colapsado, expande; si está abierto y se hace click en la cabecera, colapsa) */
+widget.addEventListener('click', function(e){
+  // Evitar que clicks en elementos interactivos (botones, links) disparen el toggle
+  const ignoreTags = ['BUTTON','A','INPUT'];
+  if(ignoreTags.includes(e.target.tagName)) return;
+  // Si está colapsado, expandir; si no, colapsar
   if(widget.classList.contains('collapsed')){
     expandWidget();
   } else {
-    collapseWidget();
+    // Si el click fue en la cabecera o en el cuerpo y no en botones, colapsar
+    // Para evitar colapsar al interactuar con el menú, solo colapsamos si el click fue en la cabecera o en el borde
+    const rect = widget.getBoundingClientRect();
+    const clickY = e.clientY;
+    if(e.target === widget || e.target === widgetHeader || clickY < rect.top + 60){
+      collapseWidget();
+    }
   }
 });
 
 /* Minimizar desde el botón dentro del widget */
-minimizeBtn.addEventListener('click', () => {
+minimizeBtn.addEventListener('click', function(e){
+  e.stopPropagation();
   collapseWidget();
 });
 
 /* Cerrar (ocultar completamente) */
-closeWidget.addEventListener('click', () => {
+closeWidget.addEventListener('click', function(e){
+  e.stopPropagation();
   widget.style.display = 'none';
 });
 
@@ -204,13 +197,13 @@ closeWidget.addEventListener('click', () => {
 function collapseWidget(){
   widget.classList.add('collapsed');
   isCollapsed = true;
-  // cuando está colapsado, solo se muestra un icono pequeño; el iframe ya ocupa todo el ancho
-  widget.style.transition = 'width .18s ease, height .18s ease, transform .18s ease';
+  // Mostrar drag handle cuando está colapsado
+  document.getElementById('dragHandle').style.display = 'block';
 }
 function expandWidget(){
   widget.classList.remove('collapsed');
   isCollapsed = false;
-  widget.style.display = 'flex';
+  document.getElementById('dragHandle').style.display = 'none';
 }
 
 /* Cargar página en el iframe principal */
@@ -229,6 +222,7 @@ function loadPage(el){
   el.addEventListener('mousedown', start);
   el.addEventListener('touchstart', start, {passive:true});
   function start(e){
+    // No iniciar drag si está colapsado (pero permitir mover el icono colapsado)
     isDown = true;
     const p = getEvent(e);
     startX = p.clientX; startY = p.clientY;
@@ -269,7 +263,7 @@ function loadPage(el){
   }
 })(widget);
 
-/* Si el usuario redimensiona la ventana, aseguramos que el widget no quede fuera */
+/* Evitar que el widget oculte contenido importante al abrirlo: si el widget está sobre un área crítica, el usuario puede arrastrarlo */
 window.addEventListener('resize', () => {
   const rect = widget.getBoundingClientRect();
   const maxLeft = window.innerWidth - widget.offsetWidth - 8;
@@ -282,7 +276,7 @@ window.addEventListener('resize', () => {
 document.addEventListener('DOMContentLoaded', () => {
   const tickets = document.getElementById('menuTickets');
   if(tickets) tickets.classList.add('active');
-  // widget visible por defecto; si prefieres ocultarlo al inicio, descomenta la línea siguiente:
+  // Por defecto el widget aparece expandido; si prefieres que inicie colapsado, descomenta:
   // collapseWidget();
 });
 </script>
