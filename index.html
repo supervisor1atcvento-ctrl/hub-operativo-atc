@@ -1,187 +1,220 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Centro de Mandos ATC</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Centro de Mandos ATC — Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --vento-orange:#ff6600;
-  --bg-sidebar:#111;
-  --bg-sidebar-header:#1a1a1a;
-  --bg-hover:#262626;
-  --text-light:#fff;
-  --text-muted:#999;
-  --border-color:#262626;
-  --bg-main:#f8f9fa;
+  --accent:#0b5cff;
+  --muted:#6b7280;
+  --bg:#f5f7fb;
+  --card:#ffffff;
+  --sidebar:#0f1724;
+  --sidebar-2:#0b1220;
+  --glass: rgba(255,255,255,0.6);
+  --radius:12px;
+  --shadow: 0 8px 24px rgba(15,23,42,0.08);
 }
 *{box-sizing:border-box}
-html,body{height:100%;margin:0;font-family:Segoe UI, Roboto, Arial;background:var(--bg-main);overflow:hidden}
-.dashboard-container{display:flex;height:100%}
-.sidebar{width:290px;background:var(--bg-sidebar);color:var(--text-light);display:flex;flex-direction:column;border-right:1px solid var(--border-color)}
-.sidebar-header{padding:20px;display:flex;gap:12px;align-items:center;background:var(--bg-sidebar-header);border-bottom:1px solid var(--border-color)}
-.avatar-clickable{width:45px;height:45px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#ff6600,#333);font-weight:700;border:2px solid var(--vento-orange);cursor:pointer}
-.search-widget{padding:12px}
-.search-input{width:100%;padding:10px;border-radius:6px;border:1px solid var(--border-color);background:var(--bg-sidebar-header);color:var(--text-light)}
-.menu-section{padding:10px;flex-grow:1;overflow:auto}
-.menu-label{font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;margin-bottom:10px;display:block;padding-left:8px}
-.menu-item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:6px;color:#ccc;margin-bottom:6px;cursor:pointer}
-.menu-item:hover{background:var(--bg-hover);color:var(--text-light)}
-.menu-item.active{background:var(--vento-orange);color:#fff;font-weight:600}
-.sidebar-footer{padding:10px;background:var(--bg-sidebar-header);text-align:center;color:#666;font-size:0.8rem;border-top:1px solid var(--border-color)}
+html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(--bg) 100%);font-family:Inter,system-ui,Segoe UI,Roboto,-apple-system,Arial;color:#0f1724}
+.dashboard{display:flex;height:100vh;gap:24px;padding:24px}
+.sidebar{
+  width:300px;background:linear-gradient(180deg,var(--sidebar),var(--sidebar-2));
+  color:#fff;border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);display:flex;flex-direction:column;flex-shrink:0;
+}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.logo{
+  width:52px;height:52px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#ff7a00);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:18px;box-shadow:0 6px 18px rgba(11,92,255,0.12)
+}
+.brand h1{font-size:1.05rem;margin:0;font-weight:600}
+.brand p{margin:0;color:rgba(255,255,255,0.85);font-size:0.85rem}
 
-.main-content{flex:1;display:flex;flex-direction:column;position:relative}
-.toggle-menu-btn{position:absolute;top:15px;left:15px;width:40px;height:40px;background:var(--vento-orange);border:none;border-radius:6px;color:#fff;z-index:100;cursor:pointer}
-.header-bar{padding:20px 20px 20px 70px;border-bottom:1px solid #e6e6e6;background:#fafafa}
-.header-bar h1{margin:0;font-size:1.4rem;color:#111}
-.header-bar p{margin:6px 0 0;color:#666;font-size:0.9rem}
+.section-title{margin-top:12px;margin-bottom:8px;color:rgba(255,255,255,0.65);font-size:0.75rem;text-transform:uppercase;letter-spacing:1px}
 
-.top-actions{display:flex;gap:10px;align-items:center;padding:12px 20px;background:#fff;border-bottom:1px solid #eee}
-.global-search{display:flex;gap:8px;flex:1}
-.global-search input{flex:1;padding:10px;border:1px solid #ccc;border-radius:6px}
-.global-search button{background:var(--vento-orange);color:#fff;border:none;padding:10px 14px;border-radius:6px;cursor:pointer}
+.menu{display:flex;flex-direction:column;gap:8px;overflow:auto;padding-right:6px}
+.menu-item{
+  display:flex;justify-content:space-between;align-items:center;padding:12px;border-radius:10px;background:transparent;color:rgba(255,255,255,0.95);cursor:pointer;border:1px solid transparent;transition:all .18s;
+}
+.menu-item:hover{background:rgba(255,255,255,0.03);transform:translateY(-2px)}
+.menu-item.active{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.04);font-weight:600}
 
-.content-frame{width:100%;height:calc(100% - 140px);border:none;display:none;background:#fff}
-.welcome-box{padding:30px}
-.link-note{font-size:0.9rem;color:#555;margin-top:8px}
+.footer{margin-top:auto;padding-top:12px;border-top:1px solid rgba(255,255,255,0.03);font-size:0.82rem;color:rgba(255,255,255,0.6);text-align:center}
+
+/* Main area */
+.main{
+  flex:1;display:flex;flex-direction:column;gap:18px;
+}
+.header{
+  display:flex;align-items:center;justify-content:space-between;padding:18px;border-radius:12px;background:var(--card);box-shadow:var(--shadow);
+}
+.header-left{display:flex;flex-direction:column}
+.header-left h2{margin:0;font-size:1.15rem}
+.header-left p{margin:6px 0 0;color:var(--muted);font-size:0.9rem}
+
+/* Top tabs */
+.tabs{display:flex;gap:10px;align-items:center}
+.tab-btn{
+  padding:10px 14px;border-radius:10px;border:1px solid transparent;background:linear-gradient(180deg,#fff,#fbfdff);cursor:pointer;font-weight:600;color:#0f1724;box-shadow:0 4px 12px rgba(15,23,42,0.04)
+}
+.tab-btn.ghost{background:transparent;border:1px solid #e6eefc;color:var(--muted);font-weight:500}
+.tab-btn.active{background:linear-gradient(90deg,var(--accent),#ff7a00);color:#fff;box-shadow:0 8px 30px rgba(11,92,255,0.12)}
+
+/* Content area */
+.content{
+  display:grid;grid-template-columns:1fr 520px;gap:18px;align-items:start;
+  padding-bottom:24px;
+}
+.panel{
+  background:var(--card);border-radius:12px;padding:18px;box-shadow:var(--shadow);
+}
+.panel h3{margin:0 0 8px 0}
+.panel p{margin:0;color:var(--muted)}
+
+/* Right frame container (tickets) */
+.frame-wrap{height:720px;border-radius:10px;overflow:hidden;border:1px solid #e6eefc}
+.frame{
+  width:100%;height:100%;border:0;display:block;background:#fff;
+}
+
+/* Responsive */
+@media (max-width:1100px){
+  .content{grid-template-columns:1fr}
+  .frame-wrap{height:520px}
+}
 </style>
 </head>
 <body>
-<div class="dashboard-container">
+<div class="dashboard">
   <aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <div class="avatar-clickable" onclick="goHome()" title="Ir al Home">EVA</div>
+    <div class="brand">
+      <div class="logo">ATC</div>
       <div>
-        <h2 style="margin:0;font-size:1rem">Centro de Mandos ATC</h2>
-        <div style="color:var(--vento-orange);font-size:0.8rem;margin-top:4px">Portal de herramientas</div>
+        <h1>Centro de Mandos</h1>
+        <p>Portal de herramientas — VENTO</p>
       </div>
     </div>
 
-    <div class="search-widget">
-      <input id="menuSearch" class="search-input" placeholder="Buscar herramienta..." onkeyup="filterMenu()" />
-    </div>
-
-    <nav class="menu-section" id="menuSection">
-      <span class="menu-label">Módulos y páginas</span>
-
-      <!-- EDITA / DUPLICA estas entradas para añadir tus páginas -->
+    <div class="section-title">Módulos y páginas</div>
+    <nav class="menu" id="menuSection">
       <div class="menu-item" data-url="https://supervisor1atcvento-ctrl.github.io/segmentador-de-agencias/" onclick="loadPage(this)">
-        <span class="item-text">Segmentador ATC</span><span class="arrow">➔</span>
+        <span class="item-text">Segmentador ATC</span><span>➔</span>
       </div>
 
       <div class="menu-item" data-url="https://supervisor1atcvento-ctrl.github.io/buscador-de-cesves/" onclick="loadPage(this)">
-        <span class="item-text">Buscador CESVE</span><span class="arrow">➔</span>
+        <span class="item-text">Buscador CESVE</span><span>➔</span>
       </div>
 
       <div class="menu-item" data-url="https://ayuda.vento.com/a/dashboard/73000005485" onclick="loadPage(this)">
-        <span class="item-text">Dudas y FAQ</span><span class="arrow">➔</span>
+        <span class="item-text">Dudas y FAQ</span><span>➔</span>
       </div>
 
-      <!-- FIN de entradas editables -->
+      <!-- Nuevo: Tickets (también disponible como pestaña superior) -->
+      <div class="menu-item" id="menuTickets" data-url="https://supervisor1atcvento-ctrl.github.io/tickets_atc/" onclick="openTicketsFromMenu(this)">
+        <span class="item-text">Tickets ATC</span><span>🎫</span>
+      </div>
     </nav>
 
-    <div class="sidebar-footer">VENTO MOTORCYCLES © 2026</div>
+    <div class="footer">VENTO MOTORCYCLES © 2026</div>
   </aside>
 
-  <main class="main-content">
-    <button class="toggle-menu-btn" id="toggleBtn" onclick="toggleSidebar()">✕</button>
-
-    <div class="header-bar">
-      <h1>Centro de Mandos ATC — Portal de Enlaces</h1>
-      <p>Accede a todas tus páginas desde un solo lugar.</p>
-    </div>
-
-    <div class="top-actions">
-      <div class="global-search" style="flex:1">
-        <input id="globalSearchInput" placeholder="Buscar en todos los sitios (palabras clave) — presiona Enter o Buscar" onkeypress="if(event.key==='Enter') doGlobalSearch()" />
-        <button onclick="doGlobalSearch()">Buscar</button>
+  <main class="main">
+    <div class="header">
+      <div class="header-left">
+        <h2>Centro de Mandos ATC</h2>
+        <p>Accede a tus herramientas y al sistema de tickets desde un solo lugar</p>
       </div>
-      <div style="font-size:0.9rem;color:#444">Resultados abrirán en nueva pestaña</div>
+
+      <div class="tabs" role="tablist" aria-label="Acciones rápidas">
+        <button class="tab-btn" onclick="goHome()">Inicio</button>
+        <button class="tab-btn ghost" id="btnOpenTickets" onclick="openTickets()">Abrir Tickets</button>
+        <button class="tab-btn ghost" onclick="openInNewTab()">Abrir en nueva pestaña</button>
+      </div>
     </div>
 
-    <div id="welcomeScreen" class="welcome-box">
-      <strong>Bienvenido</strong>
-      <p class="link-note">Selecciona una herramienta en el menú lateral para cargarla aquí. Usa la búsqueda global para buscar palabras clave en todos los dominios listados.</p>
-    </div>
+    <div class="content">
+      <section class="panel">
+        <h3>Bienvenido</h3>
+        <p>Selecciona una herramienta en el menú lateral para cargarla en el panel de la derecha. El módulo de Tickets está disponible en su propio frame para acceso rápido.</p>
 
-    <iframe id="appFrame" class="content-frame" src=""></iframe>
+        <hr style="margin:16px 0;border:none;border-top:1px solid #eef4ff">
+
+        <h4 style="margin:0 0 8px 0">Notas</h4>
+        <ul style="color:var(--muted);margin-top:8px">
+          <li>Si alguna página no carga en el panel, puede deberse a políticas de seguridad (X-Frame-Options). En ese caso se abrirá en una nueva pestaña.</li>
+          <li>Puedes editar o añadir entradas en el menú modificando los elementos con <code>data-url</code>.</li>
+        </ul>
+      </section>
+
+      <aside class="panel frame-wrap" id="rightPanel">
+        <iframe id="ticketsFrame" class="frame" src="https://supervisor1atcvento-ctrl.github.io/tickets_atc/" title="Tickets ATC"></iframe>
+      </aside>
+    </div>
   </main>
 </div>
 
 <script>
-/* Sidebar toggle */
-function toggleSidebar(){
-  const sidebar = document.getElementById('sidebar');
-  const btn = document.getElementById('toggleBtn');
-  sidebar.classList.toggle('collapsed');
-  btn.innerHTML = sidebar.classList.contains('collapsed') ? '☰' : '✕';
-}
-
-/* Go home */
+/* Navegación y carga de páginas en el panel derecho */
 function goHome(){
-  document.getElementById('appFrame').style.display = 'none';
-  document.getElementById('welcomeScreen').style.display = 'block';
+  // Resetea selección y muestra mensaje de bienvenida
   document.querySelectorAll('.menu-item').forEach(i=>i.classList.remove('active'));
+  const right = document.getElementById('rightPanel');
+  right.innerHTML = '<div style="padding:28px;color:#374151"><h3>Inicio</h3><p style="color:var(--muted)">Selecciona una herramienta en el menú lateral para cargarla aquí. El módulo de Tickets está disponible en su propio frame.</p></div>';
 }
 
-/* Load page into iframe */
-function loadPage(element){
+function loadPage(el){
   document.querySelectorAll('.menu-item').forEach(i=>i.classList.remove('active'));
-  element.classList.add('active');
-  document.getElementById('welcomeScreen').style.display = 'none';
-  const frame = document.getElementById('appFrame');
-  frame.style.display = 'block';
-  frame.src = element.getAttribute('data-url');
-}
-
-/* Filter menu items by text */
-function filterMenu(){
-  const q = document.getElementById('menuSearch').value.toUpperCase();
-  const items = document.getElementById('menuSection').getElementsByClassName('menu-item');
-  for(let i=0;i<items.length;i++){
-    const text = items[i].querySelector('.item-text').textContent || '';
-    items[i].style.display = text.toUpperCase().includes(q) ? '' : 'none';
+  el.classList.add('active');
+  const url = el.getAttribute('data-url');
+  // Si la URL es la de tickets, delegamos a la función que carga en el iframe
+  if(url && url.includes('/tickets_atc/')){
+    openTickets();
+    return;
   }
+  // Crea un iframe temporal en el panel derecho
+  const right = document.getElementById('rightPanel');
+  right.innerHTML = '<iframe class="frame" src="'+url+'" title="Contenido"></iframe>';
 }
 
-/* GLOBAL SEARCH:
-   Construye una búsqueda de Google que limita por los dominios listados en el menú.
-   Abre la búsqueda en una nueva pestaña (evita problemas de CORS al cargar resultados en iframe).
-*/
-function doGlobalSearch(){
-  const q = document.getElementById('globalSearchInput').value.trim();
-  if(!q) return;
-  // Recolecta dominios desde los items del menú
-  const items = document.querySelectorAll('#menuSection .menu-item[data-url]');
-  const domains = [];
-  items.forEach(it=>{
-    try{
-      const u = new URL(it.getAttribute('data-url'));
-      if(!domains.includes(u.hostname)) domains.push(u.hostname);
-    }catch(e){}
-  });
-  // Si no hay dominios, hace búsqueda normal
-  let query = encodeURIComponent(q);
-  if(domains.length){
-    const siteParts = domains.map(d=>'site:'+d).join(' OR ');
-    query = encodeURIComponent(q + ' ' + siteParts);
-  }
-  const googleUrl = 'https://www.google.com/search?q=' + query;
-  window.open(googleUrl, '_blank');
+/* Tickets: siempre en su propio frame (derecha) */
+function openTickets(){
+  document.querySelectorAll('.menu-item').forEach(i=>i.classList.remove('active'));
+  const menuTickets = document.getElementById('menuTickets');
+  if(menuTickets) menuTickets.classList.add('active');
+  const right = document.getElementById('rightPanel');
+  right.innerHTML = '<iframe id="ticketsFrame" class="frame" src="https://supervisor1atcvento-ctrl.github.io/tickets_atc/" title="Tickets ATC"></iframe>';
 }
 
-/* Helper: función para añadir dinámicamente una entrada (opcional) */
+/* Si el usuario hace clic en Tickets desde el menú */
+function openTicketsFromMenu(el){
+  openTickets();
+  el.classList.add('active');
+}
+
+/* Abrir la página actualmente visible en nueva pestaña (útil si X-Frame bloquea) */
+function openInNewTab(){
+  const iframe = document.querySelector('#rightPanel iframe');
+  const src = iframe ? iframe.src : '';
+  if(src) window.open(src, '_blank');
+  else window.open('about:blank', '_blank');
+}
+
+/* Helper para añadir entradas dinámicamente */
 function addMenuItem(title, url){
   const nav = document.getElementById('menuSection');
   const div = document.createElement('div');
   div.className = 'menu-item';
   div.setAttribute('data-url', url);
   div.onclick = function(){ loadPage(div); };
-  div.innerHTML = '<span class="item-text">'+title+'</span><span class="arrow">➔</span>';
+  div.innerHTML = '<span class="item-text">'+title+'</span><span>➔</span>';
   nav.appendChild(div);
 }
 
-/* Ejemplo: addMenuItem('Nueva Herramienta','https://tusitio.com/mi-herramienta') */
+/* Inicial: carga tickets en el frame derecho */
+document.addEventListener('DOMContentLoaded', function(){
+  openTickets();
+});
 </script>
 </body>
 </html>
