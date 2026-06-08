@@ -21,15 +21,13 @@
 }
 *{box-sizing:border-box}
 html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(--bg) 100%);font-family:Inter,system-ui,Segoe UI,Roboto,-apple-system,Arial;color:#0f1724}
-.app{height:100vh;display:flex;flex-direction:column;}
+.app{height:100vh;display:flex;flex-direction:column}
 
 /* Iframe full area */
 .frame-wrap{flex:1;display:block}
-.frame{
-  width:100%;height:100vh;border:0;display:block;background:#fff;
-}
+.frame{width:100%;height:100vh;border:0;display:block;background:#fff}
 
-/* Widget flotante a la derecha */
+/* Widget fixed bottom-right, non-draggable */
 .widget {
   position:fixed;
   right:24px;
@@ -45,10 +43,10 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
   overflow:hidden;
   z-index:9999;
   transition:transform .22s ease, opacity .18s ease, width .18s ease, height .18s ease, border-radius .18s ease;
-  cursor:grab;
+  cursor:default;
 }
 
-/* Collapsed widget: circular icon, centrado y sin cortes */
+/* Collapsed widget: circular icon, centered and clean */
 .widget.collapsed{
   width:var(--widget-collapsed-size);
   height:var(--widget-collapsed-size);
@@ -60,7 +58,6 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
   display:flex;
   align-items:center;
   justify-content:center;
-  cursor:pointer;
 }
 
 /* Header del widget */
@@ -74,7 +71,7 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
 .widget-title h4{margin:0;font-size:0.95rem}
 .widget-controls{display:flex;gap:8px;align-items:center}
 
-/* Botón X (ahora minimiza) */
+/* Botón X (minimiza) */
 .widget-controls .close-icon{
   width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:700;
 }
@@ -98,10 +95,6 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
 .widget.collapsed .widget-body,
 .widget.collapsed .widget-footer{display:none}
 
-/* Drag handle when collapsed */
-.widget.collapsed .drag-handle{display:block}
-.drag-handle{display:none;width:100%;height:100%;cursor:grab}
-
 /* Responsive adjustments */
 @media (max-width:900px){
   .widget{right:12px;bottom:12px;width:90%;height:420px}
@@ -116,8 +109,8 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
   </div>
 </div>
 
-<!-- Widget flotante a la derecha -->
-<aside class="widget" id="menuWidget" role="dialog" aria-label="Menú de herramientas" title="Haz clic para abrir o cerrar">
+<!-- Widget fijo en la esquina inferior derecha -->
+<aside class="widget" id="menuWidget" role="dialog" aria-label="Menú de herramientas" title="Haz clic en el icono para abrir o minimizar">
   <div class="widget-header" id="widgetHeader">
     <div class="widget-title">
       <div class="logo" id="widgetLogo">ATC</div>
@@ -128,7 +121,7 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
     </div>
 
     <div class="widget-controls">
-      <!-- Solo el botón X, ahora minimiza/colapsa -->
+      <!-- Solo el botón X que ahora minimiza/expande -->
       <div class="close-icon" id="closeWidget" title="Minimizar menú">✕</div>
     </div>
   </div>
@@ -159,34 +152,24 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
     <div style="font-size:0.85rem">VENTO © 2026</div>
     <div style="font-size:0.82rem;color:rgba(255,255,255,0.7)">ATC</div>
   </div>
-
-  <div class="drag-handle" id="dragHandle" style="display:none"></div>
 </aside>
 
 <script>
 const widget = document.getElementById('menuWidget');
-const widgetHeader = document.getElementById('widgetHeader');
 const closeWidget = document.getElementById('closeWidget');
 const mainFrame = document.getElementById('mainFrame');
 
+/* Estado inicial */
 let isCollapsed = false;
 
-/* Click sobre el widget: si está colapsado, expandir; si está abierto y el click es en la cabecera, colapsar.
-   Evitamos que clicks en botones o en items disparen el toggle. */
+/* Click sobre el icono circular cuando está colapsado: expande */
 widget.addEventListener('click', function(e){
-  const ignoreTags = ['BUTTON','A','INPUT','SELECT','TEXTAREA','DIV'];
-  // permitir interacción normal en elementos del menú: si el click fue sobre .menu-item o dentro de botones, no togglear
-  if(e.target.closest('.menu-item') || e.target.closest('.close-icon')) return;
+  // Si el widget está colapsado, cualquier click en él lo expande
   if(widget.classList.contains('collapsed')){
     expandWidget();
-  } else {
-    // Si el click fue en la cabecera (o en el borde), colapsar
-    const rect = widget.getBoundingClientRect();
-    const clickY = e.clientY;
-    if(e.target === widget || e.target === widgetHeader || clickY < rect.top + 64){
-      collapseWidget();
-    }
+    return;
   }
+  // Si está expandido, no colapsar al hacer click dentro del menú (evitar toggles no deseados)
 });
 
 /* El botón X ahora minimiza/colapsa (no cierra) */
@@ -203,15 +186,11 @@ closeWidget.addEventListener('click', function(e){
 function collapseWidget(){
   widget.classList.add('collapsed');
   isCollapsed = true;
-  // mostrar drag handle si se desea (no obligatorio)
-  document.getElementById('dragHandle').style.display = 'block';
-  // asegurar que el widget no quede cortado en los bordes
   widget.style.overflow = 'visible';
 }
 function expandWidget(){
   widget.classList.remove('collapsed');
   isCollapsed = false;
-  document.getElementById('dragHandle').style.display = 'none';
   widget.style.overflow = 'hidden';
 }
 
@@ -224,62 +203,6 @@ function loadPage(el){
     mainFrame.src = url;
   }
 }
-
-/* Drag simple para el widget (soporta mouse y touch) */
-(function makeDraggable(el){
-  let isDown = false, startX, startY, origX, origY;
-  el.addEventListener('mousedown', start);
-  el.addEventListener('touchstart', start, {passive:true});
-  function start(e){
-    // iniciar drag
-    isDown = true;
-    const p = getEvent(e);
-    startX = p.clientX; startY = p.clientY;
-    const rect = el.getBoundingClientRect();
-    origX = rect.left; origY = rect.top;
-    document.addEventListener('mousemove', move);
-    document.addEventListener('mouseup', up);
-    document.addEventListener('touchmove', move, {passive:false});
-    document.addEventListener('touchend', up);
-  }
-  function move(e){
-    if(!isDown) return;
-    e.preventDefault();
-    const p = getEvent(e);
-    let dx = p.clientX - startX;
-    let dy = p.clientY - startY;
-    let newLeft = Math.max(8, origX + dx);
-    let newTop = Math.max(8, origY + dy);
-    // keep inside viewport
-    const maxLeft = window.innerWidth - el.offsetWidth - 8;
-    const maxTop = window.innerHeight - el.offsetHeight - 8;
-    if(newLeft > maxLeft) newLeft = maxLeft;
-    if(newTop > maxTop) newTop = maxTop;
-    el.style.left = newLeft + 'px';
-    el.style.top = newTop + 'px';
-    el.style.right = 'auto';
-    el.style.bottom = 'auto';
-  }
-  function up(){
-    isDown = false;
-    document.removeEventListener('mousemove', move);
-    document.removeEventListener('mouseup', up);
-    document.removeEventListener('touchmove', move);
-    document.removeEventListener('touchend', up);
-  }
-  function getEvent(e){
-    return e.touches ? e.touches[0] : e;
-  }
-})(widget);
-
-/* Evitar que el widget quede fuera de la pantalla al redimensionar */
-window.addEventListener('resize', () => {
-  const rect = widget.getBoundingClientRect();
-  const maxLeft = window.innerWidth - widget.offsetWidth - 8;
-  const maxTop = window.innerHeight - widget.offsetHeight - 8;
-  if(rect.left > maxLeft) widget.style.left = Math.max(8, maxLeft) + 'px';
-  if(rect.top > maxTop) widget.style.top = Math.max(8, maxTop) + 'px';
-});
 
 /* Inicial: marcar Tickets como activo y cargar por defecto */
 document.addEventListener('DOMContentLoaded', () => {
