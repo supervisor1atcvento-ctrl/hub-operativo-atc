@@ -90,10 +90,17 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
 .widget-footer{padding:10px 12px;border-top:1px solid rgba(255,255,255,0.03);font-size:0.82rem;color:rgba(255,255,255,0.7);display:flex;justify-content:space-between;align-items:center}
 
 /* Icono visible cuando está colapsado */
-.widget.collapsed .logo{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px}
-.widget.collapsed .widget-header,
-.widget.collapsed .widget-body,
-.widget.collapsed .widget-footer{display:none}
+.widget.collapsed .logo{
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:28px; /* Hace que el emoji sea el protagonista */
+  background: var(--accent); /* Un color sólido suele verse más limpio para un asistente */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
 
 /* Responsive adjustments */
 @media (max-width:900px){
@@ -113,7 +120,7 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
 <aside class="widget" id="menuWidget" role="dialog" aria-label="Menú de herramientas" title="Haz clic en el icono para abrir o minimizar">
   <div class="widget-header" id="widgetHeader">
     <div class="widget-title">
-      <div class="logo" id="widgetLogo">ATC</div>
+      <div class="logo" id="widgetLogo" style="font-size: 24px;">🤖</div>
       <div>
         <h4 style="margin:0">Centro de Mandos</h4>
         <div style="font-size:0.78rem;color:rgba(255,255,255,0.75)">Portal de herramientas</div>
