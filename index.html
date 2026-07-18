@@ -22,7 +22,6 @@
 *{box-sizing:border-box}
 html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(--bg) 100%);font-family:Inter,system-ui,Segoe UI,Roboto,-apple-system,Arial;color:#0f1724}
 .app{height:100vh;display:flex;flex-direction:column}
-
 /* Iframe full area */
 .frame-wrap{flex:1;display:block}
 .frame{width:100%;height:100vh;border:0;display:block;background:#fff}
@@ -42,31 +41,18 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
   flex-direction:column;
   overflow:hidden;
   z-index:9999;
-  transition:transform .22s ease, opacity .18s ease, width .18s ease, height .18s ease, border-radius .18s ease;
+  transition:transform .22s ease, opacity .18s ease, width .18s ease, height .18s ease, border-radius .18s ease, background .22s ease, box-shadow .22s ease;
   cursor:default;
-}
-
-/* Collapsed widget: circular icon, centered and clean */
-.widget.collapsed{
-  width:var(--widget-collapsed-size);
-  height:var(--widget-collapsed-size);
-  border-radius:50%;
-  padding:6px;
-  right:18px;
-  bottom:18px;
-  overflow:visible;
-  display:flex;
-  align-items:center;
-  justify-content:center;
 }
 
 /* Header del widget */
 .widget-header{
   display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.04);
 }
-.widget-title{display:flex;align-items:center;gap:10px}
+.widget-title{display:flex;align-items:center;gap:10px; width: 100%;}
 .widget-title .logo{
-  width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:14px;
+  width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;
+  transition: all 0.22s ease;
 }
 .widget-title h4{margin:0;font-size:0.95rem}
 .widget-controls{display:flex;gap:8px;align-items:center}
@@ -89,18 +75,50 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
 /* Footer pequeño en widget */
 .widget-footer{padding:10px 12px;border-top:1px solid rgba(255,255,255,0.03);font-size:0.82rem;color:rgba(255,255,255,0.7);display:flex;justify-content:space-between;align-items:center}
 
-/* Icono visible cuando está colapsado */
-.widget.collapsed .logo{
-  width:48px;
-  height:48px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:28px; /* Hace que el emoji sea el protagonista */
-  background: var(--accent); /* Un color sólido suele verse más limpio para un asistente */
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+
+/* =========================================
+   ESTADO COLAPSADO (ASISTENTE FLOTANTE)
+   ========================================= */
+.widget.collapsed {
+  width: var(--widget-collapsed-size) !important;
+  height: var(--widget-collapsed-size) !important;
+  border-radius: 50% !important;
+  background: transparent !important; /* Elimina el cuadro negro */
+  box-shadow: none !important; /* Elimina la sombra del contenedor completo */
+  padding: 0 !important;
+  overflow: visible !important;
 }
+
+.widget.collapsed .widget-header {
+  border: none !important;
+  padding: 0 !important;
+  height: 100%;
+  justify-content: center;
+}
+
+.widget.collapsed .widget-title {
+  justify-content: center;
+  gap: 0;
+}
+
+/* El logo se convierte en el botón circular */
+.widget.collapsed .logo {
+  width: 64px !important;
+  height: 64px !important;
+  border-radius: 50% !important;
+  font-size: 32px !important; /* Tamaño del emoji */
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(2,6,23,0.3) !important; /* Sombra solo para el botón */
+}
+
+/* Ocultar el resto del contenido al minimizar */
+.widget.collapsed .widget-title > div:not(.logo),
+.widget.collapsed .widget-controls,
+.widget.collapsed .widget-body,
+.widget.collapsed .widget-footer {
+  display: none !important;
+}
+
 
 /* Responsive adjustments */
 @media (max-width:900px){
@@ -115,28 +133,25 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
     <iframe id="mainFrame" class="frame" src="https://supervisor1atcvento-ctrl.github.io/tickets_atc/" title="Contenido principal"></iframe>
   </div>
 </div>
-
 <!-- Widget fijo en la esquina inferior derecha -->
 <aside class="widget" id="menuWidget" role="dialog" aria-label="Menú de herramientas" title="Haz clic en el icono para abrir o minimizar">
   <div class="widget-header" id="widgetHeader">
     <div class="widget-title">
-      <div class="logo" id="widgetLogo" style="font-size: 24px;">🤖</div>
+      <!-- AQUI ESTÁ EL EMOJI -->
+      <div class="logo" id="widgetLogo" style="font-size: 26px;">🤖</div>
       <div>
-        <h4 style="margin:0">Centro de Mandos</h4>
+        <h4 style="margin:0">Asistente ATC</h4>
         <div style="font-size:0.78rem;color:rgba(255,255,255,0.75)">Portal de herramientas</div>
       </div>
     </div>
-
     <div class="widget-controls">
       <!-- Solo el botón X que ahora minimiza/expande -->
       <div class="close-icon" id="closeWidget" title="Minimizar menú">✕</div>
     </div>
   </div>
-
   <div class="widget-body" id="widgetBody">
     <div class="menu-section" id="menuSection">
       <!-- EDITA / DUPLICA estas entradas para añadir tus páginas -->
-
       <div class="menu-item" id="menuTickets" data-url="https://supervisor1atcvento-ctrl.github.io/tickets_atc/" onclick="loadPage(this)">
         <span class="item-text">Tickets ATC</span><span>🎫</span>
       </div>
@@ -144,33 +159,27 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
       <div class="menu-item" data-url="https://supervisor1atcvento-ctrl.github.io/indicadores/" onclick="loadPage(this)">
         <span class="item-text">Indicadores</span><span>📊</span>
       </div>
-
-      <div class="menu-item" id="menuTickets" data-url="https://supervisor1atcvento-ctrl.github.io/buscador-de-extensiones-de-garantia/" onclick="loadPage(this)">
+      <div class="menu-item" data-url="https://supervisor1atcvento-ctrl.github.io/buscador-de-extensiones-de-garantia/" onclick="loadPage(this)">
         <span class="item-text">Buscador de extensiónes de garantia</span><span>🔍️</span>
       </div>
-
-      <div class="menu-item" id="menuTickets" data-url="https://supervisor1atcvento-ctrl.github.io/calculadora-de-servicios/" onclick="loadPage(this)">
+      <div class="menu-item" data-url="https://supervisor1atcvento-ctrl.github.io/calculadora-de-servicios/" onclick="loadPage(this)">
         <span class="item-text">Calculadora de servicios</span><span>🧮</span>
       </div>
       
       <div class="menu-item" data-url="https://supervisor1atcvento-ctrl.github.io/segmentador-de-agencias/" onclick="loadPage(this)">
         <span class="item-text">Segmentador ATC</span><span>➔</span>
       </div>
-
       <div class="menu-item" data-url="https://supervisor1atcvento-ctrl.github.io/buscador-de-cesves/" onclick="loadPage(this)">
         <span class="item-text">Buscador CESVE</span><span>➔</span>
       </div>
-
       <!-- FIN de entradas editables -->
     </div>
   </div>
-
   <div class="widget-footer">
     <div style="font-size:0.85rem">VENTO © 2026</div>
     <div style="font-size:0.82rem;color:rgba(255,255,255,0.7)">ATC</div>
   </div>
 </aside>
-
 <script>
 const widget = document.getElementById('menuWidget');
 const closeWidget = document.getElementById('closeWidget');
@@ -186,7 +195,6 @@ widget.addEventListener('click', function(e){
     expandWidget();
     return;
   }
-  // Si está expandido, no colapsar al hacer click dentro del menú (evitar toggles no deseados)
 });
 
 /* El botón X ahora minimiza/colapsa (no cierra) */
@@ -203,12 +211,10 @@ closeWidget.addEventListener('click', function(e){
 function collapseWidget(){
   widget.classList.add('collapsed');
   isCollapsed = true;
-  widget.style.overflow = 'visible';
 }
 function expandWidget(){
   widget.classList.remove('collapsed');
   isCollapsed = false;
-  widget.style.overflow = 'hidden';
 }
 
 /* Cargar página en el iframe principal */
@@ -225,7 +231,7 @@ function loadPage(el){
 document.addEventListener('DOMContentLoaded', () => {
   const tickets = document.getElementById('menuTickets');
   if(tickets) tickets.classList.add('active');
-  // Si quieres que inicie colapsado por defecto, descomenta la siguiente línea:
+  // Opcional: Si quieres que inicie colapsado al cargar la página, descomenta la siguiente línea:
   // collapseWidget();
 });
 </script>
