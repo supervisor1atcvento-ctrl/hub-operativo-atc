@@ -1,189 +1,255 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Validación de Garantía</title>
-    <style>
-        /* Estilos generales de la interfaz */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4; /* Fondo gris claro */
-            margin: 0;
-            padding: 40px 20px;
-            display: flex;
-            justify-content: center;
-        }
-        
-        .card {
-            background-color: #ffffff; /* Fondo blanco */
-            width: 100%;
-            max-width: 500px;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            border-top: 6px solid #FF6600; /* Acento en naranja */
-        }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Centro de Mandos ATC — Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --accent:#0b5cff;
+  --accent-2:#ff7a00;
+  --muted:#6b7280;
+  --bg:#f5f7fb;
+  --card:#ffffff;
+  --widget-bg:linear-gradient(180deg, rgba(6,12,34,0.96), rgba(10,12,16,0.95));
+  --radius:14px;
+  --shadow: 0 18px 50px rgba(2,6,23,0.45);
+  --widget-width:360px;
+  --widget-height:520px;
+  --widget-collapsed-size:64px;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(--bg) 100%);font-family:Inter,system-ui,Segoe UI,Roboto,-apple-system,Arial;color:#0f1724}
+.app{height:100vh;display:flex;flex-direction:column}
+/* Iframe full area */
+.frame-wrap{flex:1;display:block}
+.frame{width:100%;height:100vh;border:0;display:block;background:#fff}
 
-        h2 {
-            color: #000000; /* Texto en negro */
-            text-align: center;
-            margin-top: 0;
-            margin-bottom: 25px;
-        }
+/* Widget fixed bottom-right, non-draggable */
+.widget {
+  position:fixed;
+  right:24px;
+  bottom:24px;
+  width:var(--widget-width);
+  height:var(--widget-height);
+  border-radius:var(--radius);
+  background:var(--widget-bg);
+  color:#fff;
+  box-shadow:var(--shadow);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  z-index:9999;
+  transition:transform .22s ease, opacity .18s ease, width .18s ease, height .18s ease, border-radius .18s ease, background .22s ease, box-shadow .22s ease;
+  cursor:default;
+}
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+/* Header del widget */
+.widget-header{
+  display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.04);
+}
+.widget-title{display:flex;align-items:center;gap:10px; width: 100%;}
+.widget-title .logo{
+  width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;
+  transition: all 0.22s ease;
+}
+.widget-title h4{margin:0;font-size:0.95rem}
+.widget-controls{display:flex;gap:8px;align-items:center}
 
-        label {
-            font-weight: bold;
-            color: #333;
-            display: block;
-            margin-bottom: 8px;
-        }
+/* Botón X (minimiza) */
+.widget-controls .close-icon{
+  width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:700;
+}
+.widget-controls .close-icon:hover{background:rgba(255,255,255,0.06)}
 
-        select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 15px;
-            box-sizing: border-box;
-        }
+/* Contenido del menú */
+.widget-body{padding:12px 12px 16px 12px;overflow:auto;flex:1}
+.menu-section{margin-bottom:10px}
+.menu-item{
+  display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:transparent;color:#e6eefc;cursor:pointer;margin-bottom:8px;border:1px solid transparent;
+}
+.menu-item:hover{background:rgba(255,255,255,0.02);transform:translateY(-2px)}
+.menu-item.active{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#fff;font-weight:600;border-color:rgba(255,255,255,0.04)}
 
-        button {
-            width: 100%;
-            padding: 14px;
-            background-color: #000000; /* Botón negro */
-            color: #ffffff; /* Letra blanca */
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            margin-top: 10px;
-        }
+/* Footer pequeño en widget */
+.widget-footer{padding:10px 12px;border-top:1px solid rgba(255,255,255,0.03);font-size:0.82rem;color:rgba(255,255,255,0.7);display:flex;justify-content:space-between;align-items:center}
 
-        button:hover {
-            background-color: #FF6600; /* Hover en naranja */
-        }
 
-        /* Contenedor de los resultados */
-        #resultado-container {
-            margin-top: 30px;
-            padding: 20px;
-            background-color: #fafafa;
-            border: 1px solid #ddd;
-            border-left: 5px solid #000000;
-            border-radius: 4px;
-            display: none; /* Oculto por defecto hasta que se procese */
-        }
+/* =========================================
+   ESTADO COLAPSADO (ASISTENTE FLOTANTE)
+   ========================================= */
+.widget.collapsed {
+  width: var(--widget-collapsed-size) !important;
+  height: var(--widget-collapsed-size) !important;
+  border-radius: 50% !important;
+  background: transparent !important; /* Elimina el cuadro negro */
+  box-shadow: none !important; /* Elimina la sombra del contenedor completo */
+  padding: 0 !important;
+  overflow: visible !important;
+}
 
-        .etiqueta {
-            font-size: 13px;
-            color: #666;
-            margin-bottom: 4px;
-            text-transform: uppercase;
-        }
+.widget.collapsed .widget-header {
+  border: none !important;
+  padding: 0 !important;
+  height: 100%;
+  justify-content: center;
+}
 
-        .valor {
-            font-size: 16px;
-            margin-bottom: 20px;
-        }
-        
-        .valor:last-child {
-            margin-bottom: 0;
-        }
+.widget.collapsed .widget-title {
+  justify-content: center;
+  gap: 0;
+}
 
-        /* Clases de color solicitadas para las acciones */
-        .texto-rojo {
-            color: #d93025; /* Rojo */
-            font-weight: bold;
-        }
-        .texto-verde {
-            color: #188038; /* Verde */
-            font-weight: bold;
-        }
-        .texto-herramientas {
-            font-weight: bold;
-            color: #000000;
-        }
-    </style>
+/* El logo se convierte en el emoji flotante 100% transparente */
+.widget.collapsed .logo {
+  width: 64px !important;
+  height: 64px !important;
+  border-radius: 0 !important;       /* Quitamos la forma circular */
+  background: transparent !important; /* QUITAMOS EL FONDO AZUL/DEGRADADO */
+  font-size: 48px !important;         /* Hacemos el emoji un poco más grande ya que no tiene fondo */
+  cursor: pointer;
+  box-shadow: none !important;        /* Quitamos la sombra pesada del fondo */
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.15)); /* Sombra suave exclusiva para el contorno del emoji */
+}
+
+/* Ocultar el resto del contenido al minimizar */
+.widget.collapsed .widget-title > div:not(.logo),
+.widget.collapsed .widget-controls,
+.widget.collapsed .widget-body,
+.widget.collapsed .widget-footer {
+  display: none !important;
+}
+
+
+/* Responsive adjustments */
+@media (max-width:900px){
+  .widget{right:12px;bottom:12px;width:90%;height:420px}
+  .widget.collapsed{right:12px;bottom:12px}
+}
+</style>
 </head>
 <body>
-
-    <div class="card">
-        <h2>Validación de Servicio</h2>
-
-        <!-- Selector de Acción Base -->
-        <div class="form-group">
-            <label for="accionBase">Acción Base:</label>
-            <select id="accionBase">
-                <option value="">-- Selecciona una acción --</option>
-                <option value="SE REQUIERE CHECK LIST">SE REQUIERE CHECK LIST</option>
-                <option value="PASA COMO GARANTIA">PASA COMO GARANTIA</option>
-            </select>
-        </div>
-
-        <!-- Selector de Kit de Herramientas -->
-        <div class="form-group">
-            <label for="reporteHerramientas">Estado de Herramientas:</label>
-            <select id="reporteHerramientas">
-                <option value="">-- Selecciona el estado --</option>
-                <option value="SI REPORTA">SI REPORTA</option>
-                <option value="NO REPORTA">NO REPORTA</option>
-            </select>
-        </div>
-
-        <button onclick="procesarDatos()">Generar Resultado</button>
-
-        <!-- Bloque donde se imprimen los resultados -->
-        <div id="resultado-container">
-            <div class="etiqueta">Acción a tomar:</div>
-            <div id="resultado-accion" class="valor"></div>
-
-            <div class="etiqueta">Kit de Herramientas:</div>
-            <div id="resultado-herramientas" class="valor texto-herramientas"></div>
-        </div>
+<div class="app">
+  <div class="frame-wrap">
+    <iframe id="mainFrame" class="frame" src="https://supervisor1atcvento-ctrl.github.io/tickets_atc/" title="Contenido principal"></iframe>
+  </div>
+</div>
+<!-- Widget fijo en la esquina inferior derecha -->
+<aside class="widget" id="menuWidget" role="dialog" aria-label="Menú de herramientas" title="Haz clic en el icono para abrir o minimizar">
+  <div class="widget-header" id="widgetHeader">
+    <div class="widget-title">
+      <!-- AQUI ESTÁ EL EMOJI -->
+      <div class="logo" id="widgetLogo" style="font-size: 26px;">🤖</div>
+      <div>
+        <h4 style="margin:0">Asistente ATC</h4>
+        <div style="font-size:0.78rem;color:rgba(255,255,255,0.75)">Portal de herramientas</div>
+      </div>
     </div>
+    <div class="widget-controls">
+      <!-- Solo el botón X que ahora minimiza/expande -->
+      <div class="close-icon" id="closeWidget" title="Minimizar menú">✕</div>
+    </div>
+  </div>
+  <div class="widget-body" id="widgetBody">
+    <div class="menu-section" id="menuSection">
+      <!-- EDITA / DUPLICA estas entradas para añadir tus páginas -->
+      <div class="menu-item" id="menuTickets" data-url="https://supervisor1atcvento-ctrl.github.io/tickets_atc/" onclick="loadPage(this)">
+        <span class="item-text">Tickets ATC</span><span>🎫</span>
+      </div>
 
-    <script>
-        function procesarDatos() {
-            // Obtener los valores seleccionados en el formulario
-            const accion = document.getElementById("accionBase").value;
-            const reporte = document.getElementById("reporteHerramientas").value;
+      <div class="menu-item" data-url="https://supervisor1atcvento-ctrl.github.io/indicadores/" onclick="loadPage(this)">
+        <span class="item-text">Indicadores</span><span>📊</span>
+      </div>
 
-            // Identificar los elementos donde se mostrará el resultado
-            const contenedorResultados = document.getElementById("resultado-container");
-            const divAccion = document.getElementById("resultado-accion");
-            const divHerramientas = document.getElementById("resultado-herramientas");
+      <div class="menu-item" data-url="https://script.google.com/macros/s/AKfycbzSF4oEkoujflBAHpuGQFS3HC2mTUaOjKbKpt0wz0BzQ_XM0-t0Qm3juTgzHBiBxAJ6/exec" onclick="loadPage(this)">
+        <span class="item-text">Tiendas VS CESVES</span><span>🔍️</span>
+      </div>
+      
+      <div class="menu-item" data-url="https://supervisor1atcvento-ctrl.github.io/buscador-de-extensiones-de-garantia/" onclick="loadPage(this)">
+        <span class="item-text">Buscador de extensiónes de garantia</span><span>🔍️</span>
+      </div>
+      
+      <div class="menu-item" data-url="https://supervisor1atcvento-ctrl.github.io/calculadora-de-servicios/" onclick="loadPage(this)">
+        <span class="item-text">Calculadora de servicios</span><span>🧮</span>
+      </div>
 
-            // Validar que el usuario haya seleccionado ambas opciones
-            if (accion === "" || reporte === "") {
-                alert("Por favor, selecciona ambas opciones antes de continuar.");
-                return;
-            }
+      </div>
+      <div class="menu-item" data-url="https://supervisor1atcvento-ctrl.github.io/Directorio-POST-VENTA/" onclick="loadPage(this)">
+        <span class="item-text">Directorio POST-VENTA</span><span>📓</span>
+      </div>
 
-            // --- 1. Lógica para los colores de la Acción Base ---
-            if (accion === "SE REQUIERE CHECK LIST") {
-                divAccion.innerHTML = `<span class="texto-rojo">${accion}</span>`;
-            } else if (accion === "PASA COMO GARANTIA") {
-                divAccion.innerHTML = `<span class="texto-verde">${accion}</span>`;
-            }
+      <div class="menu-item" data-url="https://supervisor1atcvento-ctrl.github.io/segmentador-de-agencias/" onclick="loadPage(this)">
+        <span class="item-text">Segmentador ATC</span><span>🔍️</span>
+      </div>
+      <div class="menu-item" data-url="https://supervisor1atcvento-ctrl.github.io/buscador-de-cesves/" onclick="loadPage(this)">
+        <span class="item-text">Buscador CESVE</span><span>🔍️</span>
+      </div>
+      <!-- FIN de entradas editables -->
+    </div>
+  </div>
+  <div class="widget-footer">
+    <div style="font-size:0.85rem">VENTO © 2026</div>
+    <div style="font-size:0.82rem;color:rgba(255,255,255,0.7)">ATC</div>
+  </div>
+</aside>
+<script>
+const widget = document.getElementById('menuWidget');
+const closeWidget = document.getElementById('closeWidget');
+const mainFrame = document.getElementById('mainFrame');
 
-            // --- 2. Lógica para cambiar el texto del Kit de Herramientas ---
-            if (reporte === "SI REPORTA") {
-                divHerramientas.innerText = "NO CUENTA CON KIT DE HERRAMIENTAS";
-            } else if (reporte === "NO REPORTA") {
-                divHerramientas.innerText = "SI CUENTA CON KIT DE HERRAMIENTAS";
-            }
+/* Estado inicial */
+let isCollapsed = false;
 
-            // Mostrar el cuadro de resultados con una animación ligera (haciéndolo visible)
-            contenedorResultados.style.display = "block";
-        }
-    </script>
+/* Click sobre el icono circular cuando está colapsado: expande */
+widget.addEventListener('click', function(e){
+  // Si el widget está colapsado, cualquier click en él lo expande
+  if(widget.classList.contains('collapsed')){
+    expandWidget();
+    return;
+  }
+});
 
+/* El botón X ahora minimiza/colapsa (no cierra) */
+closeWidget.addEventListener('click', function(e){
+  e.stopPropagation();
+  if(widget.classList.contains('collapsed')){
+    expandWidget();
+  } else {
+    collapseWidget();
+  }
+});
+
+/* Funciones para colapsar/expandir */
+function collapseWidget(){
+  widget.classList.add('collapsed');
+  isCollapsed = true;
+}
+function expandWidget(){
+  widget.classList.remove('collapsed');
+  isCollapsed = false;
+}
+
+/* Cargar página en el iframe principal */
+function loadPage(el){
+  document.querySelectorAll('.menu-item').forEach(i=>i.classList.remove('active'));
+  el.classList.add('active');
+  const url = el.getAttribute('data-url');
+  if(url){
+    mainFrame.src = url;
+  }
+}
+
+/* Inicial: marcar Tickets como activo y cargar por defecto */
+document.addEventListener('DOMContentLoaded', () => {
+  const tickets = document.getElementById('menuTickets');
+  if(tickets) tickets.classList.add('active');
+  // Opcional: Si quieres que inicie colapsado al cargar la página, descomenta la siguiente línea:
+  // collapseWidget();
+});
+</script>
 </body>
 </html>
