@@ -25,7 +25,6 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
 /* Iframe full area */
 .frame-wrap{flex:1;display:block}
 .frame{width:100%;height:100vh;border:0;display:block;background:#fff}
-
 /* Widget fixed bottom-right, non-draggable */
 .widget {
   position:fixed;
@@ -44,7 +43,6 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
   transition:transform .22s ease, opacity .18s ease, width .18s ease, height .18s ease, border-radius .18s ease, background .22s ease, box-shadow .22s ease;
   cursor:default;
 }
-
 /* Header del widget */
 .widget-header{
   display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.04);
@@ -56,13 +54,11 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
 }
 .widget-title h4{margin:0;font-size:0.95rem}
 .widget-controls{display:flex;gap:8px;align-items:center}
-
 /* Botón X (minimiza) */
 .widget-controls .close-icon{
   width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:700;
 }
 .widget-controls .close-icon:hover{background:rgba(255,255,255,0.06)}
-
 /* Contenido del menú */
 .widget-body{padding:12px 12px 16px 12px;overflow:auto;flex:1}
 .menu-section{margin-bottom:10px}
@@ -71,11 +67,8 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
 }
 .menu-item:hover{background:rgba(255,255,255,0.02);transform:translateY(-2px)}
 .menu-item.active{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#fff;font-weight:600;border-color:rgba(255,255,255,0.04)}
-
 /* Footer pequeño en widget */
 .widget-footer{padding:10px 12px;border-top:1px solid rgba(255,255,255,0.03);font-size:0.82rem;color:rgba(255,255,255,0.7);display:flex;justify-content:space-between;align-items:center}
-
-
 /* =========================================
    ESTADO COLAPSADO (ASISTENTE FLOTANTE)
    ========================================= */
@@ -88,19 +81,16 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
   padding: 0 !important;
   overflow: visible !important;
 }
-
 .widget.collapsed .widget-header {
   border: none !important;
   padding: 0 !important;
   height: 100%;
   justify-content: center;
 }
-
 .widget.collapsed .widget-title {
   justify-content: center;
   gap: 0;
 }
-
 /* El logo se convierte en el emoji flotante 100% transparente */
 .widget.collapsed .logo {
   width: 64px !important;
@@ -115,7 +105,6 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
   justify-content: center;
   filter: drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.15)); /* Sombra suave exclusiva para el contorno del emoji */
 }
-
 /* Ocultar el resto del contenido al minimizar */
 .widget.collapsed .widget-title > div:not(.logo),
 .widget.collapsed .widget-controls,
@@ -124,6 +113,103 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
   display: none !important;
 }
 
+/* =========================================
+   ESTILOS DEL MODAL DE BATERÍAS (VIN)
+   ========================================= */
+.vin-overlay {
+  display: none; /* Oculto por defecto */
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 10000; /* Por encima de todo, incluso del widget */
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(5px);
+}
+.vin-modal {
+  background-color: #121212; /* Negro */
+  border: 1px solid #333;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 380px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
+  position: relative;
+  color: #fff; /* Blanco */
+}
+.vin-close-btn {
+  position: absolute;
+  top: 14px; right: 14px;
+  background: transparent;
+  border: none;
+  color: #aaa;
+  font-size: 20px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.vin-close-btn:hover { color: #fff; }
+.vin-modal h3 {
+  margin: 0 0 5px 0;
+  font-size: 1.3rem;
+  text-align: center;
+}
+.vin-modal p {
+  margin: 0 0 20px 0;
+  font-size: 0.85rem;
+  color: #aaa;
+  text-align: center;
+}
+.vin-input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background-color: #2a2a2a;
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  outline: none;
+  margin-bottom: 16px;
+  transition: border-color 0.2s;
+}
+.vin-input:focus { border-color: #ff6600; /* Naranja */ }
+.vin-submit {
+  width: 100%;
+  padding: 12px;
+  background-color: #ff6600; /* Naranja */
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.vin-submit:hover { background-color: #e05500; }
+.vin-submit:disabled { background-color: #444; cursor: not-allowed; }
+
+.vin-result {
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: 8px;
+  text-align: center;
+  display: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+.vin-result.success { background: rgba(46, 125, 50, 0.2); border: 1px solid #2e7d32; color: #81c784; }
+.vin-result.danger { background: rgba(198, 40, 40, 0.2); border: 1px solid #c62828; color: #e57373; }
+.vin-result.error { background: rgba(255, 152, 0, 0.2); border: 1px solid #ffb74d; color: #ffb74d; }
+
+.vin-spinner {
+  display: inline-block; width: 14px; height: 14px;
+  border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
+  border-radius: 50%; animation: spin 0.8s linear infinite;
+  vertical-align: middle; margin-right: 8px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 
 /* Responsive adjustments */
 @media (max-width:900px){
@@ -138,6 +224,23 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
     <iframe id="mainFrame" class="frame" src="https://supervisor1atcvento-ctrl.github.io/tickets_atc/" title="Contenido principal"></iframe>
   </div>
 </div>
+
+<!-- =========================================
+     MODAL EMERGENTE PARA BÚSQUEDA DE BATERÍAS
+     ========================================= -->
+<div class="vin-overlay" id="vinModalOverlay">
+  <div class="vin-modal">
+    <button class="vin-close-btn" onclick="cerrarModalVIN()" title="Cerrar ventana">✕</button>
+    <h3>Baterías activadas en planta</h3>
+    <p>Coloca el VIN de la unidad</p>
+    <form onsubmit="ejecutarBusquedaVIN(event)">
+      <input type="text" id="vinInput" class="vin-input" placeholder="Ingrese VIN de la moto..." autocomplete="off" required>
+      <button type="submit" id="vinSubmitBtn" class="vin-submit">Validar</button>
+    </form>
+    <div id="vinResultMsg" class="vin-result"></div>
+  </div>
+</div>
+
 <!-- Widget fijo en la esquina inferior derecha -->
 <aside class="widget" id="menuWidget" role="dialog" aria-label="Menú de herramientas" title="Haz clic en el icono para abrir o minimizar">
   <div class="widget-header" id="widgetHeader">
@@ -156,23 +259,26 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
   </div>
   <div class="widget-body" id="widgetBody">
     <div class="menu-section" id="menuSection">
+      
+      <!-- BOTÓN PARA ABRIR LA CONSULTA RÁPIDA (MODAL) -->
+      <div class="menu-item" style="border: 1px solid #ff6600; background: rgba(255, 102, 0, 0.1);" onclick="abrirModalVIN()">
+        <span class="item-text" style="color: #ff6600; font-weight: 600;">Baterías activadas en planta</span><span>🔋</span>
+      </div>
+      <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 12px 0;">
+
       <!-- EDITA / DUPLICA estas entradas para añadir tus páginas -->
       <div class="menu-item" id="menuTickets" data-url="https://supervisor1atcvento-ctrl.github.io/tickets_atc/" onclick="loadPage(this)">
         <span class="item-text">Tickets ATC</span><span>🎫</span>
       </div>
-
       <div class="menu-item" data-url="https://supervisor1atcvento-ctrl.github.io/indicadores/" onclick="loadPage(this)">
         <span class="item-text">Indicadores</span><span>📊</span>
       </div>
-
       <div class="menu-item" data-url="https://supervisor1atcvento-ctrl.github.io/segmentador-de-agencias/" onclick="loadPage(this)">
         <span class="item-text">Segmentador de Agencias</span><span>🔍️</span>
       </div>
-
       <div class="menu-item" data-url="https://supervisor1atcvento-ctrl.github.io/buscador-de-cesves/" onclick="loadPage(this)">
         <span class="item-text">Buscador CESVE</span><span>🔍️</span>
       </div>
-
       <div class="menu-item" data-url="https://script.google.com/macros/s/AKfycbzSF4oEkoujflBAHpuGQFS3HC2mTUaOjKbKpt0wz0BzQ_XM0-t0Qm3juTgzHBiBxAJ6/exec" onclick="loadPage(this)">
         <span class="item-text">Tiendas VS CESVES</span><span>🔍️</span>
       </div>
@@ -180,21 +286,16 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
       <div class="menu-item" data-url="https://supervisor1atcvento-ctrl.github.io/buscador-de-extensiones-de-garantia/" onclick="loadPage(this)">
         <span class="item-text">Buscador de extensiónes de garantia</span><span>🔍️</span>
       </div>
-
-<a href="https://docs.google.com/forms/d/e/1FAIpQLSfFrOUDVc3YTUqJJav7e04a7utTbRtU1Jf0SbKY539xmyMniA/viewform?usp=sharing" target="_blank" class="menu-item" style="text-decoration: none; color: inherit; display: block;">
-  <span class="item-text">Solicitar Extensiónes de Garantia</span><span>🗳️</span>
-</a>
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSfFrOUDVc3YTUqJJav7e04a7utTbRtU1Jf0SbKY539xmyMniA/viewform?usp=sharing" target="_blank" class="menu-item" style="text-decoration: none; color: inherit; display: block;">
+        <span class="item-text">Solicitar Extensiónes de Garantia</span><span>🗳️</span>
+      </a>
       
       <div class="menu-item" data-url="https://supervisor1atcvento-ctrl.github.io/calculadora-de-servicios/" onclick="loadPage(this)">
         <span class="item-text">Calculadora de servicios</span><span>🧮</span>
       </div>
-
-      </div>
       <div class="menu-item" data-url="https://supervisor1atcvento-ctrl.github.io/Directorio-POST-VENTA/" onclick="loadPage(this)">
         <span class="item-text">Directorio POST-VENTA</span><span>📓</span>
       </div>
-
-
       <!-- FIN de entradas editables -->
     </div>
   </div>
@@ -203,24 +304,23 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
     <div style="font-size:0.82rem;color:rgba(255,255,255,0.7)">ATC</div>
   </div>
 </aside>
+
 <script>
+// =========================================
+// LÓGICA DEL WIDGET (Menú)
+// =========================================
 const widget = document.getElementById('menuWidget');
 const closeWidget = document.getElementById('closeWidget');
 const mainFrame = document.getElementById('mainFrame');
-
-/* Estado inicial */
 let isCollapsed = false;
 
-/* Click sobre el icono circular cuando está colapsado: expande */
 widget.addEventListener('click', function(e){
-  // Si el widget está colapsado, cualquier click en él lo expande
   if(widget.classList.contains('collapsed')){
     expandWidget();
     return;
   }
 });
 
-/* El botón X ahora minimiza/colapsa (no cierra) */
 closeWidget.addEventListener('click', function(e){
   e.stopPropagation();
   if(widget.classList.contains('collapsed')){
@@ -230,7 +330,6 @@ closeWidget.addEventListener('click', function(e){
   }
 });
 
-/* Funciones para colapsar/expandir */
 function collapseWidget(){
   widget.classList.add('collapsed');
   isCollapsed = true;
@@ -240,7 +339,6 @@ function expandWidget(){
   isCollapsed = false;
 }
 
-/* Cargar página en el iframe principal */
 function loadPage(el){
   document.querySelectorAll('.menu-item').forEach(i=>i.classList.remove('active'));
   el.classList.add('active');
@@ -250,13 +348,86 @@ function loadPage(el){
   }
 }
 
-/* Inicial: marcar Tickets como activo y cargar por defecto */
 document.addEventListener('DOMContentLoaded', () => {
   const tickets = document.getElementById('menuTickets');
   if(tickets) tickets.classList.add('active');
-  // Opcional: Si quieres que inicie colapsado al cargar la página, descomenta la siguiente línea:
-  // collapseWidget();
 });
+
+
+// =========================================
+// LÓGICA DEL MODAL DE VIN (Consulta rápida)
+// =========================================
+const modalOverlay = document.getElementById('vinModalOverlay');
+const vinInput = document.getElementById('vinInput');
+const vinResult = document.getElementById('vinResultMsg');
+
+function abrirModalVIN() {
+  modalOverlay.style.display = 'flex';
+  collapseWidget(); // Ocultamos el menú principal para despejar la vista
+  vinInput.focus(); // Coloca el cursor en el input automáticamente
+}
+
+function cerrarModalVIN() {
+  modalOverlay.style.display = 'none';
+  vinInput.value = ''; // Limpiar el input al cerrar
+  vinResult.style.display = 'none'; // Ocultar mensaje anterior
+}
+
+// Cerrar si se hace clic fuera del cuadro negro
+modalOverlay.addEventListener('click', function(e) {
+  if (e.target === this) {
+    cerrarModalVIN();
+  }
+});
+
+// Función de consulta directa a la base
+async function ejecutarBusquedaVIN(e) {
+  e.preventDefault();
+  
+  const btnSubmit = document.getElementById('vinSubmitBtn');
+  const vinBuscado = vinInput.value.trim().toUpperCase();
+
+  if (!vinBuscado) return;
+
+  btnSubmit.disabled = true;
+  btnSubmit.innerHTML = '<span class="vin-spinner"></span>Buscando...';
+  vinResult.style.display = 'none';
+
+  const SPREADSHEET_ID = '1qxnp3r976gbgxO_ws0XymcMkH0XRklldWp5HEf-gaU4';
+  const GID = '1280448484';
+
+  try {
+    const querySQL = encodeURIComponent(`select C where upper(C) = '${vinBuscado}' limit 1`);
+    const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tq=${querySQL}&gid=${GID}`;
+
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Error de red');
+
+    const text = await response.text();
+    const jsonString = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
+    const data = JSON.parse(jsonString);
+
+    btnSubmit.disabled = false;
+    btnSubmit.innerText = 'Validar';
+
+    if (data.table && data.table.rows && data.table.rows.length > 0) {
+      mostrarMensajeVIN('success', '✅ ENCONTRADO EN LA BASE');
+    } else {
+      mostrarMensajeVIN('danger', '❌ NO SE ENCUENTRA EN LA BASE');
+    }
+
+  } catch (err) {
+    btnSubmit.disabled = false;
+    btnSubmit.innerText = 'Validar';
+    mostrarMensajeVIN('error', '⚠️ Error de consulta: ' + err.message);
+  }
+}
+
+function mostrarMensajeVIN(tipo, texto) {
+  vinResult.className = 'vin-result ' + tipo;
+  vinResult.innerText = texto;
+  vinResult.style.display = 'block';
+}
 </script>
 </body>
 </html>
