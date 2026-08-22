@@ -4,217 +4,196 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Centro de Mandos ATC — Portal</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<!-- Tipografía y FontAwesome institucional -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
-:root{
-  --accent:#0b5cff;
-  --accent-2:#ff7a00;
-  --muted:#6b7280;
-  --bg:#f5f7fb;
-  --card:#ffffff;
-  --widget-bg:linear-gradient(180deg, rgba(6,12,34,0.96), rgba(10,12,16,0.95));
-  --radius:14px;
-  --shadow: 0 18px 50px rgba(2,6,23,0.45);
-  --widget-width:360px;
-  --widget-height:520px;
-  --widget-collapsed-size:64px;
+/* 
+  ESTÁNDARES INSTITUCIONALES VENTO
+  Colores Estrictos: Negro, Blanco y Naranja
+*/
+:root {
+  --vento-white: #FFFFFF;
+  --vento-bg: #F8F9FA;
+  --vento-black: #1A1A1A;
+  --vento-gray-dark: #4B5563;
+  --vento-gray-light: #E5E7EB;
+  --vento-orange: #F28F17;
+  --vento-orange-hover: #D97D11;
+  
+  --radius: 12px;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 18px 50px rgba(0, 0, 0, 0.35);
+  --widget-width: 360px;
+  --widget-height: 540px;
+  --widget-collapsed-size: 64px;
 }
 *{box-sizing:border-box}
-html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(--bg) 100%);font-family:Inter,system-ui,Segoe UI,Roboto,-apple-system,Arial;color:#0f1724}
-.app{height:100vh;display:flex;flex-direction:column}
+html,body{
+  height:100%; margin:0; 
+  background-color: var(--vento-bg);
+  font-family: 'Inter', system-ui, sans-serif; 
+  color: var(--vento-black);
+}
+.app{height:100vh; display:flex; flex-direction:column}
+
 /* Iframe full area */
-.frame-wrap{flex:1;display:block}
-.frame{width:100%;height:100vh;border:0;display:block;background:#fff}
-/* Widget fixed bottom-right, non-draggable */
+.frame-wrap{flex:1; display:block}
+.frame{width:100%; height:100vh; border:0; display:block; background:var(--vento-white)}
+
+/* Widget fijo inferior derecho */
 .widget {
   position:fixed;
-  right:24px;
-  bottom:24px;
-  width:var(--widget-width);
-  height:var(--widget-height);
+  right:24px; bottom:24px;
+  width:var(--widget-width); height:var(--widget-height);
   border-radius:var(--radius);
-  background:var(--widget-bg);
-  color:#fff;
-  box-shadow:var(--shadow);
-  display:flex;
-  flex-direction:column;
-  overflow:hidden;
-  z-index:9999;
-  transition:transform .22s ease, opacity .18s ease, width .18s ease, height .18s ease, border-radius .18s ease, background .22s ease, box-shadow .22s ease;
-  cursor:default;
+  background: var(--vento-black);
+  border: 2px solid var(--vento-gray-dark);
+  color: var(--vento-white);
+  box-shadow:var(--shadow-lg);
+  display:flex; flex-direction:column;
+  overflow:hidden; z-index:9999;
+  transition: all .22s ease;
 }
-/* Header del widget */
 .widget-header{
-  display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.04);
+  display:flex; align-items:center; justify-content:space-between; 
+  padding:16px; border-bottom:2px solid #333;
 }
-.widget-title{display:flex;align-items:center;gap:10px; width: 100%;}
+.widget-title{display:flex; align-items:center; gap:12px; width: 100%;}
 .widget-title .logo{
-  width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;
-  transition: all 0.22s ease;
+  width:44px; height:44px; border-radius:10px; 
+  background: var(--vento-orange); 
+  display:flex; align-items:center; justify-content:center; 
+  font-weight:700; color:var(--vento-white); font-size: 24px;
 }
-.widget-title h4{margin:0;font-size:0.95rem}
-.widget-controls{display:flex;gap:8px;align-items:center}
-/* Botón X (minimiza) */
+.widget-title h4{margin:0; font-size:1rem; font-weight: 700; letter-spacing: 0.5px;}
+.widget-controls{display:flex; gap:8px; align-items:center}
 .widget-controls .close-icon{
-  width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:700;
+  width:32px; height:32px; border-radius:8px; background:transparent; 
+  border: 2px solid var(--vento-gray-dark);
+  display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:700;
+  transition: all 0.2s;
 }
-.widget-controls .close-icon:hover{background:rgba(255,255,255,0.06)}
-/* Contenido del menú */
-.widget-body{padding:12px 12px 16px 12px;overflow:auto;flex:1}
-.menu-section{margin-bottom:10px}
+.widget-controls .close-icon:hover{
+  background: var(--vento-white); color: var(--vento-black); border-color: var(--vento-white);
+}
+
+.widget-body{padding:16px; overflow:auto; flex:1}
 .menu-item{
-  display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:transparent;color:#e6eefc;cursor:pointer;margin-bottom:8px;border:1px solid transparent;
+  display:flex; justify-content:space-between; align-items:center; 
+  padding:12px; border-radius:8px; background:transparent; 
+  color:var(--vento-gray-light); cursor:pointer; margin-bottom:8px; 
+  border:2px solid transparent; font-weight: 500; font-size: 14px;
+  transition: all 0.2s;
 }
-.menu-item:hover{background:rgba(255,255,255,0.02);transform:translateY(-2px)}
-.menu-item.active{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#fff;font-weight:600;border-color:rgba(255,255,255,0.04)}
-/* Footer pequeño en widget */
-.widget-footer{padding:10px 12px;border-top:1px solid rgba(255,255,255,0.03);font-size:0.82rem;color:rgba(255,255,255,0.7);display:flex;justify-content:space-between;align-items:center}
-/* =========================================
-   ESTADO COLAPSADO (ASISTENTE FLOTANTE)
-   ========================================= */
+.menu-item i { font-size: 16px; color: var(--vento-gray-dark); }
+.menu-item:hover{
+  background: #2a2a2a; border-color: #444; color: var(--vento-white);
+}
+.menu-item:hover i { color: var(--vento-orange); }
+.menu-item.active{
+  background: var(--vento-orange); color: var(--vento-white); 
+  font-weight:700; border-color: var(--vento-orange-hover);
+}
+.menu-item.active i { color: var(--vento-white); }
+
+.widget-footer{
+  padding:12px 16px; border-top:2px solid #333; font-size:0.82rem; 
+  color:var(--vento-gray-dark); display:flex; justify-content:space-between; align-items:center;
+  font-weight: 600; text-transform: uppercase;
+}
+
+/* WIDGET COLAPSADO */
 .widget.collapsed {
   width: var(--widget-collapsed-size) !important;
   height: var(--widget-collapsed-size) !important;
   border-radius: 50% !important;
-  background: transparent !important; /* Elimina el cuadro negro */
-  box-shadow: none !important; /* Elimina la sombra del contenedor completo */
+  background: transparent !important; 
+  border: none !important;
+  box-shadow: none !important; 
   padding: 0 !important;
   overflow: visible !important;
 }
-.widget.collapsed .widget-header {
-  border: none !important;
-  padding: 0 !important;
-  height: 100%;
-  justify-content: center;
-}
-.widget.collapsed .widget-title {
-  justify-content: center;
-  gap: 0;
-}
-/* El logo se convierte en el emoji flotante 100% transparente */
+.widget.collapsed .widget-header { border: none !important; padding: 0 !important; height: 100%; justify-content: center; }
+.widget.collapsed .widget-title { justify-content: center; gap: 0; }
 .widget.collapsed .logo {
-  width: 64px !important;
-  height: 64px !important;
-  border-radius: 0 !important;       /* Quitamos la forma circular */
-  background: transparent !important; /* QUITAMOS EL FONDO AZUL/DEGRADADO */
-  font-size: 48px !important;         /* Hacemos el emoji un poco más grande ya que no tiene fondo */
-  cursor: pointer;
-  box-shadow: none !important;        /* Quitamos la sombra pesada del fondo */
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
-  filter: drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.15)); /* Sombra suave exclusiva para el contorno del emoji */
+  width: 64px !important; height: 64px !important; border-radius: 50% !important; 
+  background: var(--vento-orange) !important; font-size: 32px !important; cursor: pointer;
+  box-shadow: 0 4px 12px rgba(242, 143, 23, 0.4) !important;
 }
-/* Ocultar el resto del contenido al minimizar */
 .widget.collapsed .widget-title > div:not(.logo),
 .widget.collapsed .widget-controls,
 .widget.collapsed .widget-body,
-.widget.collapsed .widget-footer {
-  display: none !important;
-}
+.widget.collapsed .widget-footer { display: none !important; }
 
-/* =========================================
-   ESTILOS DEL MODAL DE BATERÍAS (VIN)
-   ========================================= */
-.vin-overlay {
-  display: none; /* Oculto por defecto */
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  z-index: 10000; /* Por encima de todo, incluso del widget */
-  justify-content: center;
-  align-items: center;
-  backdrop-filter: blur(5px);
+/* MODAL DE BÚSQUEDA UNIVERSAL DE VIN */
+.overlay-blur {
+  display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(26, 26, 26, 0.7); backdrop-filter: blur(5px); z-index: 10000;
+  justify-content: center; align-items: center;
 }
-.vin-modal {
-  background-color: #121212; /* Negro */
-  border: 1px solid #333;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 380px;
-  padding: 24px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
-  position: relative;
-  color: #fff; /* Blanco */
+.panel-modal {
+  background-color: var(--vento-white); border: 2px solid var(--vento-black);
+  border-radius: 16px; width: 90%; max-width: 450px; padding: 0;
+  box-shadow: var(--shadow-lg); position: relative; color: var(--vento-black);
+  overflow: hidden;
 }
-.vin-close-btn {
-  position: absolute;
-  top: 14px; right: 14px;
-  background: transparent;
-  border: none;
-  color: #aaa;
-  font-size: 20px;
-  cursor: pointer;
-  transition: color 0.2s;
+.modal-header {
+  padding: 20px 24px; border-bottom: 2px solid var(--vento-black);
+  background: var(--vento-bg); display: flex; justify-content: space-between; align-items: center;
 }
-.vin-close-btn:hover { color: #fff; }
-.vin-modal h3 {
-  margin: 0 0 5px 0;
-  font-size: 1.3rem;
-  text-align: center;
+.modal-header-title { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+.modal-header-title i { color: var(--vento-orange); }
+.modal-close {
+  background: var(--vento-white); border: 2px solid var(--vento-black);
+  width: 30px; height: 30px; border-radius: 50%; color: var(--vento-black);
+  font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center;
 }
-.vin-modal p {
-  margin: 0 0 20px 0;
-  font-size: 0.85rem;
-  color: #aaa;
-  text-align: center;
-}
-.vin-input {
-  width: 100%;
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid #333;
-  background-color: #2a2a2a;
-  color: #fff;
-  font-size: 1.05rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  outline: none;
-  margin-bottom: 16px;
-  transition: border-color 0.2s;
-}
-.vin-input:focus { border-color: #ff6600; /* Naranja */ }
-.vin-submit {
-  width: 100%;
-  padding: 12px;
-  background-color: #ff6600; /* Naranja */
-  color: #ffffff;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-.vin-submit:hover { background-color: #e05500; }
-.vin-submit:disabled { background-color: #444; cursor: not-allowed; }
+.modal-close:hover { background: var(--vento-orange); color: var(--vento-white); border-color: var(--vento-orange); }
 
-.vin-result {
-  margin-top: 16px;
-  padding: 14px;
-  border-radius: 8px;
-  text-align: center;
-  display: none;
-  font-weight: 700;
-  font-size: 0.9rem;
-}
-.vin-result.success { background: rgba(46, 125, 50, 0.2); border: 1px solid #2e7d32; color: #81c784; }
-.vin-result.danger { background: rgba(198, 40, 40, 0.2); border: 1px solid #c62828; color: #e57373; }
-.vin-result.error { background: rgba(255, 152, 0, 0.2); border: 1px solid #ffb74d; color: #ffb74d; }
+.modal-body { padding: 24px; }
+.modal-body p { margin: 0 0 16px 0; font-size: 14px; color: var(--vento-gray-dark); font-weight: 500; }
 
-.vin-spinner {
-  display: inline-block; width: 14px; height: 14px;
-  border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
-  border-radius: 50%; animation: spin 0.8s linear infinite;
-  vertical-align: middle; margin-right: 8px;
+.input-vin {
+  width: 100%; padding: 14px 18px; border-radius: 8px; border: 2px solid var(--vento-black);
+  background-color: var(--vento-white); color: var(--vento-black); font-size: 16px;
+  font-weight: 700; text-transform: uppercase; outline: none; margin-bottom: 16px;
+  font-family: 'Inter', sans-serif; transition: all 0.3s ease;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
+.input-vin:focus { border-color: var(--vento-orange); box-shadow: 0 0 0 4px rgba(242, 143, 23, 0.15); }
+.input-vin::placeholder { color: #9CA3AF; font-weight: 500; text-transform: none; }
 
-/* Responsive adjustments */
+.btn-search {
+  width: 100%; padding: 14px; background-color: var(--vento-black); color: var(--vento-white);
+  border: 2px solid var(--vento-black); border-radius: 8px; font-size: 15px; font-weight: 800;
+  cursor: pointer; transition: all 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.btn-search:hover { background-color: var(--vento-orange); border-color: var(--vento-orange); }
+.btn-search:disabled { background-color: var(--vento-gray-dark); border-color: var(--vento-gray-dark); cursor: not-allowed; }
+
+/* Resultados de Bases de Datos */
+.db-results-container { margin-top: 20px; display: none; flex-direction: column; gap: 12px; }
+.db-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 16px; border-radius: 8px; border: 2px solid var(--vento-gray-light);
+  background: var(--vento-bg);
+}
+.db-name { font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+
+/* Badges Corporativos */
+.badge {
+  display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px;
+  border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.badge-orange { background-color: var(--vento-orange); color: var(--vento-white); border: 1px solid var(--vento-orange-hover); }
+.badge-black { background-color: var(--vento-black); color: var(--vento-white); border: 1px solid var(--vento-black); }
+.badge-white { background-color: var(--vento-white); color: var(--vento-black); border: 1px solid var(--vento-black); }
+
 @media (max-width:900px){
-  .widget{right:12px;bottom:12px;width:90%;height:420px}
-  .widget.collapsed{right:12px;bottom:12px}
+  .widget{right:16px; bottom:16px; width:90%; height:460px}
+  .widget.collapsed{right:16px; bottom:16px}
 }
 </style>
 </head>
@@ -226,82 +205,87 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
 </div>
 
 <!-- =========================================
-     MODAL EMERGENTE PARA BÚSQUEDA DE BATERÍAS
+     MODAL BÚSQUEDA UNIVERSAL DE VIN
      ========================================= -->
-<div class="vin-overlay" id="vinModalOverlay">
-  <div class="vin-modal">
-    <button class="vin-close-btn" onclick="cerrarModalVIN()" title="Cerrar ventana">✕</button>
-    <h3>Baterías activadas en planta</h3>
-    <p>Coloca el VIN de la unidad</p>
-    <form onsubmit="ejecutarBusquedaVIN(event)">
-      <input type="text" id="vinInput" class="vin-input" placeholder="Ingrese VIN de la moto..." autocomplete="off" required>
-      <button type="submit" id="vinSubmitBtn" class="vin-submit">Validar</button>
-    </form>
-    <div id="vinResultMsg" class="vin-result"></div>
+<div class="overlay-blur" id="vinModalOverlay">
+  <div class="panel-modal">
+    <div class="modal-header">
+      <div class="modal-header-title">
+        <i class="fa-solid fa-magnifying-glass"></i> Búsqueda Universal VIN
+      </div>
+      <button class="modal-close" onclick="cerrarModalVIN()" title="Cerrar"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <p>Ingresa el número de serie para consultar su registro en todas las bases operativas de Vento.</p>
+      <form onsubmit="ejecutarBusquedaUniversal(event)">
+        <input type="text" id="vinInput" class="input-vin" placeholder="Ingrese VIN (17 caracteres)..." autocomplete="off" maxlength="17" required>
+        <button type="submit" id="vinSubmitBtn" class="btn-search">
+          <i class="fa-solid fa-database"></i> Consultar Bases
+        </button>
+      </form>
+      
+      <div id="dbResults" class="db-results-container">
+        <!-- Resultados inyectados por JS -->
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- Widget fijo en la esquina inferior derecha -->
-<aside class="widget" id="menuWidget" role="dialog" aria-label="Menú de herramientas" title="Haz clic en el icono para abrir o minimizar">
+<!-- Widget fijo -->
+<aside class="widget" id="menuWidget">
   <div class="widget-header" id="widgetHeader">
     <div class="widget-title">
-      <!-- AQUI ESTÁ EL EMOJI -->
-      <div class="logo" id="widgetLogo" style="font-size: 26px;">🤖</div>
+      <div class="logo" id="widgetLogo"><i class="fa-solid fa-motorcycle"></i></div>
       <div>
-        <h4 style="margin:0">Asistente ATC</h4>
-        <div style="font-size:0.78rem;color:rgba(255,255,255,0.75)">Portal de herramientas</div>
+        <h4>Asistente ATC</h4>
+        <div style="font-size:0.75rem; color:var(--vento-gray-light); font-weight:500;">Portal de herramientas</div>
       </div>
     </div>
     <div class="widget-controls">
-      <!-- Solo el botón X que ahora minimiza/expande -->
-      <div class="close-icon" id="closeWidget" title="Minimizar menú">✕</div>
+      <div class="close-icon" id="closeWidget" title="Minimizar menú"><i class="fa-solid fa-minus"></i></div>
     </div>
   </div>
+  
   <div class="widget-body" id="widgetBody">
-    <div class="menu-section" id="menuSection">
-      
-      <!-- BOTÓN PARA ABRIR LA CONSULTA RÁPIDA (MODAL) -->
-      <div class="menu-item" style="border: 1px solid #ff6600; background: rgba(255, 102, 0, 0.1);" onclick="abrirModalVIN()">
-        <span class="item-text" style="color: #ff6600; font-weight: 600;">Baterías activadas en planta</span><span>🔋</span>
+    <div class="menu-section">
+      <!-- BOTÓN DE BÚSQUEDA UNIVERSAL -->
+      <div class="menu-item" style="border-color: var(--vento-orange); background: rgba(242, 143, 23, 0.1); color: var(--vento-orange);" onclick="abrirModalVIN()">
+        <span>Búsqueda Universal de VIN</span><i class="fa-solid fa-magnifying-glass" style="color: var(--vento-orange);"></i>
       </div>
-      <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 12px 0;">
-
-      <!-- EDITA / DUPLICA estas entradas para añadir tus páginas -->
-      <div class="menu-item" id="menuTickets" data-url="https://supervisor1atcvento-ctrl.github.io/tickets_atc/" onclick="loadPage(this)">
-        <span class="item-text">Tickets ATC</span><span>🎫</span>
+      <hr style="border: 0; border-top: 2px dashed #444; margin: 16px 0;">
+      
+      <!-- Herramientas -->
+      <div class="menu-item active" id="menuTickets" data-url="https://supervisor1atcvento-ctrl.github.io/tickets_atc/" onclick="loadPage(this)">
+        <span>Tickets ATC</span><i class="fa-solid fa-ticket"></i>
       </div>
       <div class="menu-item" data-url="https://supervisor1atcvento-ctrl.github.io/indicadores/" onclick="loadPage(this)">
-        <span class="item-text">Indicadores</span><span>📊</span>
+        <span>Indicadores</span><i class="fa-solid fa-chart-line"></i>
       </div>
       <div class="menu-item" data-url="https://supervisor1atcvento-ctrl.github.io/segmentador-de-agencias/" onclick="loadPage(this)">
-        <span class="item-text">Segmentador de Agencias</span><span>🔍️</span>
+        <span>Segmentador de Agencias</span><i class="fa-solid fa-store"></i>
       </div>
       <div class="menu-item" data-url="https://supervisor1atcvento-ctrl.github.io/buscador-de-cesves/" onclick="loadPage(this)">
-        <span class="item-text">Buscador CESVE</span><span>🔍️</span>
+        <span>Buscador CESVE</span><i class="fa-solid fa-wrench"></i>
       </div>
       <div class="menu-item" data-url="https://script.google.com/macros/s/AKfycbzSF4oEkoujflBAHpuGQFS3HC2mTUaOjKbKpt0wz0BzQ_XM0-t0Qm3juTgzHBiBxAJ6/exec" onclick="loadPage(this)">
-        <span class="item-text">Tiendas VS CESVES</span><span>🔍️</span>
+        <span>Tiendas VS CESVES</span><i class="fa-solid fa-code-compare"></i>
       </div>
-      
       <div class="menu-item" data-url="https://supervisor1atcvento-ctrl.github.io/buscador-de-extensiones-de-garantia/" onclick="loadPage(this)">
-        <span class="item-text">Buscador de extensiónes de garantia</span><span>🔍️</span>
+        <span>Buscador Extensiones</span><i class="fa-solid fa-file-shield"></i>
       </div>
-      <a href="https://docs.google.com/forms/d/e/1FAIpQLSfFrOUDVc3YTUqJJav7e04a7utTbRtU1Jf0SbKY539xmyMniA/viewform?usp=sharing" target="_blank" class="menu-item" style="text-decoration: none; color: inherit; display: block;">
-        <span class="item-text">Solicitar Extensiónes de Garantia</span><span>🗳️</span>
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSfFrOUDVc3YTUqJJav7e04a7utTbRtU1Jf0SbKY539xmyMniA/viewform?usp=sharing" target="_blank" class="menu-item" style="text-decoration: none;">
+        <span>Solicitar Extensión</span><i class="fa-solid fa-pen-to-square"></i>
       </a>
-      
       <div class="menu-item" data-url="https://supervisor1atcvento-ctrl.github.io/calculadora-de-servicios/" onclick="loadPage(this)">
-        <span class="item-text">Calculadora de servicios</span><span>🧮</span>
+        <span>Calculadora de servicios</span><i class="fa-solid fa-calculator"></i>
       </div>
       <div class="menu-item" data-url="https://supervisor1atcvento-ctrl.github.io/Directorio-POST-VENTA/" onclick="loadPage(this)">
-        <span class="item-text">Directorio POST-VENTA</span><span>📓</span>
+        <span>Directorio POST-VENTA</span><i class="fa-solid fa-address-book"></i>
       </div>
-      <!-- FIN de entradas editables -->
     </div>
   </div>
   <div class="widget-footer">
-    <div style="font-size:0.85rem">VENTO © 2026</div>
-    <div style="font-size:0.82rem;color:rgba(255,255,255,0.7)">ATC</div>
+    <span>VENTO © 2026</span><span>ATC</span>
   </div>
 </aside>
 
@@ -312,121 +296,133 @@ html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7f9fc 0%,var(
 const widget = document.getElementById('menuWidget');
 const closeWidget = document.getElementById('closeWidget');
 const mainFrame = document.getElementById('mainFrame');
-let isCollapsed = false;
 
 widget.addEventListener('click', function(e){
-  if(widget.classList.contains('collapsed')){
-    expandWidget();
-    return;
-  }
+  if(widget.classList.contains('collapsed')){ expandWidget(); return; }
 });
-
 closeWidget.addEventListener('click', function(e){
   e.stopPropagation();
-  if(widget.classList.contains('collapsed')){
-    expandWidget();
-  } else {
-    collapseWidget();
-  }
+  if(widget.classList.contains('collapsed')){ expandWidget(); } 
+  else { collapseWidget(); }
 });
 
-function collapseWidget(){
-  widget.classList.add('collapsed');
-  isCollapsed = true;
-}
-function expandWidget(){
-  widget.classList.remove('collapsed');
-  isCollapsed = false;
-}
+function collapseWidget(){ widget.classList.add('collapsed'); }
+function expandWidget(){ widget.classList.remove('collapsed'); }
 
 function loadPage(el){
   document.querySelectorAll('.menu-item').forEach(i=>i.classList.remove('active'));
   el.classList.add('active');
   const url = el.getAttribute('data-url');
-  if(url){
-    mainFrame.src = url;
-  }
+  if(url) mainFrame.src = url;
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  const tickets = document.getElementById('menuTickets');
-  if(tickets) tickets.classList.add('active');
-});
-
-
 // =========================================
-// LÓGICA DEL MODAL DE VIN (Consulta rápida)
+// LÓGICA DE BÚSQUEDA UNIVERSAL (Baterías + Proyecto S + Motos Entregadas)
 // =========================================
 const modalOverlay = document.getElementById('vinModalOverlay');
 const vinInput = document.getElementById('vinInput');
-const vinResult = document.getElementById('vinResultMsg');
+const dbResults = document.getElementById('dbResults');
 
 function abrirModalVIN() {
   modalOverlay.style.display = 'flex';
-  collapseWidget(); // Ocultamos el menú principal para despejar la vista
-  vinInput.focus(); // Coloca el cursor en el input automáticamente
+  collapseWidget(); 
+  vinInput.focus(); 
 }
 
 function cerrarModalVIN() {
   modalOverlay.style.display = 'none';
-  vinInput.value = ''; // Limpiar el input al cerrar
-  vinResult.style.display = 'none'; // Ocultar mensaje anterior
+  vinInput.value = ''; 
+  dbResults.style.display = 'none'; 
 }
 
-// Cerrar si se hace clic fuera del cuadro negro
 modalOverlay.addEventListener('click', function(e) {
-  if (e.target === this) {
-    cerrarModalVIN();
-  }
+  if (e.target === this) cerrarModalVIN();
 });
 
-// Función de consulta directa a la base
-async function ejecutarBusquedaVIN(e) {
+// Función de consulta concurrente a múltiples bases
+async function ejecutarBusquedaUniversal(e) {
   e.preventDefault();
   
   const btnSubmit = document.getElementById('vinSubmitBtn');
   const vinBuscado = vinInput.value.trim().toUpperCase();
-
   if (!vinBuscado) return;
-
+  
   btnSubmit.disabled = true;
-  btnSubmit.innerHTML = '<span class="vin-spinner"></span>Buscando...';
-  vinResult.style.display = 'none';
+  btnSubmit.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Consultando...';
+  dbResults.style.display = 'none';
+  
+  // 1. Parámetros Baterías en Planta
+  const BAT_SHEET_ID = '1qxnp3r976gbgxO_ws0XymcMkH0XRklldWp5HEf-gaU4';
+  const BAT_GID = '1280448484';
+  const urlBaterias = `https://docs.google.com/spreadsheets/d/${BAT_SHEET_ID}/gviz/tq?tq=${encodeURIComponent(`select C where upper(C) = '${vinBuscado}' limit 1`)}&gid=${BAT_GID}`;
+  
+  // 2. Parámetros Proyecto S
+  const MULTI_SHEET_ID = '1ZV84x-E4d_iJz7An7aKQ5qjyK6p0vil81GGqrJbmLJY';
+  const urlProyectoS = `https://docs.google.com/spreadsheets/d/${MULTI_SHEET_ID}/gviz/tq?tq=${encodeURIComponent(`select F where upper(F) = '${vinBuscado}' limit 1`)}&sheet=Proyecto+S`;
 
-  const SPREADSHEET_ID = '1qxnp3r976gbgxO_ws0XymcMkH0XRklldWp5HEf-gaU4';
-  const GID = '1280448484';
+  // 3. Parámetros Motos entregadas en Agencia antes del Check List
+  // NOTA: Estoy asumiendo que el VIN se encuentra en la Columna F de esta pestaña. 
+  // Si está en otra columna, cambia la letra "F" en el select de abajo.
+  const pestañaMotos = encodeURIComponent('Motos entregadas en Agencia antes del Check List');
+  const urlMotosEntregadas = `https://docs.google.com/spreadsheets/d/${MULTI_SHEET_ID}/gviz/tq?tq=${encodeURIComponent(`select F where upper(F) = '${vinBuscado}' limit 1`)}&sheet=${pestañaMotos}`;
 
   try {
-    const querySQL = encodeURIComponent(`select C where upper(C) = '${vinBuscado}' limit 1`);
-    const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tq=${querySQL}&gid=${GID}`;
+    // Ejecutar las tres consultas de forma simultánea
+    const [resBaterias, resProyectoS, resMotosEntregadas] = await Promise.all([
+      fetch(urlBaterias).then(r => r.text()),
+      fetch(urlProyectoS).then(r => r.text()),
+      fetch(urlMotosEntregadas).then(r => r.text())
+    ]);
 
-    const response = await fetch(url);
-    if (!response.ok) throw new Error('Error de red');
+    // Función auxiliar para extraer el JSON de la respuesta de GViz
+    const extraerJSON = (texto) => {
+      try { return JSON.parse(texto.substring(texto.indexOf('{'), texto.lastIndexOf('}') + 1)); } 
+      catch (err) { return null; }
+    };
 
-    const text = await response.text();
-    const jsonString = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
-    const data = JSON.parse(jsonString);
+    const dataBaterias = extraerJSON(resBaterias);
+    const dataProyectoS = extraerJSON(resProyectoS);
+    const dataMotos = extraerJSON(resMotosEntregadas);
 
-    btnSubmit.disabled = false;
-    btnSubmit.innerText = 'Validar';
+    // Validar si trajeron resultados (rows > 0)
+    const halladoBaterias = dataBaterias && dataBaterias.table && dataBaterias.table.rows.length > 0;
+    const halladoProyectoS = dataProyectoS && dataProyectoS.table && dataProyectoS.table.rows.length > 0;
+    const halladoMotos = dataMotos && dataMotos.table && dataMotos.table.rows.length > 0;
 
-    if (data.table && data.table.rows && data.table.rows.length > 0) {
-      mostrarMensajeVIN('success', '✅ ENCONTRADO EN LA BASE');
-    } else {
-      mostrarMensajeVIN('danger', '❌ NO SE ENCUENTRA EN LA BASE');
-    }
+    // Pintar los resultados unificados
+    dbResults.innerHTML = `
+      <div style="font-size: 13px; font-weight: 800; color: var(--vento-gray-dark); margin-bottom: -4px;">RESULTADOS DEL ESCANEO:</div>
+      
+      <div class="db-item" style="${halladoBaterias ? 'border-color: var(--vento-black);' : ''}">
+        <div class="db-name"><i class="fa-solid fa-car-battery" style="color: ${halladoBaterias ? 'var(--vento-orange)' : 'var(--vento-gray-dark)'}"></i> Baterías Activadas</div>
+        <span class="badge ${halladoBaterias ? 'badge-black' : 'badge-white'}">
+          ${halladoBaterias ? '<i class="fa-solid fa-check"></i> Localizado' : '<i class="fa-solid fa-xmark"></i> No Registro'}
+        </span>
+      </div>
+      
+      <div class="db-item" style="${halladoProyectoS ? 'border-color: var(--vento-orange);' : ''}">
+        <div class="db-name"><i class="fa-solid fa-clipboard-list" style="color: ${halladoProyectoS ? 'var(--vento-orange)' : 'var(--vento-gray-dark)'}"></i> Proyecto S</div>
+        <span class="badge ${halladoProyectoS ? 'badge-orange' : 'badge-white'}">
+          ${halladoProyectoS ? '<i class="fa-solid fa-check"></i> Localizado' : '<i class="fa-solid fa-xmark"></i> No Registro'}
+        </span>
+      </div>
+
+      <div class="db-item" style="${halladoMotos ? 'border-color: var(--vento-orange);' : ''}">
+        <div class="db-name"><i class="fa-solid fa-motorcycle" style="color: ${halladoMotos ? 'var(--vento-orange)' : 'var(--vento-gray-dark)'}"></i> Entregadas antes C.L.</div>
+        <span class="badge ${halladoMotos ? 'badge-orange' : 'badge-white'}">
+          ${halladoMotos ? '<i class="fa-solid fa-check"></i> Localizado' : '<i class="fa-solid fa-xmark"></i> No Registro'}
+        </span>
+      </div>
+    `;
+    dbResults.style.display = 'flex';
 
   } catch (err) {
+    dbResults.innerHTML = `<div class="db-item" style="border-color: red; color: red;"><i class="fa-solid fa-triangle-exclamation"></i> Error al conectar con las bases de datos.</div>`;
+    dbResults.style.display = 'flex';
+  } finally {
     btnSubmit.disabled = false;
-    btnSubmit.innerText = 'Validar';
-    mostrarMensajeVIN('error', '⚠️ Error de consulta: ' + err.message);
+    btnSubmit.innerHTML = '<i class="fa-solid fa-database"></i> Consultar Bases';
   }
-}
-
-function mostrarMensajeVIN(tipo, texto) {
-  vinResult.className = 'vin-result ' + tipo;
-  vinResult.innerText = texto;
-  vinResult.style.display = 'block';
 }
 </script>
 </body>
