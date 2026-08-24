@@ -20,7 +20,7 @@
   --vento-gray-light: #E5E7EB;
   --vento-orange: #F28F17;
   --vento-orange-hover: #D97D11;
-  
+
   --radius: 12px;
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-lg: 0 18px 50px rgba(0, 0, 0, 0.35);
@@ -217,7 +217,7 @@ select.input-vin {
           <i class="fa-solid fa-database"></i> Consultar Bases
         </button>
       </form>
-      
+
       <div id="dbResults" class="db-results-container">
         <!-- Resultados inyectados por JS -->
       </div>
@@ -238,7 +238,7 @@ select.input-vin {
     </div>
     <div class="modal-body">
       <p>Busca el nombre o número de la agencia para verificar su kit de herramientas y sacar el dictamen.</p>
-      
+
       <!-- Buscador -->
       <div style="display: flex; gap: 10px; margin-bottom: 16px;">
         <input type="text" id="inputAgenciaModal" class="input-vin" style="margin-bottom: 0;" placeholder="Ej. Liverpool, 3054..." autocomplete="off" onkeyup="if(event.key === 'Enter') buscarAgenciaRapida()">
@@ -254,7 +254,7 @@ select.input-vin {
       <div id="areaDictamenRapido" style="display: none; margin-top: 20px; border-top: 2px dashed var(--vento-gray-light); padding-top: 20px;">
         <h4 id="nombreAgenciaSeleccionada" style="margin: 0 0 10px 0; font-weight: 800; font-size: 16px;"></h4>
         <div id="badgeAgenciaSeleccionada" style="margin-bottom: 20px;"></div>
-        
+
         <div style="font-size: 14px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
           <i class="fa-solid fa-users-gear" style="color: var(--vento-orange);"></i> Origen del Armado en VENTONET
         </div>
@@ -264,7 +264,7 @@ select.input-vin {
           <option value="CESVE">CESVE</option>
           <option value="AGENCIA">SIN REGISTRO EN VENTONET</option>
         </select>
-        
+
         <div id="boxDictamenFinal" class="db-results-container" style="padding: 0; border: none; background: transparent;"></div>
       </div>
     </div>
@@ -285,7 +285,7 @@ select.input-vin {
       <div class="close-icon" id="closeWidget" title="Minimizar menú"><i class="fa-solid fa-minus"></i></div>
     </div>
   </div>
-  
+
   <div class="widget-body" id="widgetBody">
     <div class="menu-section">
       <!-- BOTÓN DE BÚSQUEDA UNIVERSAL -->
@@ -293,7 +293,7 @@ select.input-vin {
         <span>Búsqueda Universal de VIN</span><i class="fa-solid fa-magnifying-glass" style="color: var(--vento-orange);"></i>
       </div>
       <hr style="border: 0; border-top: 2px dashed #444; margin: 16px 0;">
-      
+
       <!-- Herramientas -->
       <div class="menu-item active" id="menuTickets" data-url="https://supervisor1atcvento-ctrl.github.io/tickets_atc/" onclick="loadPage(this)">
         <span>Tickets ATC</span><i class="fa-solid fa-ticket"></i>
@@ -301,7 +301,7 @@ select.input-vin {
       <div class="menu-item" data-url="https://supervisor1atcvento-ctrl.github.io/indicadores/" onclick="loadPage(this)">
         <span>Indicadores</span><i class="fa-solid fa-chart-line"></i>
       </div>
-      
+
       <!-- BOTÓN MODIFICADO: Abre el segmentador rápido nativo -->
       <div class="menu-item" onclick="abrirModalSegmentador()">
         <span>Segmentador de Agencias</span><i class="fa-solid fa-store"></i>
@@ -367,17 +367,17 @@ let cargandoAgencias = false;
 async function inicializarBaseAgencias() {
   if (bbddAgencias.length > 0 || cargandoAgencias) return;
   cargandoAgencias = true;
-  
+
   const urlCSV = `https://docs.google.com/spreadsheets/d/1ZV84x-E4d_iJz7An7aKQ5qjyK6p0vil81GGqrJbmLJY/gviz/tq?tqx=out:csv&sheet=Agencias`;
-  
+
   try {
     const res = await fetch(urlCSV);
     const texto = await res.text();
     const lineas = texto.split(/\r?\n/);
-    
+
     for(let i = 1; i < lineas.length; i++) {
       if(!lineas[i]) continue;
-      
+
       // Parseo básico de CSV
       let col = []; let celda = ''; let comillas = false;
       for(let char of lineas[i]) {
@@ -386,7 +386,7 @@ async function inicializarBaseAgencias() {
         else { celda += char; }
       }
       col.push(celda.trim());
-      
+
       // Columna 1 = Nombre, Columna 14 = Puede Reportar (SI/NO)
       if(col.length > 1 && col[1]) {
         bbddAgencias.push({
@@ -424,11 +424,11 @@ function buscarAgenciaRapida() {
   const input = document.getElementById('inputAgenciaModal').value.trim().toLowerCase();
   const contenedorResultados = document.getElementById('resultadosAgenciaRapida');
   const areaDictamen = document.getElementById('areaDictamenRapido');
-  
+
   areaDictamen.style.display = 'none'; // Oculta dictamen previo
-  
+
   if (!input) return;
-  
+
   if (bbddAgencias.length === 0) {
     contenedorResultados.innerHTML = `<div style="font-size:13px; color:var(--vento-gray-dark); text-align:center;"><i class="fa-solid fa-spinner fa-spin"></i> Sincronizando directorio, intenta en un segundo...</div>`;
     contenedorResultados.style.display = 'flex';
@@ -438,7 +438,7 @@ function buscarAgenciaRapida() {
   // Filtrar coincidencias (máximo 4 para no saturar la vista)
   const coincidencias = bbddAgencias.filter(a => a.nombre.toLowerCase().includes(input)).slice(0, 4);
   contenedorResultados.innerHTML = '';
-  
+
   if (coincidencias.length === 0) {
     contenedorResultados.innerHTML = `
       <div class="db-item" style="border-color: red; flex-direction: column; align-items: flex-start;">
@@ -453,10 +453,10 @@ function buscarAgenciaRapida() {
     coincidencias.forEach(agencia => {
       const claseBadge = (agencia.puede === 'SI') ? 'badge-orange' : 'badge-black';
       const textoBadge = (agencia.puede === 'SI') ? '<i class="fa-solid fa-ban"></i> SIN HERRAMIENTAS' : '<i class="fa-solid fa-check"></i> CON HERRAMIENTAS';
-      
+
       // Escapamos comillas simples en el nombre para el onClick
       const nombreEscapado = agencia.nombre.replace(/'/g, "\\'");
-      
+
       contenedorResultados.innerHTML += `
         <div class="db-item" style="cursor: pointer; transition: all 0.2s;" 
              onclick="seleccionarAgenciaParaDictamen('${nombreEscapado}', '${agencia.puede}')" 
@@ -471,41 +471,41 @@ function buscarAgenciaRapida() {
       `;
     });
   }
-  
+
   contenedorResultados.style.display = 'flex';
 }
 
 function seleccionarAgenciaParaDictamen(nombre, puede) {
   document.getElementById('resultadosAgenciaRapida').style.display = 'none'; // Ocultar lista
-  
+
   const claseBadge = (puede === 'SI') ? 'badge-orange' : 'badge-black';
   const textoBadge = (puede === 'SI') ? '<i class="fa-solid fa-ban"></i> NO CUENTA CON KIT DE HERRAMIENTAS' : '<i class="fa-solid fa-check"></i> SÍ CUENTA CON KIT DE HERRAMIENTAS';
-  
+
   document.getElementById('nombreAgenciaSeleccionada').innerText = nombre;
   document.getElementById('badgeAgenciaSeleccionada').innerHTML = `<span class="badge ${claseBadge}">${textoBadge}</span>`;
-  
+
   // Reiniciar selección de armado
   document.getElementById('select-armado-rapido').value = '';
   document.getElementById('boxDictamenFinal').style.display = 'none';
-  
+
   document.getElementById('areaDictamenRapido').style.display = 'block';
 }
 
 function evaluarDictamenRapido() {
   const armado = document.getElementById('select-armado-rapido').value;
   const caja = document.getElementById('boxDictamenFinal');
-  
+
   if (!armado) {
     caja.style.display = 'none';
     return;
   }
-  
+
   let accionCalculada = (armado === 'CEDIS' || armado === 'AGENCIA') ? 'SE REQUIERE CHECK LIST' : 'PASA COMO GARANTIA';
-  
+
   let estiloAlerta = accionCalculada.includes('GARANTIA') 
     ? 'border-left: 6px solid var(--vento-black); background: var(--vento-white); color: var(--vento-black); border-top: 2px solid var(--vento-black); border-right: 2px solid var(--vento-black); border-bottom: 2px solid var(--vento-black);' 
     : 'border-left: 6px solid var(--vento-orange); background: var(--vento-black); color: var(--vento-white); border-top: 2px solid var(--vento-black); border-right: 2px solid var(--vento-black); border-bottom: 2px solid var(--vento-black);';
-  
+
   caja.style.display = 'block';
   caja.innerHTML = `
     <div style="font-size: 13px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; color: var(--vento-black);">
@@ -540,6 +540,7 @@ modalOverlay.addEventListener('click', function(e) {
 });
 
 // Función de consulta concurrente a múltiples bases
+// Función de consulta concurrente a múltiples bases
 async function ejecutarBusquedaUniversal(e) {
   e.preventDefault();
   
@@ -554,56 +555,185 @@ async function ejecutarBusquedaUniversal(e) {
   // 1. Parámetros Baterías en Planta
   const BAT_SHEET_ID = '1qxnp3r976gbgxO_ws0XymcMkH0XRklldWp5HEf-gaU4';
   const BAT_GID = '1280448484';
-  const urlBaterias = `https://docs.google.com/spreadsheets/d/${BAT_SHEET_ID}/gviz/tq?tq=${encodeURIComponent(`select C where upper(C) = '${vinBuscado}' limit 1`)}&gid=${BAT_GID}`;
+  const urlBaterias = `https://docs.google.com/spreadsheets/d/${BAT_SHEET_ID}/gviz/tq?tq=${encodeURIComponent(`select * where upper(C) contains '${vinBuscado}' limit 1`)}&gid=${BAT_GID}`;
   
   // 2. Parámetros Proyecto S
   const MULTI_SHEET_ID = '1ZV84x-E4d_iJz7An7aKQ5qjyK6p0vil81GGqrJbmLJY';
-  const urlProyectoS = `https://docs.google.com/spreadsheets/d/${MULTI_SHEET_ID}/gviz/tq?tq=${encodeURIComponent(`select F where upper(F) = '${vinBuscado}' limit 1`)}&sheet=Proyecto+S`;
+  const urlProyectoS = `https://docs.google.com/spreadsheets/d/${MULTI_SHEET_ID}/gviz/tq?tq=${encodeURIComponent(`select * where upper(F) contains '${vinBuscado}' limit 1`)}&sheet=Proyecto+S`;
+  
   // 3. Parámetros Motos entregadas en Agencia antes del Check List
   const pestañaMotos = encodeURIComponent('Motos entregadas en Agencia antes del Check List');
-  const urlMotosEntregadas = `https://docs.google.com/spreadsheets/d/${MULTI_SHEET_ID}/gviz/tq?tq=${encodeURIComponent(`select F where upper(F) = '${vinBuscado}' limit 1`)}&sheet=${pestañaMotos}`;
+  const urlMotosEntregadas = `https://docs.google.com/spreadsheets/d/${MULTI_SHEET_ID}/gviz/tq?tq=${encodeURIComponent(`select * where upper(F) contains '${vinBuscado}' limit 1`)}&sheet=${pestañaMotos}`;
+
+  // 4. Parámetros para Extensión de Garantía (¡SIN LIMIT 1 para traer múltiples registros!)
+  const EXT_GARANTIA_SHEET_ID = '1vSGWWNPZ6DTK5Cq4Gke6P4WCp_kZoKCSkQ1n2-SJo74';
+  const urlExtensionGarantia = `https://docs.google.com/spreadsheets/d/${EXT_GARANTIA_SHEET_ID}/gviz/tq?tq=${encodeURIComponent(`select * where upper(I) contains '${vinBuscado}'`)}`;
+
   try {
-    const [resBaterias, resProyectoS, resMotosEntregadas] = await Promise.all([
+    const [resBaterias, resProyectoS, resMotosEntregadas, resExtensionGarantia] = await Promise.all([
       fetch(urlBaterias).then(r => r.text()),
       fetch(urlProyectoS).then(r => r.text()),
-      fetch(urlMotosEntregadas).then(r => r.text())
+      fetch(urlMotosEntregadas).then(r => r.text()),
+      fetch(urlExtensionGarantia).then(r => r.text())
     ]);
+    
     const extraerJSON = (texto) => {
       try { return JSON.parse(texto.substring(texto.indexOf('{'), texto.lastIndexOf('}') + 1)); } 
       catch (err) { return null; }
     };
+    
     const dataBaterias = extraerJSON(resBaterias);
     const dataProyectoS = extraerJSON(resProyectoS);
     const dataMotos = extraerJSON(resMotosEntregadas);
+    const dataExtensionGarantia = extraerJSON(resExtensionGarantia);
     
-    const halladoBaterias = dataBaterias && dataBaterias.table && dataBaterias.table.rows.length > 0;
-    const halladoProyectoS = dataProyectoS && dataProyectoS.table && dataProyectoS.table.rows.length > 0;
-    const halladoMotos = dataMotos && dataMotos.table && dataMotos.table.rows.length > 0;
-    
+    // Función auxiliar para leer celdas evitando errores de "undefined"
+    const getCell = (row, idx) => {
+      if (!row || !row.c || idx >= row.c.length || !row.c[idx]) return 'N/A';
+      const cell = row.c[idx];
+      if (cell.f !== undefined && cell.f !== null) return cell.f; // Retorna valor formateado (ej. fechas)
+      if (cell.v !== undefined && cell.v !== null) return cell.v;
+      return 'N/A';
+    };
+
+    // Función 1: Generador Genérico (Para las primeras 3 bases de datos)
+    const generarTarjetaGenerica = (titulo, icono, data, colorNaranja) => {
+      const hallado = data && data.table && data.table.rows.length > 0;
+      const badgeClass = hallado ? (colorNaranja ? 'badge-orange' : 'badge-black') : 'badge-white';
+      const borderColor = hallado ? (colorNaranja ? 'var(--vento-orange)' : 'var(--vento-black)') : 'var(--vento-gray-light)';
+      const iconActiveColor = hallado ? 'var(--vento-orange)' : 'var(--vento-gray-dark)';
+      
+      let detallesHTML = '';
+      if (hallado) {
+        const cols = data.table.cols;
+        const row = data.table.rows[0].c;
+        detallesHTML = `<div class="vin-details" style="display: none; padding: 12px 16px; background: var(--vento-white); border-top: 1px solid var(--vento-gray-light); font-size: 13px; color: var(--vento-gray-dark);">`;
+        let hayDatos = false;
+        for (let i = 0; i < cols.length; i++) {
+          const header = cols[i].label || `Columna ${i + 1}`;
+          let val = getCell(data.table.rows[0], i);
+          if (val !== 'N/A' && val.toString().trim() !== '') {
+            detallesHTML += `<div style="margin-bottom: 6px; border-bottom: 1px dashed var(--vento-gray-light); padding-bottom: 4px;"><strong style="color: var(--vento-black);">${header}:</strong> ${val}</div>`;
+            hayDatos = true;
+          }
+        }
+        if (!hayDatos) detallesHTML += `<div>No hay datos adicionales legibles.</div>`;
+        detallesHTML += `</div>`;
+      }
+      return `
+        <div style="border: 2px solid ${borderColor}; border-radius: 8px; margin-bottom: 0px; background: var(--vento-bg); overflow: hidden; transition: all 0.2s;">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; cursor: ${hallado ? 'pointer' : 'default'};" 
+               ${hallado ? `onclick="const det = this.nextElementSibling; det.style.display = det.style.display === 'none' ? 'block' : 'none';"` : ''}>
+            <div style="font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 8px;">
+              <i class="${icono}" style="color: ${iconActiveColor}"></i> ${titulo}
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span class="badge ${badgeClass}">
+                ${hallado ? '<i class="fa-solid fa-check"></i> Localizado' : '<i class="fa-solid fa-xmark"></i> No Registro'}
+              </span>
+              ${hallado ? `<i class="fa-solid fa-chevron-down" style="color: var(--vento-gray-dark); font-size: 14px;"></i>` : ''}
+            </div>
+          </div>
+          ${detallesHTML}
+        </div>
+      `;
+    };
+
+    // Función 2: Generador Exclusivo para Extensiones de Garantía (Múltiples registros y diseño a medida)
+    const generarTarjetaExtensiones = (titulo, icono, data) => {
+      const rows = data && data.table && data.table.rows ? data.table.rows : [];
+      const hallado = rows.length > 0;
+      const badgeClass = hallado ? 'badge-orange' : 'badge-white';
+      const borderColor = hallado ? 'var(--vento-orange)' : 'var(--vento-gray-light)';
+      const iconActiveColor = hallado ? 'var(--vento-orange)' : 'var(--vento-gray-dark)';
+
+      let detallesHTML = '';
+      if (hallado) {
+        detallesHTML = `<div class="vin-details" style="display: none; padding: 12px; background: var(--vento-white); border-top: 1px solid var(--vento-gray-light); font-size: 13px; color: var(--vento-gray-dark);">`;
+        
+        // Iteramos por todos los registros encontrados
+        rows.forEach((r, idx) => {
+          // Mapeo exacto de las columnas que solicitaste (A=0, B=1, C=2, etc.)
+          const fechaSol     = getCell(r, 0);  // Columna A
+          const solicitante  = getCell(r, 1);  // Columna B
+          const tipoSol      = getCell(r, 2);  // Columna C
+          const cliente      = getCell(r, 4);  // Columna E
+          const modelo       = getCell(r, 7);  // Columna H
+          const serie        = getCell(r, 8);  // Columna I
+          const folio        = getCell(r, 17); // Columna R
+          const estatus      = getCell(r, 19); // Columna T
+          const comentarios  = getCell(r, 22); // Columna W
+          const liga         = getCell(r, 23); // Columna X
+
+          const estaAutorizado = estatus.toString().trim().toUpperCase() === 'AUTORIZADO';
+
+          // Estructura de Sub-Acordeón para cada registro
+          detallesHTML += `
+            <div style="margin-bottom: 8px; border: 1px solid var(--vento-gray-light); border-radius: 6px; overflow: hidden;">
+              
+              <!-- Cabecera del Registro (Clickable) -->
+              <div style="padding: 10px 12px; background: var(--vento-bg); cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 700; color: var(--vento-black);"
+                   onclick="const det = this.nextElementSibling; det.style.display = det.style.display === 'none' ? 'block' : 'none';">
+                <span>Folio: <span style="color:var(--vento-orange)">${folio}</span> &nbsp;|&nbsp; Estatus: ${estatus}</span>
+                <i class="fa-solid fa-chevron-down" style="color: var(--vento-gray-dark); font-size: 12px;"></i>
+              </div>
+              
+              <!-- Cuerpo del Registro -->
+              <div style="display: none; padding: 12px; background: var(--vento-white); border-top: 1px solid var(--vento-gray-light);">
+                <div style="margin-bottom: 6px;"><strong>Tipo de solicitud:</strong> ${tipoSol}</div>
+                <div style="margin-bottom: 6px;"><strong>Serie de la moto:</strong> ${serie}</div>
+                <div style="margin-bottom: 6px;"><strong>Modelo de la unidad:</strong> ${modelo}</div>
+                <div style="margin-bottom: 6px;"><strong>Nombre de cliente:</strong> ${cliente}</div>
+                <div style="margin-bottom: 6px;"><strong>Quien solicita:</strong> ${solicitante}</div>
+                <div style="margin-bottom: 6px;"><strong>Cuando la solicita:</strong> ${fechaSol}</div>
+                <div style="margin-bottom: 6px;"><strong>Estatus:</strong> <span style="font-weight:bold; color:${estaAutorizado ? 'green' : 'var(--vento-gray-dark)'};">${estatus}</span></div>
+                <div style="margin-bottom: 6px;"><strong>Comentarios:</strong> ${comentarios}</div>
+                
+                ${estaAutorizado && liga !== 'N/A' && liga !== '' ? `
+                  <a href="${liga}" target="_blank" class="btn-search" style="padding: 8px 12px; margin-top: 12px; font-size: 12px; text-decoration: none; display: inline-flex; width: auto; background: var(--vento-black);">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Ver Documento
+                  </a>
+                ` : ''}
+              </div>
+            </div>
+          `;
+        });
+        detallesHTML += `</div>`;
+      }
+
+      return `
+        <div style="border: 2px solid ${borderColor}; border-radius: 8px; margin-bottom: 0px; background: var(--vento-bg); overflow: hidden; transition: all 0.2s;">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; cursor: ${hallado ? 'pointer' : 'default'};" 
+               ${hallado ? `onclick="const det = this.nextElementSibling; det.style.display = det.style.display === 'none' ? 'block' : 'none';"` : ''}>
+            <div style="font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 8px;">
+              <i class="${icono}" style="color: ${iconActiveColor}"></i> ${titulo}
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span class="badge ${badgeClass}">
+                ${hallado ? `<i class="fa-solid fa-check"></i> Localizado (${rows.length})` : '<i class="fa-solid fa-xmark"></i> No Registro'}
+              </span>
+              ${hallado ? `<i class="fa-solid fa-chevron-down" style="color: var(--vento-gray-dark); font-size: 14px;"></i>` : ''}
+            </div>
+          </div>
+          ${detallesHTML}
+        </div>
+      `;
+    };
+
+    // Imprimir los resultados
     dbResults.innerHTML = `
       <div style="font-size: 13px; font-weight: 800; color: var(--vento-gray-dark); margin-bottom: -4px;">RESULTADOS DEL ESCANEO:</div>
-      <div class="db-item" style="${halladoBaterias ? 'border-color: var(--vento-black);' : ''}">
-        <div class="db-name"><i class="fa-solid fa-car-battery" style="color: ${halladoBaterias ? 'var(--vento-orange)' : 'var(--vento-gray-dark)'}"></i> Baterías Activadas</div>
-        <span class="badge ${halladoBaterias ? 'badge-black' : 'badge-white'}">
-          ${halladoBaterias ? '<i class="fa-solid fa-check"></i> Localizado' : '<i class="fa-solid fa-xmark"></i> No Registro'}
-        </span>
-      </div>
-      <div class="db-item" style="${halladoProyectoS ? 'border-color: var(--vento-orange);' : ''}">
-        <div class="db-name"><i class="fa-solid fa-clipboard-list" style="color: ${halladoProyectoS ? 'var(--vento-orange)' : 'var(--vento-gray-dark)'}"></i> Proyecto S</div>
-        <span class="badge ${halladoProyectoS ? 'badge-orange' : 'badge-white'}">
-          ${halladoProyectoS ? '<i class="fa-solid fa-check"></i> Localizado' : '<i class="fa-solid fa-xmark"></i> No Registro'}
-        </span>
-      </div>
-      <div class="db-item" style="${halladoMotos ? 'border-color: var(--vento-orange);' : ''}">
-        <div class="db-name"><i class="fa-solid fa-motorcycle" style="color: ${halladoMotos ? 'var(--vento-orange)' : 'var(--vento-gray-dark)'}"></i> Entregadas antes C.L.</div>
-        <span class="badge ${halladoMotos ? 'badge-orange' : 'badge-white'}">
-          ${halladoMotos ? '<i class="fa-solid fa-check"></i> Localizado' : '<i class="fa-solid fa-xmark"></i> No Registro'}
-        </span>
-      </div>
+      ${generarTarjetaGenerica('Baterías Activadas', 'fa-solid fa-car-battery', dataBaterias, false)}
+      ${generarTarjetaGenerica('Proyecto S', 'fa-solid fa-clipboard-list', dataProyectoS, true)}
+      ${generarTarjetaGenerica('Entregadas antes C.L.', 'fa-solid fa-motorcycle', dataMotos, true)}
+      
+      <!-- Inyección de la tarjeta Exclusiva de Extensiones -->
+      ${generarTarjetaExtensiones('Extensión de Garantía', 'fa-solid fa-file-shield', dataExtensionGarantia)}
     `;
+    
     dbResults.style.display = 'flex';
   } catch (err) {
-    dbResults.innerHTML = `<div class="db-item" style="border-color: red; color: red;"><i class="fa-solid fa-triangle-exclamation"></i> Error al conectar con las bases de datos.</div>`;
+    dbResults.innerHTML = `<div style="padding: 14px; border: 2px solid red; border-radius: 8px; color: red; background: var(--vento-bg);"><i class="fa-solid fa-triangle-exclamation"></i> Error al conectar con las bases de datos.</div>`;
     dbResults.style.display = 'flex';
   } finally {
     btnSubmit.disabled = false;
