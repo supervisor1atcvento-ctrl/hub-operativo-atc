@@ -537,7 +537,6 @@ modalOverlay.addEventListener('click', function(e) {
 });
 
 // Función de consulta concurrente a múltiples bases
-// Función de consulta concurrente a múltiples bases
 async function ejecutarBusquedaUniversal(e) {
   e.preventDefault();
   
@@ -588,12 +587,12 @@ async function ejecutarBusquedaUniversal(e) {
     const getCell = (row, idx) => {
       if (!row || !row.c || idx >= row.c.length || !row.c[idx]) return 'N/A';
       const cell = row.c[idx];
-      if (cell.f !== undefined && cell.f !== null) return cell.f; // Retorna valor formateado (ej. fechas)
+      if (cell.f !== undefined && cell.f !== null) return cell.f; 
       if (cell.v !== undefined && cell.v !== null) return cell.v;
       return 'N/A';
     };
 
-    // Función 1: Generador Genérico (Para las primeras 3 bases de datos)
+    // Función 1: Generador Genérico
     const generarTarjetaGenerica = (titulo, icono, data, colorNaranja) => {
       const hallado = data && data.table && data.table.rows.length > 0;
       const badgeClass = hallado ? (colorNaranja ? 'badge-orange' : 'badge-black') : 'badge-white';
@@ -636,7 +635,7 @@ async function ejecutarBusquedaUniversal(e) {
       `;
     };
 
-    // Función 2: Generador Exclusivo para Extensiones de Garantía (Múltiples registros y diseño a medida)
+    // Función 2: Generador Exclusivo para Extensiones de Garantía
     const generarTarjetaExtensiones = (titulo, icono, data) => {
       const rows = data && data.table && data.table.rows ? data.table.rows : [];
       const hallado = rows.length > 0;
@@ -650,7 +649,6 @@ async function ejecutarBusquedaUniversal(e) {
         
         // Iteramos por todos los registros encontrados
         rows.forEach((r, idx) => {
-          // Mapeo exacto de las columnas que solicitaste (A=0, B=1, C=2, etc.)
           const fechaSol     = getCell(r, 0);  // Columna A
           const solicitante  = getCell(r, 1);  // Columna B
           const tipoSol      = getCell(r, 2);  // Columna C
@@ -662,7 +660,9 @@ async function ejecutarBusquedaUniversal(e) {
           const comentarios  = getCell(r, 22); // Columna W
           const liga         = getCell(r, 23); // Columna X
 
-          const estaAutorizado = estatus.toString().trim().toUpperCase() === 'AUTORIZADO';
+          // NUEVA CONDICIÓN LOGICA: AUTORIZADO o MANUAL
+          const estatusLimpio = estatus.toString().trim().toUpperCase();
+          const mostrarBoton = estatusLimpio === 'AUTORIZADO' || estatusLimpio === 'MANUAL';
 
           // Estructura de Sub-Acordeón para cada registro
           detallesHTML += `
@@ -683,10 +683,10 @@ async function ejecutarBusquedaUniversal(e) {
                 <div style="margin-bottom: 6px;"><strong>Nombre de cliente:</strong> ${cliente}</div>
                 <div style="margin-bottom: 6px;"><strong>Quien solicita:</strong> ${solicitante}</div>
                 <div style="margin-bottom: 6px;"><strong>Cuando la solicita:</strong> ${fechaSol}</div>
-                <div style="margin-bottom: 6px;"><strong>Estatus:</strong> <span style="font-weight:bold; color:${estaAutorizado ? 'green' : 'var(--vento-gray-dark)'};">${estatus}</span></div>
+                <div style="margin-bottom: 6px;"><strong>Estatus:</strong> <span style="font-weight:bold; color:${mostrarBoton ? 'green' : 'var(--vento-gray-dark)'};">${estatus}</span></div>
                 <div style="margin-bottom: 6px;"><strong>Comentarios:</strong> ${comentarios}</div>
                 
-                ${estaAutorizado && liga !== 'N/A' && liga !== '' ? `
+                ${mostrarBoton && liga !== 'N/A' && liga !== '' ? `
                   <a href="${liga}" target="_blank" class="btn-search" style="padding: 8px 12px; margin-top: 12px; font-size: 12px; text-decoration: none; display: inline-flex; width: auto; background: var(--vento-black);">
                     <i class="fa-solid fa-arrow-up-right-from-square"></i> Ver Documento
                   </a>
@@ -723,8 +723,6 @@ async function ejecutarBusquedaUniversal(e) {
       ${generarTarjetaGenerica('Baterías Activadas', 'fa-solid fa-car-battery', dataBaterias, false)}
       ${generarTarjetaGenerica('Proyecto S', 'fa-solid fa-clipboard-list', dataProyectoS, true)}
       ${generarTarjetaGenerica('Entregadas antes C.L.', 'fa-solid fa-motorcycle', dataMotos, true)}
-      
-      <!-- Inyección de la tarjeta Exclusiva de Extensiones -->
       ${generarTarjetaExtensiones('Extensión de Garantía', 'fa-solid fa-file-shield', dataExtensionGarantia)}
     `;
     
