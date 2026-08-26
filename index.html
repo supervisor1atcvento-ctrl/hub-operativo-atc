@@ -20,7 +20,6 @@
   --vento-gray-light: #E5E7EB;
   --vento-orange: #F28F17;
   --vento-orange-hover: #D97D11;
-
   --radius: 12px;
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-lg: 0 18px 50px rgba(0, 0, 0, 0.35);
@@ -34,11 +33,87 @@ html,body{
   background-color: var(--vento-bg);
   font-family: 'Inter', system-ui, sans-serif; 
   color: var(--vento-black);
+  overflow: hidden;
 }
 .app{height:100vh; display:flex; flex-direction:column}
-/* Iframe full area */
-.frame-wrap{flex:1; display:block}
-.frame{width:100%; height:100vh; border:0; display:block; background:var(--vento-white)}
+
+/* =========================================
+   BANNER BANCARIO / MARQUESINA DE ANUNCIOS
+   ========================================= */
+.bank-banner {
+  background-color: var(--vento-black);
+  color: var(--vento-white);
+  border-bottom: 3px solid var(--vento-orange);
+  display: flex;
+  align-items: center;
+  height: 40px;
+  min-height: 40px;
+  overflow: hidden;
+  position: relative;
+  z-index: 1000;
+  font-size: 13px;
+}
+.banner-badge {
+  background: var(--vento-orange);
+  color: var(--vento-white);
+  padding: 0 16px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  box-shadow: 4px 0 10px rgba(0,0,0,0.3);
+  z-index: 2;
+  text-transform: uppercase;
+}
+.ticker-container {
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.ticker-content {
+  display: inline-block;
+  white-space: nowrap;
+  padding-left: 100%;
+  animation: marquee 28s linear infinite;
+}
+.ticker-container:hover .ticker-content {
+  animation-play-state: paused;
+}
+.ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding-right: 40px;
+  font-weight: 500;
+}
+.ticker-item strong {
+  color: var(--vento-white);
+}
+.ticker-item i {
+  color: var(--vento-orange);
+  font-size: 14px;
+}
+.ticker-separator {
+  color: var(--vento-orange);
+  margin: 0 15px;
+  font-weight: bold;
+}
+@keyframes marquee {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-100%, 0, 0); }
+}
+
+/* Iframe full area ajustado */
+.frame-wrap{flex:1; display:block; height: calc(100vh - 40px);}
+.frame{width:100%; height:100%; border:0; display:block; background:var(--vento-white)}
+
 /* Widget fijo inferior derecho */
 .widget {
   position:fixed;
@@ -179,7 +254,6 @@ html,body{
 .badge-orange { background-color: var(--vento-orange); color: var(--vento-white); border: 1px solid var(--vento-orange-hover); }
 .badge-black { background-color: var(--vento-black); color: var(--vento-white); border: 1px solid var(--vento-black); }
 .badge-white { background-color: var(--vento-white); color: var(--vento-black); border: 1px solid var(--vento-black); }
-
 select.input-vin {
   cursor: pointer; appearance: none;
   background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
@@ -193,11 +267,46 @@ select.input-vin {
 </head>
 <body>
 <div class="app">
+
+  <!-- BANNER DE ANUNCIO -->
+  <div class="bank-banner">
+    <div class="banner-badge">
+      <i class="fa-solid fa-bullhorn"></i> AVISO DE COBRANZA
+    </div>
+    <div class="ticker-container" title="Pasa el cursor para pausar la animación">
+      <div class="ticker-content">
+        <div class="ticker-item">
+          <i class="fa-solid fa-phone"></i>
+          <span>Teléfono de Cobranza: <strong>5585261697</strong></span>
+        </div>
+        <span class="ticker-separator">•</span>
+        <div class="ticker-item">
+          <i class="fa-solid fa-clock"></i>
+          <span>Horario de Atención: <strong>Lunes a Viernes de 7:00 A.M. a 8:00 P.M.</strong></span>
+        </div>
+        <span class="ticker-separator">•</span>
+        <div class="ticker-item">
+          <i class="fa-solid fa-calendar-days"></i>
+          <span>Fin de Semana: <strong>Sábados y Domingos de 8:00 A.M. a 1:00 P.M.</strong></span>
+        </div>
+        <span class="ticker-separator">•</span>
+        <div class="ticker-item">
+          <i class="fa-solid fa-phone"></i>
+          <span>Teléfono de Cobranza: <strong>5585261697</strong></span>
+        </div>
+        <span class="ticker-separator">•</span>
+        <div class="ticker-item">
+          <i class="fa-solid fa-clock"></i>
+          <span>Horario de Atención: <strong>Lunes a Viernes de 7:00 A.M. a 8:00 P.M.</strong> | <strong>Sábados y Domingos de 8:00 A.M. a 1:00 P.M.</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="frame-wrap">
     <iframe id="mainFrame" class="frame" src="https://supervisor1atcvento-ctrl.github.io/tickets_atc/" title="Contenido principal"></iframe>
   </div>
 </div>
-
 <!-- =========================================
      MODAL BÚSQUEDA UNIVERSAL DE VIN
      ========================================= -->
@@ -217,14 +326,12 @@ select.input-vin {
           <i class="fa-solid fa-database"></i> Consultar Bases
         </button>
       </form>
-
       <div id="dbResults" class="db-results-container">
         <!-- Resultados inyectados por JS -->
       </div>
     </div>
   </div>
 </div>
-
 <!-- =========================================
      NUEVO MODAL: SEGMENTADOR RÁPIDO NATIVO
      ========================================= -->
@@ -238,7 +345,6 @@ select.input-vin {
     </div>
     <div class="modal-body">
       <p>Busca el nombre o número de la agencia para verificar su kit de herramientas y sacar el dictamen.</p>
-
       <!-- Buscador -->
       <div style="display: flex; gap: 10px; margin-bottom: 16px;">
         <input type="text" id="inputAgenciaModal" class="input-vin" style="margin-bottom: 0;" placeholder="Ej. Liverpool, 3054..." autocomplete="off" onkeyup="if(event.key === 'Enter') buscarAgenciaRapida()">
@@ -246,15 +352,12 @@ select.input-vin {
           <i class="fa-solid fa-magnifying-glass"></i>
         </button>
       </div>
-
       <!-- Resultados de la búsqueda -->
       <div id="resultadosAgenciaRapida" class="db-results-container" style="margin-top: 10px;"></div>
-
       <!-- Área del Dictamen (Oculta hasta seleccionar una agencia) -->
       <div id="areaDictamenRapido" style="display: none; margin-top: 20px; border-top: 2px dashed var(--vento-gray-light); padding-top: 20px;">
         <h4 id="nombreAgenciaSeleccionada" style="margin: 0 0 10px 0; font-weight: 800; font-size: 16px;"></h4>
         <div id="badgeAgenciaSeleccionada" style="margin-bottom: 20px;"></div>
-
         <div style="font-size: 14px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
           <i class="fa-solid fa-users-gear" style="color: var(--vento-orange);"></i> Origen del Armado en VENTONET
         </div>
@@ -264,13 +367,11 @@ select.input-vin {
           <option value="CESVE">CESVE</option>
           <option value="AGENCIA">SIN REGISTRO EN VENTONET</option>
         </select>
-
         <div id="boxDictamenFinal" class="db-results-container" style="padding: 0; border: none; background: transparent;"></div>
       </div>
     </div>
   </div>
 </div>
-
 <!-- Widget fijo -->
 <aside class="widget" id="menuWidget">
   <div class="widget-header" id="widgetHeader">
@@ -285,7 +386,6 @@ select.input-vin {
       <div class="close-icon" id="closeWidget" title="Minimizar menú"><i class="fa-solid fa-minus"></i></div>
     </div>
   </div>
-
   <div class="widget-body" id="widgetBody">
     <div class="menu-section">
       <!-- BOTÓN DE BÚSQUEDA UNIVERSAL -->
@@ -293,7 +393,6 @@ select.input-vin {
         <span>Búsqueda Universal de VIN</span><i class="fa-solid fa-magnifying-glass" style="color: var(--vento-orange);"></i>
       </div>
       <hr style="border: 0; border-top: 2px dashed #444; margin: 16px 0;">
-
       <!-- Herramientas -->
       <div class="menu-item active" id="menuTickets" data-url="https://supervisor1atcvento-ctrl.github.io/tickets_atc/" onclick="loadPage(this)">
         <span>Tickets ATC</span><i class="fa-solid fa-ticket"></i>
@@ -301,12 +400,10 @@ select.input-vin {
       <div class="menu-item" data-url="https://supervisor1atcvento-ctrl.github.io/indicadores/" onclick="loadPage(this)">
         <span>Indicadores</span><i class="fa-solid fa-chart-line"></i>
       </div>
-
       <!-- BOTÓN MODIFICADO: Abre el segmentador rápido nativo -->
       <div class="menu-item" onclick="abrirModalSegmentador()">
         <span>Segmentador de Agencias</span><i class="fa-solid fa-store"></i>
       </div>
-
       <div class="menu-item" data-url="https://supervisor1atcvento-ctrl.github.io/buscador-de-cesves/" onclick="loadPage(this)">
         <span>Buscador CESVE</span><i class="fa-solid fa-wrench"></i>
       </div>
@@ -328,7 +425,6 @@ select.input-vin {
     <span>VENTO © 2026</span><span>ATC</span>
   </div>
 </aside>
-
 <script>
 // =========================================
 // LÓGICA DEL WIDGET (Menú)
@@ -336,7 +432,6 @@ select.input-vin {
 const widget = document.getElementById('menuWidget');
 const closeWidget = document.getElementById('closeWidget');
 const mainFrame = document.getElementById('mainFrame');
-
 widget.addEventListener('click', function(e){
   if(widget.classList.contains('collapsed')){ expandWidget(); return; }
 });
@@ -353,28 +448,22 @@ function loadPage(el){
   const url = el.getAttribute('data-url');
   if(url) mainFrame.src = url;
 }
-
 // =========================================
 // LÓGICA DEL SEGMENTADOR RÁPIDO NATIVO
 // =========================================
 let bbddAgencias = [];
 let cargandoAgencias = false;
-
 // Carga la base de datos de Google Sheets en segundo plano la primera vez que se abre
 async function inicializarBaseAgencias() {
   if (bbddAgencias.length > 0 || cargandoAgencias) return;
   cargandoAgencias = true;
-
   const urlCSV = `https://docs.google.com/spreadsheets/d/1ZV84x-E4d_iJz7An7aKQ5qjyK6p0vil81GGqrJbmLJY/gviz/tq?tqx=out:csv&sheet=Agencias`;
-
   try {
     const res = await fetch(urlCSV);
     const texto = await res.text();
     const lineas = texto.split(/\r?\n/);
-
     for(let i = 1; i < lineas.length; i++) {
       if(!lineas[i]) continue;
-
       // Parseo básico de CSV
       let col = []; let celda = ''; let comillas = false;
       for(let char of lineas[i]) {
@@ -383,7 +472,6 @@ async function inicializarBaseAgencias() {
         else { celda += char; }
       }
       col.push(celda.trim());
-
       // Columna 1 = Nombre, Columna 14 = Puede Reportar (SI/NO)
       if(col.length > 1 && col[1]) {
         bbddAgencias.push({
@@ -398,44 +486,35 @@ async function inicializarBaseAgencias() {
     cargandoAgencias = false;
   }
 }
-
 function abrirModalSegmentador() {
   document.getElementById('segmentadorModalOverlay').style.display = 'flex';
   collapseWidget();
   inicializarBaseAgencias(); // Descarga la info si es la primera vez
   setTimeout(() => document.getElementById('inputAgenciaModal').focus(), 100);
 }
-
 function cerrarModalSegmentador() {
   document.getElementById('segmentadorModalOverlay').style.display = 'none';
   document.getElementById('inputAgenciaModal').value = '';
   document.getElementById('resultadosAgenciaRapida').style.display = 'none';
   document.getElementById('areaDictamenRapido').style.display = 'none';
 }
-
 document.getElementById('segmentadorModalOverlay').addEventListener('click', function(e) {
   if (e.target === this) cerrarModalSegmentador();
 });
-
 function buscarAgenciaRapida() {
   const input = document.getElementById('inputAgenciaModal').value.trim().toLowerCase();
   const contenedorResultados = document.getElementById('resultadosAgenciaRapida');
   const areaDictamen = document.getElementById('areaDictamenRapido');
-
   areaDictamen.style.display = 'none'; // Oculta dictamen previo
-
   if (!input) return;
-
   if (bbddAgencias.length === 0) {
     contenedorResultados.innerHTML = `<div style="font-size:13px; color:var(--vento-gray-dark); text-align:center;"><i class="fa-solid fa-spinner fa-spin"></i> Sincronizando directorio, intenta en un segundo...</div>`;
     contenedorResultados.style.display = 'flex';
     return;
   }
-
   // Filtrar coincidencias (máximo 4 para no saturar la vista)
   const coincidencias = bbddAgencias.filter(a => a.nombre.toLowerCase().includes(input)).slice(0, 4);
   contenedorResultados.innerHTML = '';
-
   if (coincidencias.length === 0) {
     contenedorResultados.innerHTML = `
       <div class="db-item" style="border-color: red; flex-direction: column; align-items: flex-start;">
@@ -450,10 +529,8 @@ function buscarAgenciaRapida() {
     coincidencias.forEach(agencia => {
       const claseBadge = (agencia.puede === 'SI') ? 'badge-orange' : 'badge-black';
       const textoBadge = (agencia.puede === 'SI') ? '<i class="fa-solid fa-ban"></i> SIN HERRAMIENTAS' : '<i class="fa-solid fa-check"></i> CON HERRAMIENTAS';
-
       // Escapamos comillas simples en el nombre para el onClick
       const nombreEscapado = agencia.nombre.replace(/'/g, "\\'");
-
       contenedorResultados.innerHTML += `
         <div class="db-item" style="cursor: pointer; transition: all 0.2s;" 
              onclick="seleccionarAgenciaParaDictamen('${nombreEscapado}', '${agencia.puede}')" 
@@ -468,41 +545,30 @@ function buscarAgenciaRapida() {
       `;
     });
   }
-
   contenedorResultados.style.display = 'flex';
 }
-
 function seleccionarAgenciaParaDictamen(nombre, puede) {
   document.getElementById('resultadosAgenciaRapida').style.display = 'none'; // Ocultar lista
-
   const claseBadge = (puede === 'SI') ? 'badge-orange' : 'badge-black';
   const textoBadge = (puede === 'SI') ? '<i class="fa-solid fa-ban"></i> NO CUENTA CON KIT DE HERRAMIENTAS' : '<i class="fa-solid fa-check"></i> SÍ CUENTA CON KIT DE HERRAMIENTAS';
-
   document.getElementById('nombreAgenciaSeleccionada').innerText = nombre;
   document.getElementById('badgeAgenciaSeleccionada').innerHTML = `<span class="badge ${claseBadge}">${textoBadge}</span>`;
-
   // Reiniciar selección de armado
   document.getElementById('select-armado-rapido').value = '';
   document.getElementById('boxDictamenFinal').style.display = 'none';
-
   document.getElementById('areaDictamenRapido').style.display = 'block';
 }
-
 function evaluarDictamenRapido() {
   const armado = document.getElementById('select-armado-rapido').value;
   const caja = document.getElementById('boxDictamenFinal');
-
   if (!armado) {
     caja.style.display = 'none';
     return;
   }
-
   let accionCalculada = (armado === 'CEDIS' || armado === 'AGENCIA') ? 'SE REQUIERE CHECK LIST' : 'PASA COMO GARANTIA';
-
   let estiloAlerta = accionCalculada.includes('GARANTIA') 
     ? 'border-left: 6px solid var(--vento-black); background: var(--vento-white); color: var(--vento-black); border-top: 2px solid var(--vento-black); border-right: 2px solid var(--vento-black); border-bottom: 2px solid var(--vento-black);' 
     : 'border-left: 6px solid var(--vento-orange); background: var(--vento-black); color: var(--vento-white); border-top: 2px solid var(--vento-black); border-right: 2px solid var(--vento-black); border-bottom: 2px solid var(--vento-black);';
-
   caja.style.display = 'block';
   caja.innerHTML = `
     <div style="font-size: 13px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; color: var(--vento-black);">
@@ -514,14 +580,12 @@ function evaluarDictamenRapido() {
     </div>
   `;
 }
-
 // =========================================
 // LÓGICA DE BÚSQUEDA UNIVERSAL (Baterías + Proyecto S + Motos Entregadas)
 // =========================================
 const modalOverlay = document.getElementById('vinModalOverlay');
 const vinInput = document.getElementById('vinInput');
 const dbResults = document.getElementById('dbResults');
-
 function abrirModalVIN() {
   modalOverlay.style.display = 'flex';
   collapseWidget(); 
@@ -535,7 +599,6 @@ function cerrarModalVIN() {
 modalOverlay.addEventListener('click', function(e) {
   if (e.target === this) cerrarModalVIN();
 });
-
 // Función de consulta concurrente a múltiples bases
 async function ejecutarBusquedaUniversal(e) {
   e.preventDefault();
@@ -560,11 +623,9 @@ async function ejecutarBusquedaUniversal(e) {
   // 3. Parámetros Motos entregadas en Agencia antes del Check List
   const pestañaMotos = encodeURIComponent('Motos entregadas en Agencia antes del Check List');
   const urlMotosEntregadas = `https://docs.google.com/spreadsheets/d/${MULTI_SHEET_ID}/gviz/tq?tq=${encodeURIComponent(`select * where upper(F) contains '${vinBuscado}' limit 1`)}&sheet=${pestañaMotos}`;
-
   // 4. Parámetros para Extensión de Garantía (¡SIN LIMIT 1 para traer múltiples registros!)
   const EXT_GARANTIA_SHEET_ID = '1vSGWWNPZ6DTK5Cq4Gke6P4WCp_kZoKCSkQ1n2-SJo74';
   const urlExtensionGarantia = `https://docs.google.com/spreadsheets/d/${EXT_GARANTIA_SHEET_ID}/gviz/tq?tq=${encodeURIComponent(`select * where upper(I) contains '${vinBuscado}'`)}`;
-
   try {
     const [resBaterias, resProyectoS, resMotosEntregadas, resExtensionGarantia] = await Promise.all([
       fetch(urlBaterias).then(r => r.text()),
@@ -591,7 +652,6 @@ async function ejecutarBusquedaUniversal(e) {
       if (cell.v !== undefined && cell.v !== null) return cell.v;
       return 'N/A';
     };
-
     // Función 1: Generador Genérico
     const generarTarjetaGenerica = (titulo, icono, data, colorNaranja) => {
       const hallado = data && data.table && data.table.rows.length > 0;
@@ -634,7 +694,6 @@ async function ejecutarBusquedaUniversal(e) {
         </div>
       `;
     };
-
     // Función 2: Generador Exclusivo para Extensiones de Garantía
     const generarTarjetaExtensiones = (titulo, icono, data) => {
       const rows = data && data.table && data.table.rows ? data.table.rows : [];
@@ -642,7 +701,6 @@ async function ejecutarBusquedaUniversal(e) {
       const badgeClass = hallado ? 'badge-orange' : 'badge-white';
       const borderColor = hallado ? 'var(--vento-orange)' : 'var(--vento-gray-light)';
       const iconActiveColor = hallado ? 'var(--vento-orange)' : 'var(--vento-gray-dark)';
-
       let detallesHTML = '';
       if (hallado) {
         detallesHTML = `<div class="vin-details" style="display: none; padding: 12px; background: var(--vento-white); border-top: 1px solid var(--vento-gray-light); font-size: 13px; color: var(--vento-gray-dark);">`;
@@ -659,11 +717,9 @@ async function ejecutarBusquedaUniversal(e) {
           const estatus      = getCell(r, 19); // Columna T
           const comentarios  = getCell(r, 22); // Columna W
           const liga         = getCell(r, 23); // Columna X
-
           // NUEVA CONDICIÓN LOGICA: AUTORIZADO o MANUAL
           const estatusLimpio = estatus.toString().trim().toUpperCase();
           const mostrarBoton = estatusLimpio === 'AUTORIZADO' || estatusLimpio === 'MANUAL';
-
           // Estructura de Sub-Acordeón para cada registro
           detallesHTML += `
             <div style="margin-bottom: 8px; border: 1px solid var(--vento-gray-light); border-radius: 6px; overflow: hidden;">
@@ -697,7 +753,6 @@ async function ejecutarBusquedaUniversal(e) {
         });
         detallesHTML += `</div>`;
       }
-
       return `
         <div style="border: 2px solid ${borderColor}; border-radius: 8px; margin-bottom: 0px; background: var(--vento-bg); overflow: hidden; transition: all 0.2s;">
           <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; cursor: ${hallado ? 'pointer' : 'default'};" 
@@ -716,7 +771,6 @@ async function ejecutarBusquedaUniversal(e) {
         </div>
       `;
     };
-
     // Imprimir los resultados
     dbResults.innerHTML = `
       <div style="font-size: 13px; font-weight: 800; color: var(--vento-gray-dark); margin-bottom: -4px;">RESULTADOS DEL ESCANEO:</div>
