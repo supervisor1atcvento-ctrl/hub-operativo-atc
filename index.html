@@ -36,7 +36,6 @@ html,body{
   overflow: hidden;
 }
 .app{height:100vh; display:flex; flex-direction:column}
-
 /* =========================================
    BANNER BANCARIO / MARQUESINA DE ANUNCIOS
    ========================================= */
@@ -84,7 +83,7 @@ html,body{
   animation: marquee 28s linear infinite;
 }
 .ticker-container:hover .ticker-content {
-  animation-play-state: paused;
+  animation-play-state: paused !important;
 }
 .ticker-item {
   display: inline-flex;
@@ -110,10 +109,31 @@ html,body{
   100% { transform: translate3d(-100%, 0, 0); }
 }
 
+/* NUEVO: Botón para saltar aviso */
+.btn-next-aviso {
+  background-color: var(--vento-black);
+  color: var(--vento-orange);
+  border: none;
+  border-left: 2px solid var(--vento-gray-dark);
+  height: 100%;
+  padding: 0 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: all 0.2s;
+  z-index: 2;
+}
+.btn-next-aviso:hover {
+  background-color: var(--vento-orange);
+  color: var(--vento-white);
+  border-left-color: var(--vento-orange);
+}
+
 /* Iframe full area ajustado */
 .frame-wrap{flex:1; display:block; height: calc(100vh - 40px);}
 .frame{width:100%; height:100%; border:0; display:block; background:var(--vento-white)}
-
 /* Widget fijo inferior derecho */
 .widget {
   position:fixed;
@@ -267,42 +287,25 @@ select.input-vin {
 </head>
 <body>
 <div class="app">
-
-  <!-- BANNER DE ANUNCIO -->
+  <!-- BANNER DE ANUNCIO DINÁMICO CON ROTACIÓN POR FILA -->
   <div class="bank-banner">
-    <div class="banner-badge">
-      <i class="fa-solid fa-bullhorn"></i> AVISO DE COBRANZA
+    <div class="banner-badge" id="bannerBadge">
+      <i class="fa-solid fa-bullhorn" id="badgeIcon"></i>
+      <span id="badgeText">AVISOS ATC</span>
     </div>
     <div class="ticker-container" title="Pasa el cursor para pausar la animación">
-      <div class="ticker-content">
-        <div class="ticker-item">
-          <i class="fa-solid fa-phone"></i>
-          <span>Teléfono de Cobranza: <strong>5585261697</strong></span>
-        </div>
-        <span class="ticker-separator">•</span>
-        <div class="ticker-item">
-          <i class="fa-solid fa-clock"></i>
-          <span>Horario de Atención: <strong>Lunes a Viernes de 7:00 A.M. a 8:00 P.M.</strong></span>
-        </div>
-        <span class="ticker-separator">•</span>
-        <div class="ticker-item">
-          <i class="fa-solid fa-calendar-days"></i>
-          <span>Fin de Semana: <strong>Sábados y Domingos de 8:00 A.M. a 1:00 P.M.</strong></span>
-        </div>
-        <span class="ticker-separator">•</span>
-        <div class="ticker-item">
-          <i class="fa-solid fa-phone"></i>
-          <span>Teléfono de Cobranza: <strong>5585261697</strong></span>
-        </div>
-        <span class="ticker-separator">•</span>
-        <div class="ticker-item">
-          <i class="fa-solid fa-clock"></i>
-          <span>Horario de Atención: <strong>Lunes a Viernes de 7:00 A.M. a 8:00 P.M.</strong> | <strong>Sábados y Domingos de 8:00 A.M. a 1:00 P.M.</strong></span>
-        </div>
+      <div class="ticker-content" id="tickerContent">
+        <span style="color: var(--vento-white); padding-left: 20px; font-weight: 600;">
+          <i class="fa-solid fa-rotate fa-spin" style="color: var(--vento-orange); margin-right: 8px;"></i> Sincronizando avisos...
+        </span>
       </div>
     </div>
+    <!-- BOTÓN DE SIGUIENTE AVISO -->
+    <button class="btn-next-aviso" onclick="saltarAviso()" title="Saltar al siguiente aviso">
+      <i class="fa-solid fa-forward-step"></i>
+    </button>
   </div>
-
+  
   <div class="frame-wrap">
     <iframe id="mainFrame" class="frame" src="https://supervisor1atcvento-ctrl.github.io/tickets_atc/" title="Contenido principal"></iframe>
   </div>
@@ -333,7 +336,7 @@ select.input-vin {
   </div>
 </div>
 <!-- =========================================
-     NUEVO MODAL: SEGMENTADOR RÁPIDO NATIVO
+     MODAL: SEGMENTADOR RÁPIDO NATIVO
      ========================================= -->
 <div class="overlay-blur" id="segmentadorModalOverlay">
   <div class="panel-modal">
@@ -354,7 +357,7 @@ select.input-vin {
       </div>
       <!-- Resultados de la búsqueda -->
       <div id="resultadosAgenciaRapida" class="db-results-container" style="margin-top: 10px;"></div>
-      <!-- Área del Dictamen (Oculta hasta seleccionar una agencia) -->
+      <!-- Área del Dictamen -->
       <div id="areaDictamenRapido" style="display: none; margin-top: 20px; border-top: 2px dashed var(--vento-gray-light); padding-top: 20px;">
         <h4 id="nombreAgenciaSeleccionada" style="margin: 0 0 10px 0; font-weight: 800; font-size: 16px;"></h4>
         <div id="badgeAgenciaSeleccionada" style="margin-bottom: 20px;"></div>
@@ -400,7 +403,6 @@ select.input-vin {
       <div class="menu-item" data-url="https://supervisor1atcvento-ctrl.github.io/indicadores/" onclick="loadPage(this)">
         <span>Indicadores</span><i class="fa-solid fa-chart-line"></i>
       </div>
-      <!-- BOTÓN MODIFICADO: Abre el segmentador rápido nativo -->
       <div class="menu-item" onclick="abrirModalSegmentador()">
         <span>Segmentador de Agencias</span><i class="fa-solid fa-store"></i>
       </div>
@@ -453,7 +455,6 @@ function loadPage(el){
 // =========================================
 let bbddAgencias = [];
 let cargandoAgencias = false;
-// Carga la base de datos de Google Sheets en segundo plano la primera vez que se abre
 async function inicializarBaseAgencias() {
   if (bbddAgencias.length > 0 || cargandoAgencias) return;
   cargandoAgencias = true;
@@ -464,7 +465,6 @@ async function inicializarBaseAgencias() {
     const lineas = texto.split(/\r?\n/);
     for(let i = 1; i < lineas.length; i++) {
       if(!lineas[i]) continue;
-      // Parseo básico de CSV
       let col = []; let celda = ''; let comillas = false;
       for(let char of lineas[i]) {
         if(char === '"') { comillas = !comillas; }
@@ -472,7 +472,6 @@ async function inicializarBaseAgencias() {
         else { celda += char; }
       }
       col.push(celda.trim());
-      // Columna 1 = Nombre, Columna 14 = Puede Reportar (SI/NO)
       if(col.length > 1 && col[1]) {
         bbddAgencias.push({
           nombre: col[1].replace(/"/g, '').trim(),
@@ -489,7 +488,7 @@ async function inicializarBaseAgencias() {
 function abrirModalSegmentador() {
   document.getElementById('segmentadorModalOverlay').style.display = 'flex';
   collapseWidget();
-  inicializarBaseAgencias(); // Descarga la info si es la primera vez
+  inicializarBaseAgencias(); 
   setTimeout(() => document.getElementById('inputAgenciaModal').focus(), 100);
 }
 function cerrarModalSegmentador() {
@@ -505,16 +504,18 @@ function buscarAgenciaRapida() {
   const input = document.getElementById('inputAgenciaModal').value.trim().toLowerCase();
   const contenedorResultados = document.getElementById('resultadosAgenciaRapida');
   const areaDictamen = document.getElementById('areaDictamenRapido');
-  areaDictamen.style.display = 'none'; // Oculta dictamen previo
+  areaDictamen.style.display = 'none'; 
+  
   if (!input) return;
   if (bbddAgencias.length === 0) {
     contenedorResultados.innerHTML = `<div style="font-size:13px; color:var(--vento-gray-dark); text-align:center;"><i class="fa-solid fa-spinner fa-spin"></i> Sincronizando directorio, intenta en un segundo...</div>`;
     contenedorResultados.style.display = 'flex';
     return;
   }
-  // Filtrar coincidencias (máximo 4 para no saturar la vista)
+  
   const coincidencias = bbddAgencias.filter(a => a.nombre.toLowerCase().includes(input)).slice(0, 4);
   contenedorResultados.innerHTML = '';
+  
   if (coincidencias.length === 0) {
     contenedorResultados.innerHTML = `
       <div class="db-item" style="border-color: red; flex-direction: column; align-items: flex-start;">
@@ -529,8 +530,8 @@ function buscarAgenciaRapida() {
     coincidencias.forEach(agencia => {
       const claseBadge = (agencia.puede === 'SI') ? 'badge-orange' : 'badge-black';
       const textoBadge = (agencia.puede === 'SI') ? '<i class="fa-solid fa-ban"></i> SIN HERRAMIENTAS' : '<i class="fa-solid fa-check"></i> CON HERRAMIENTAS';
-      // Escapamos comillas simples en el nombre para el onClick
       const nombreEscapado = agencia.nombre.replace(/'/g, "\\'");
+      
       contenedorResultados.innerHTML += `
         <div class="db-item" style="cursor: pointer; transition: all 0.2s;" 
              onclick="seleccionarAgenciaParaDictamen('${nombreEscapado}', '${agencia.puede}')" 
@@ -548,12 +549,12 @@ function buscarAgenciaRapida() {
   contenedorResultados.style.display = 'flex';
 }
 function seleccionarAgenciaParaDictamen(nombre, puede) {
-  document.getElementById('resultadosAgenciaRapida').style.display = 'none'; // Ocultar lista
+  document.getElementById('resultadosAgenciaRapida').style.display = 'none'; 
   const claseBadge = (puede === 'SI') ? 'badge-orange' : 'badge-black';
   const textoBadge = (puede === 'SI') ? '<i class="fa-solid fa-ban"></i> NO CUENTA CON KIT DE HERRAMIENTAS' : '<i class="fa-solid fa-check"></i> SÍ CUENTA CON KIT DE HERRAMIENTAS';
+  
   document.getElementById('nombreAgenciaSeleccionada').innerText = nombre;
   document.getElementById('badgeAgenciaSeleccionada').innerHTML = `<span class="badge ${claseBadge}">${textoBadge}</span>`;
-  // Reiniciar selección de armado
   document.getElementById('select-armado-rapido').value = '';
   document.getElementById('boxDictamenFinal').style.display = 'none';
   document.getElementById('areaDictamenRapido').style.display = 'block';
@@ -565,10 +566,12 @@ function evaluarDictamenRapido() {
     caja.style.display = 'none';
     return;
   }
+  
   let accionCalculada = (armado === 'CEDIS' || armado === 'AGENCIA') ? 'SE REQUIERE CHECK LIST' : 'PASA COMO GARANTIA';
   let estiloAlerta = accionCalculada.includes('GARANTIA') 
     ? 'border-left: 6px solid var(--vento-black); background: var(--vento-white); color: var(--vento-black); border-top: 2px solid var(--vento-black); border-right: 2px solid var(--vento-black); border-bottom: 2px solid var(--vento-black);' 
     : 'border-left: 6px solid var(--vento-orange); background: var(--vento-black); color: var(--vento-white); border-top: 2px solid var(--vento-black); border-right: 2px solid var(--vento-black); border-bottom: 2px solid var(--vento-black);';
+  
   caja.style.display = 'block';
   caja.innerHTML = `
     <div style="font-size: 13px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; color: var(--vento-black);">
@@ -581,7 +584,7 @@ function evaluarDictamenRapido() {
   `;
 }
 // =========================================
-// LÓGICA DE BÚSQUEDA UNIVERSAL (Baterías + Proyecto S + Motos Entregadas)
+// LÓGICA DE BÚSQUEDA UNIVERSAL
 // =========================================
 const modalOverlay = document.getElementById('vinModalOverlay');
 const vinInput = document.getElementById('vinInput');
@@ -599,7 +602,6 @@ function cerrarModalVIN() {
 modalOverlay.addEventListener('click', function(e) {
   if (e.target === this) cerrarModalVIN();
 });
-// Función de consulta concurrente a múltiples bases
 async function ejecutarBusquedaUniversal(e) {
   e.preventDefault();
   
@@ -611,21 +613,19 @@ async function ejecutarBusquedaUniversal(e) {
   btnSubmit.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Consultando...';
   dbResults.style.display = 'none';
   
-  // 1. Parámetros Baterías en Planta
   const BAT_SHEET_ID = '1qxnp3r976gbgxO_ws0XymcMkH0XRklldWp5HEf-gaU4';
   const BAT_GID = '1280448484';
   const urlBaterias = `https://docs.google.com/spreadsheets/d/${BAT_SHEET_ID}/gviz/tq?tq=${encodeURIComponent(`select * where upper(C) contains '${vinBuscado}' limit 1`)}&gid=${BAT_GID}`;
   
-  // 2. Parámetros Proyecto S
   const MULTI_SHEET_ID = '1ZV84x-E4d_iJz7An7aKQ5qjyK6p0vil81GGqrJbmLJY';
   const urlProyectoS = `https://docs.google.com/spreadsheets/d/${MULTI_SHEET_ID}/gviz/tq?tq=${encodeURIComponent(`select * where upper(F) contains '${vinBuscado}' limit 1`)}&sheet=Proyecto+S`;
   
-  // 3. Parámetros Motos entregadas en Agencia antes del Check List
   const pestañaMotos = encodeURIComponent('Motos entregadas en Agencia antes del Check List');
   const urlMotosEntregadas = `https://docs.google.com/spreadsheets/d/${MULTI_SHEET_ID}/gviz/tq?tq=${encodeURIComponent(`select * where upper(F) contains '${vinBuscado}' limit 1`)}&sheet=${pestañaMotos}`;
-  // 4. Parámetros para Extensión de Garantía (¡SIN LIMIT 1 para traer múltiples registros!)
+  
   const EXT_GARANTIA_SHEET_ID = '1vSGWWNPZ6DTK5Cq4Gke6P4WCp_kZoKCSkQ1n2-SJo74';
   const urlExtensionGarantia = `https://docs.google.com/spreadsheets/d/${EXT_GARANTIA_SHEET_ID}/gviz/tq?tq=${encodeURIComponent(`select * where upper(I) contains '${vinBuscado}'`)}`;
+  
   try {
     const [resBaterias, resProyectoS, resMotosEntregadas, resExtensionGarantia] = await Promise.all([
       fetch(urlBaterias).then(r => r.text()),
@@ -644,7 +644,6 @@ async function ejecutarBusquedaUniversal(e) {
     const dataMotos = extraerJSON(resMotosEntregadas);
     const dataExtensionGarantia = extraerJSON(resExtensionGarantia);
     
-    // Función auxiliar para leer celdas evitando errores de "undefined"
     const getCell = (row, idx) => {
       if (!row || !row.c || idx >= row.c.length || !row.c[idx]) return 'N/A';
       const cell = row.c[idx];
@@ -652,7 +651,7 @@ async function ejecutarBusquedaUniversal(e) {
       if (cell.v !== undefined && cell.v !== null) return cell.v;
       return 'N/A';
     };
-    // Función 1: Generador Genérico
+    
     const generarTarjetaGenerica = (titulo, icono, data, colorNaranja) => {
       const hallado = data && data.table && data.table.rows.length > 0;
       const badgeClass = hallado ? (colorNaranja ? 'badge-orange' : 'badge-black') : 'badge-white';
@@ -694,7 +693,7 @@ async function ejecutarBusquedaUniversal(e) {
         </div>
       `;
     };
-    // Función 2: Generador Exclusivo para Extensiones de Garantía
+    
     const generarTarjetaExtensiones = (titulo, icono, data) => {
       const rows = data && data.table && data.table.rows ? data.table.rows : [];
       const hallado = rows.length > 0;
@@ -705,33 +704,28 @@ async function ejecutarBusquedaUniversal(e) {
       if (hallado) {
         detallesHTML = `<div class="vin-details" style="display: none; padding: 12px; background: var(--vento-white); border-top: 1px solid var(--vento-gray-light); font-size: 13px; color: var(--vento-gray-dark);">`;
         
-        // Iteramos por todos los registros encontrados
         rows.forEach((r, idx) => {
-          const fechaSol     = getCell(r, 0);  // Columna A
-          const solicitante  = getCell(r, 1);  // Columna B
-          const tipoSol      = getCell(r, 2);  // Columna C
-          const cliente      = getCell(r, 4);  // Columna E
-          const modelo       = getCell(r, 7);  // Columna H
-          const serie        = getCell(r, 8);  // Columna I
-          const folio        = getCell(r, 17); // Columna R
-          const estatus      = getCell(r, 19); // Columna T
-          const comentarios  = getCell(r, 22); // Columna W
-          const liga         = getCell(r, 23); // Columna X
-          // NUEVA CONDICIÓN LOGICA: AUTORIZADO o MANUAL
+          const fechaSol     = getCell(r, 0);  
+          const solicitante  = getCell(r, 1);  
+          const tipoSol      = getCell(r, 2);  
+          const cliente      = getCell(r, 4);  
+          const modelo       = getCell(r, 7);  
+          const serie        = getCell(r, 8);  
+          const folio        = getCell(r, 17); 
+          const estatus      = getCell(r, 19); 
+          const comentarios  = getCell(r, 22); 
+          const liga         = getCell(r, 23); 
+          
           const estatusLimpio = estatus.toString().trim().toUpperCase();
           const mostrarBoton = estatusLimpio === 'AUTORIZADO' || estatusLimpio === 'MANUAL';
-          // Estructura de Sub-Acordeón para cada registro
+          
           detallesHTML += `
             <div style="margin-bottom: 8px; border: 1px solid var(--vento-gray-light); border-radius: 6px; overflow: hidden;">
-              
-              <!-- Cabecera del Registro (Clickable) -->
               <div style="padding: 10px 12px; background: var(--vento-bg); cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 700; color: var(--vento-black);"
                    onclick="const det = this.nextElementSibling; det.style.display = det.style.display === 'none' ? 'block' : 'none';">
                 <span>Folio: <span style="color:var(--vento-orange)">${folio}</span> &nbsp;|&nbsp; Estatus: ${estatus}</span>
                 <i class="fa-solid fa-chevron-down" style="color: var(--vento-gray-dark); font-size: 12px;"></i>
               </div>
-              
-              <!-- Cuerpo del Registro -->
               <div style="display: none; padding: 12px; background: var(--vento-white); border-top: 1px solid var(--vento-gray-light);">
                 <div style="margin-bottom: 6px;"><strong>Tipo de solicitud:</strong> ${tipoSol}</div>
                 <div style="margin-bottom: 6px;"><strong>Serie de la moto:</strong> ${serie}</div>
@@ -771,7 +765,7 @@ async function ejecutarBusquedaUniversal(e) {
         </div>
       `;
     };
-    // Imprimir los resultados
+    
     dbResults.innerHTML = `
       <div style="font-size: 13px; font-weight: 800; color: var(--vento-gray-dark); margin-bottom: -4px;">RESULTADOS DEL ESCANEO:</div>
       ${generarTarjetaGenerica('Baterías Activadas', 'fa-solid fa-car-battery', dataBaterias, false)}
@@ -789,6 +783,124 @@ async function ejecutarBusquedaUniversal(e) {
     btnSubmit.innerHTML = '<i class="fa-solid fa-database"></i> Consultar Bases';
   }
 }
+// =========================================
+// LÓGICA DEL BANNER DE AVISOS DINÁMICO POR FILA (GOOGLE SHEETS)
+// =========================================
+let avisosLista = [];
+let avisoActualIndex = 0;
+let avisoTimeout = null;
+
+async function cargarAvisosDinamicos() {
+  const sheetId = '1GBcoYjw-mziCA30F2CgqGM9kKWjJjeSiTGfHN6XM8rE';
+  const sheetName = 'Avisos';
+  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
+  
+  try {
+    const res = await fetch(url);
+    const texto = await res.text();
+    
+    const jsonString = texto.substring(texto.indexOf('{'), texto.lastIndexOf('}') + 1);
+    const data = JSON.parse(jsonString);
+    const rows = data.table.rows;
+    
+    avisosLista = [];
+    
+    if (rows && rows.length > 0) {
+      rows.forEach(row => {
+        const tipoVal = row.c[0] ? row.c[0].v : 'AVISO ATC';
+        const avisoVal = row.c[1] ? row.c[1].v : '';
+        
+        if (avisoVal) {
+          avisosLista.push({
+            tipo: tipoVal,
+            aviso: avisoVal
+          });
+        }
+      });
+    }
+    
+    if (avisosLista.length > 0) {
+      avisoActualIndex = 0;
+      reproducirSiguienteAviso();
+    } else {
+      document.getElementById('tickerContent').innerHTML = `
+        <span style="color: var(--vento-white); font-weight: 500; padding-left: 20px;">
+          No hay avisos activos en este momento.
+        </span>`;
+    }
+  } catch (error) {
+    console.error("Error al cargar los avisos de Sheets:", error);
+    document.getElementById('tickerContent').innerHTML = `
+      <span style="color: var(--vento-orange); font-weight: 500; padding-left: 20px;">
+        <i class="fa-solid fa-triangle-exclamation"></i> Error de conexión con el tablero de avisos.
+      </span>`;
+  }
+}
+
+function reproducirSiguienteAviso() {
+  if (avisosLista.length === 0) return;
+  
+  const item = avisosLista[avisoActualIndex];
+  const badgeText = document.getElementById('badgeText');
+  const badgeIcon = document.getElementById('badgeIcon');
+  const tickerContainer = document.getElementById('tickerContent');
+  
+  badgeText.innerText = item.tipo.toUpperCase();
+  
+  let icono = 'fa-bullhorn';
+  const tipoLower = item.tipo.toString().toLowerCase();
+  if (tipoLower.includes('teléfono') || tipoLower.includes('cobranza') || tipoLower.includes('contacto')) icono = 'fa-phone';
+  else if (tipoLower.includes('horario') || tipoLower.includes('tiempo')) icono = 'fa-clock';
+  else if (tipoLower.includes('urgente') || tipoLower.includes('alerta') || tipoLower.includes('importante')) icono = 'fa-triangle-exclamation';
+  else if (tipoLower.includes('sistema') || tipoLower.includes('falla')) icono = 'fa-desktop';
+  else if (tipoLower.includes('calendario') || tipoLower.includes('fecha')) icono = 'fa-calendar-days';
+  
+  badgeIcon.className = `fa-solid ${icono}`;
+  
+  tickerContainer.innerHTML = `
+    <div class="ticker-item">
+      <span>${item.aviso}</span>
+    </div>
+  `;
+  
+  const duracionSegundos = Math.max(16, Math.ceil(item.aviso.length * 0.22));
+  
+  tickerContainer.style.animation = 'none';
+  tickerContainer.offsetHeight; // Forzar reflow
+  tickerContainer.style.animation = `marquee ${duracionSegundos}s linear 1`;
+  
+  if (avisoTimeout) clearTimeout(avisoTimeout);
+  avisoTimeout = setTimeout(() => {
+    avanzarIndiceO_Recargar();
+  }, duracionSegundos * 1000);
+}
+
+// NUEVO: Función auxiliar para avanzar o reiniciar
+function avanzarIndiceO_Recargar() {
+  avisoActualIndex++;
+  
+  // Si llegamos al final del arreglo, se dispara una nueva carga para detectar adiciones en el Sheet
+  if (avisoActualIndex >= avisosLista.length) {
+    document.getElementById('tickerContent').innerHTML = `
+      <span style="color: var(--vento-white); font-weight: 600; padding-left: 20px;">
+        <i class="fa-solid fa-rotate fa-spin" style="color: var(--vento-orange); margin-right: 8px;"></i> Actualizando ciclo de avisos...
+      </span>`;
+    document.getElementById('tickerContent').style.animation = 'none';
+    
+    cargarAvisosDinamicos();
+  } else {
+    // Si aún hay avisos en la lista, sigue con el siguiente
+    reproducirSiguienteAviso();
+  }
+}
+
+// NUEVO: Lógica del Botón "Saltar Aviso"
+function saltarAviso() {
+  if (avisoTimeout) clearTimeout(avisoTimeout);
+  avanzarIndiceO_Recargar();
+}
+
+window.addEventListener('DOMContentLoaded', cargarAvisosDinamicos);
 </script>
 </body>
 </html>
