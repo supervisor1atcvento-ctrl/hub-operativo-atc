@@ -108,8 +108,7 @@ html,body{
   0% { transform: translate3d(0, 0, 0); }
   100% { transform: translate3d(-100%, 0, 0); }
 }
-
-/* NUEVO: Botón para saltar aviso */
+/* BOTÓN PARA SALTAR AVISO */
 .btn-next-aviso {
   background-color: var(--vento-black);
   color: var(--vento-orange);
@@ -130,7 +129,6 @@ html,body{
   color: var(--vento-white);
   border-left-color: var(--vento-orange);
 }
-
 /* Iframe full area ajustado */
 .frame-wrap{flex:1; display:block; height: calc(100vh - 40px);}
 .frame{width:100%; height:100%; border:0; display:block; background:var(--vento-white)}
@@ -661,7 +659,6 @@ async function ejecutarBusquedaUniversal(e) {
       let detallesHTML = '';
       if (hallado) {
         const cols = data.table.cols;
-        const row = data.table.rows[0].c;
         detallesHTML = `<div class="vin-details" style="display: none; padding: 12px 16px; background: var(--vento-white); border-top: 1px solid var(--vento-gray-light); font-size: 13px; color: var(--vento-gray-dark);">`;
         let hayDatos = false;
         for (let i = 0; i < cols.length; i++) {
@@ -704,7 +701,7 @@ async function ejecutarBusquedaUniversal(e) {
       if (hallado) {
         detallesHTML = `<div class="vin-details" style="display: none; padding: 12px; background: var(--vento-white); border-top: 1px solid var(--vento-gray-light); font-size: 13px; color: var(--vento-gray-dark);">`;
         
-        rows.forEach((r, idx) => {
+        rows.forEach((r) => {
           const fechaSol     = getCell(r, 0);  
           const solicitante  = getCell(r, 1);  
           const tipoSol      = getCell(r, 2);  
@@ -784,12 +781,11 @@ async function ejecutarBusquedaUniversal(e) {
   }
 }
 // =========================================
-// LÓGICA DEL BANNER DE AVISOS DINÁMICO POR FILA (GOOGLE SHEETS)
+// LÓGICA DEL BANNER DE AVISOS DINÁMICO POR FILA (GOOGLE SHEETS - SOLO ESTATUS "ACTIVO")
 // =========================================
 let avisosLista = [];
 let avisoActualIndex = 0;
 let avisoTimeout = null;
-
 async function cargarAvisosDinamicos() {
   const sheetId = '1GBcoYjw-mziCA30F2CgqGM9kKWjJjeSiTGfHN6XM8rE';
   const sheetName = 'Avisos';
@@ -807,10 +803,13 @@ async function cargarAvisosDinamicos() {
     
     if (rows && rows.length > 0) {
       rows.forEach(row => {
-        const tipoVal = row.c[0] ? row.c[0].v : 'AVISO ATC';
-        const avisoVal = row.c[1] ? row.c[1].v : '';
+        if (!row || !row.c) return;
+        const tipoVal = (row.c[0] && row.c[0].v !== null) ? row.c[0].v : 'AVISO ATC';
+        const avisoVal = (row.c[1] && row.c[1].v !== null) ? row.c[1].v : '';
+        const estatusVal = (row.c[2] && row.c[2].v !== null) ? row.c[2].v.toString().trim() : '';
         
-        if (avisoVal) {
+        // FILTRO: Solo reproducir aquellos avisos cuyo estatus en la columna C sea "Activo"
+        if (avisoVal && estatusVal.toLowerCase() === 'activo') {
           avisosLista.push({
             tipo: tipoVal,
             aviso: avisoVal
@@ -836,7 +835,6 @@ async function cargarAvisosDinamicos() {
       </span>`;
   }
 }
-
 function reproducirSiguienteAviso() {
   if (avisosLista.length === 0) return;
   
@@ -875,11 +873,9 @@ function reproducirSiguienteAviso() {
   }, duracionSegundos * 1000);
 }
 
-// NUEVO: Función auxiliar para avanzar o reiniciar
 function avanzarIndiceO_Recargar() {
   avisoActualIndex++;
   
-  // Si llegamos al final del arreglo, se dispara una nueva carga para detectar adiciones en el Sheet
   if (avisoActualIndex >= avisosLista.length) {
     document.getElementById('tickerContent').innerHTML = `
       <span style="color: var(--vento-white); font-weight: 600; padding-left: 20px;">
@@ -889,18 +885,38 @@ function avanzarIndiceO_Recargar() {
     
     cargarAvisosDinamicos();
   } else {
-    // Si aún hay avisos en la lista, sigue con el siguiente
     reproducirSiguienteAviso();
   }
 }
 
-// NUEVO: Lógica del Botón "Saltar Aviso"
 function saltarAviso() {
   if (avisoTimeout) clearTimeout(avisoTimeout);
   avanzarIndiceO_Recargar();
 }
 
-window.addEventListener('DOMContentLoaded', cargarAvisosDinamicos);
+// =========================================
+// LÓGICA DE ACTUALIZACIÓN SILENCIOSA POR INACTIVIDAD (15 MINUTOS)
+// =========================================
+const TIEMPO_INACTIVIDAD_MS = 15 * 60 * 1000; // 15 minutos en milisegundos
+let timerInactividad;
+
+function reiniciarTimerInactividad() {
+  clearTimeout(timerInactividad);
+  timerInactividad = setTimeout(() => {
+    // Recarga silenciosa del portal al cumplir 15 min sin interacción
+    window.location.reload();
+  }, TIEMPO_INACTIVIDAD_MS);
+}
+
+// Escuchadores de eventos que detectan la interacción del usuario
+['mousemove', 'mousedown', 'keydown', 'keypress', 'scroll', 'touchstart', 'click'].forEach(evento => {
+  window.addEventListener(evento, reiniciarTimerInactividad, { passive: true });
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+  cargarAvisosDinamicos();
+  reiniciarTimerInactividad(); // Iniciar control de inactividad
+});
 </script>
 </body>
 </html>
