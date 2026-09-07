@@ -36,6 +36,7 @@ html,body{
   overflow: hidden;
 }
 .app{height:100vh; display:flex; flex-direction:column}
+
 /* =========================================
    BANNER BANCARIO / MARQUESINA DE ANUNCIOS
    ========================================= */
@@ -132,6 +133,7 @@ html,body{
 /* Iframe full area ajustado */
 .frame-wrap{flex:1; display:block; height: calc(100vh - 40px);}
 .frame{width:100%; height:100%; border:0; display:block; background:var(--vento-white)}
+
 /* Widget fijo inferior derecho */
 .widget {
   position:fixed;
@@ -213,6 +215,107 @@ html,body{
 .widget.collapsed .widget-controls,
 .widget.collapsed .widget-body,
 .widget.collapsed .widget-footer { display: none !important; }
+
+/* =========================================
+   ESTILOS WIDGET DE CHATBOT (RESUÉLVELO CHAT)
+   ========================================= */
+.chat-launcher-btn {
+  position: fixed;
+  left: 24px;
+  bottom: 24px;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: var(--vento-orange);
+  color: var(--vento-white);
+  border: 2px solid var(--vento-white);
+  box-shadow: 0 8px 24px rgba(242, 143, 23, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  cursor: pointer;
+  z-index: 9998;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.chat-launcher-btn:hover {
+  transform: scale(1.1);
+  background: var(--vento-black);
+  border-color: var(--vento-orange);
+  color: var(--vento-orange);
+}
+.chat-widget-container {
+  position: fixed;
+  left: 24px;
+  bottom: 92px;
+  width: 380px;
+  height: 580px;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 120px);
+  background: var(--vento-black);
+  border: 2px solid var(--vento-orange);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 10001;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.25s ease;
+  transform: translateY(20px) scale(0.95);
+  opacity: 0;
+  pointer-events: none;
+}
+.chat-widget-container.active {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+  pointer-events: all;
+}
+.chat-widget-header {
+  background: var(--vento-black);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid #333;
+}
+.chat-widget-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  color: var(--vento-white);
+  font-size: 14px;
+}
+.chat-widget-close {
+  background: transparent;
+  border: 2px solid var(--vento-gray-dark);
+  color: var(--vento-white);
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.chat-widget-close:hover {
+  background: var(--vento-orange);
+  border-color: var(--vento-orange);
+  color: var(--vento-white);
+}
+.chat-widget-iframe-container {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  background: var(--vento-white);
+}
+.chat-widget-iframe-container iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
 /* MODALES GENERALES */
 .overlay-blur {
   display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -280,6 +383,8 @@ select.input-vin {
 @media (max-width:900px){
   .widget{right:16px; bottom:16px; width:90%; height:460px}
   .widget.collapsed{right:16px; bottom:16px}
+  .chat-widget-container{left: 16px; bottom: 80px; width: calc(100vw - 32px); height: 80vh;}
+  .chat-launcher-btn{left: 16px; bottom: 16px;}
 }
 </style>
 </head>
@@ -308,6 +413,29 @@ select.input-vin {
     <iframe id="mainFrame" class="frame" src="https://supervisor1atcvento-ctrl.github.io/tickets_atc/" title="Contenido principal"></iframe>
   </div>
 </div>
+
+<!-- =========================================
+     BOTÓN FLOTANTE Y WIDGET DE CHATBOT (RESUÉLVELO CHAT)
+     ========================================= -->
+<button class="chat-launcher-btn" onclick="toggleChatWidget()" title="Abrir Resuélvelo Chat">
+  <i class="fa-solid fa-robot"></i>
+</button>
+
+<div class="chat-widget-container" id="chatWidgetContainer">
+  <div class="chat-widget-header">
+    <div class="chat-widget-title">
+      <i class="fa-solid fa-robot" style="color: var(--vento-orange); font-size: 18px;"></i>
+      <span>Resuélvelo Chat</span>
+    </div>
+    <button class="chat-widget-close" onclick="toggleChatWidget()" title="Minimizar Chat">
+      <i class="fa-solid fa-minus"></i>
+    </button>
+  </div>
+  <div class="chat-widget-iframe-container">
+    <iframe id="chatIframe" src="https://resuelvelo-chat.darlimco.chatgpt.site/" title="Resuélvelo Chatbot"></iframe>
+  </div>
+</div>
+
 <!-- =========================================
      MODAL BÚSQUEDA UNIVERSAL DE VIN
      ========================================= -->
@@ -333,6 +461,7 @@ select.input-vin {
     </div>
   </div>
 </div>
+
 <!-- =========================================
      MODAL: SEGMENTADOR RÁPIDO NATIVO
      ========================================= -->
@@ -373,6 +502,7 @@ select.input-vin {
     </div>
   </div>
 </div>
+
 <!-- Widget fijo -->
 <aside class="widget" id="menuWidget">
   <div class="widget-header" id="widgetHeader">
@@ -393,6 +523,12 @@ select.input-vin {
       <div class="menu-item" style="border-color: var(--vento-orange); background: rgba(242, 143, 23, 0.1); color: var(--vento-orange);" onclick="abrirModalVIN()">
         <span>Búsqueda Universal de VIN</span><i class="fa-solid fa-magnifying-glass" style="color: var(--vento-orange);"></i>
       </div>
+      
+      <!-- BOTÓN ACCESO DIRECTO RESUÉLVELO CHATBOT -->
+      <div class="menu-item" style="border-color: var(--vento-orange); background: rgba(242, 143, 23, 0.15); color: var(--vento-white); font-weight: 700;" onclick="toggleChatWidget()">
+        <span>Resuélvelo Chat</span><i class="fa-solid fa-robot" style="color: var(--vento-orange);"></i>
+      </div>
+
       <hr style="border: 0; border-top: 2px dashed #444; margin: 16px 0;">
       <!-- Herramientas -->
       <div class="menu-item active" id="menuTickets" data-url="https://supervisor1atcvento-ctrl.github.io/tickets_atc/" onclick="loadPage(this)">
@@ -425,7 +561,21 @@ select.input-vin {
     <span>VENTO © 2026</span><span>ATC</span>
   </div>
 </aside>
+
 <script>
+// =========================================
+// LÓGICA DEL CHATBOT WIDGET
+// =========================================
+function toggleChatWidget() {
+  const chatWidget = document.getElementById('chatWidgetContainer');
+  chatWidget.classList.toggle('active');
+  
+  // Si el menú del asistente está desplegado, colapsarlo para mejorar visión
+  if (widget && !widget.classList.contains('collapsed')) {
+    collapseWidget();
+  }
+}
+
 // =========================================
 // LÓGICA DEL WIDGET (Menú)
 // =========================================
@@ -448,6 +598,7 @@ function loadPage(el){
   const url = el.getAttribute('data-url');
   if(url) mainFrame.src = url;
 }
+
 // =========================================
 // LÓGICA DEL SEGMENTADOR RÁPIDO NATIVO
 // =========================================
@@ -581,6 +732,7 @@ function evaluarDictamenRapido() {
     </div>
   `;
 }
+
 // =========================================
 // LÓGICA DE BÚSQUEDA UNIVERSAL
 // =========================================
@@ -780,6 +932,7 @@ async function ejecutarBusquedaUniversal(e) {
     btnSubmit.innerHTML = '<i class="fa-solid fa-database"></i> Consultar Bases';
   }
 }
+
 // =========================================
 // LÓGICA DEL BANNER DE AVISOS DINÁMICO POR FILA (GOOGLE SHEETS - SOLO ESTATUS "ACTIVO")
 // =========================================
@@ -808,7 +961,6 @@ async function cargarAvisosDinamicos() {
         const avisoVal = (row.c[1] && row.c[1].v !== null) ? row.c[1].v : '';
         const estatusVal = (row.c[2] && row.c[2].v !== null) ? row.c[2].v.toString().trim() : '';
         
-        // FILTRO: Solo reproducir aquellos avisos cuyo estatus en la columna C sea "Activo"
         if (avisoVal && estatusVal.toLowerCase() === 'activo') {
           avisosLista.push({
             tipo: tipoVal,
@@ -872,7 +1024,6 @@ function reproducirSiguienteAviso() {
     avanzarIndiceO_Recargar();
   }, duracionSegundos * 1000);
 }
-
 function avanzarIndiceO_Recargar() {
   avisoActualIndex++;
   
@@ -888,7 +1039,6 @@ function avanzarIndiceO_Recargar() {
     reproducirSiguienteAviso();
   }
 }
-
 function saltarAviso() {
   if (avisoTimeout) clearTimeout(avisoTimeout);
   avanzarIndiceO_Recargar();
@@ -899,23 +1049,18 @@ function saltarAviso() {
 // =========================================
 const TIEMPO_INACTIVIDAD_MS = 15 * 60 * 1000; // 15 minutos en milisegundos
 let timerInactividad;
-
 function reiniciarTimerInactividad() {
   clearTimeout(timerInactividad);
   timerInactividad = setTimeout(() => {
-    // Recarga silenciosa del portal al cumplir 15 min sin interacción
     window.location.reload();
   }, TIEMPO_INACTIVIDAD_MS);
 }
-
-// Escuchadores de eventos que detectan la interacción del usuario
 ['mousemove', 'mousedown', 'keydown', 'keypress', 'scroll', 'touchstart', 'click'].forEach(evento => {
   window.addEventListener(evento, reiniciarTimerInactividad, { passive: true });
 });
-
 window.addEventListener('DOMContentLoaded', () => {
   cargarAvisosDinamicos();
-  reiniciarTimerInactividad(); // Iniciar control de inactividad
+  reiniciarTimerInactividad();
 });
 </script>
 </body>
