@@ -371,11 +371,30 @@ html,body{
 .badge-orange { background-color: var(--vento-orange); color: var(--vento-white); border: 1px solid var(--vento-orange-hover); }
 .badge-black { background-color: var(--vento-black); color: var(--vento-white); border: 1px solid var(--vento-black); }
 .badge-white { background-color: var(--vento-white); color: var(--vento-black); border: 1px solid var(--vento-black); }
-select.input-vin {
-  cursor: pointer; appearance: none;
-  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-  background-repeat: no-repeat; background-position: right 16px top 50%; background-size: 12px auto;
+
+/* ESTILOS DEL WIZARD (Asistente Segmentador) */
+.wizard-btn {
+  background-color: var(--vento-white);
+  color: var(--vento-black);
+  border: 2px solid var(--vento-gray-light);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s;
 }
+.wizard-btn:hover {
+  border-color: var(--vento-orange);
+  box-shadow: 0 4px 12px rgba(242, 143, 23, 0.1);
+  transform: translateY(-1px);
+}
+.wizard-btn i { color: var(--vento-orange); }
+
 @media (max-width:900px){
   .widget{right:16px; bottom:16px; width:90%; height:460px}
   .widget.collapsed{right:16px; bottom:16px}
@@ -409,6 +428,7 @@ select.input-vin {
     <iframe id="mainFrame" class="frame" src="https://supervisor1atcvento-ctrl.github.io/tickets_atc/" title="Contenido principal"></iframe>
   </div>
 </div>
+
 <!-- =========================================
      BOTÓN FLOTANTE Y WIDGET DE CHATBOT (RESUÉLVELO CHAT)
      ========================================= -->
@@ -429,6 +449,7 @@ select.input-vin {
     <iframe id="chatIframe" src="https://resuelvelo-chat.darlimco.chatgpt.site/" title="Resuélvelo Chatbot"></iframe>
   </div>
 </div>
+
 <!-- =========================================
      MODAL BÚSQUEDA UNIVERSAL DE VIN
      ========================================= -->
@@ -454,6 +475,7 @@ select.input-vin {
     </div>
   </div>
 </div>
+
 <!-- =========================================
      MODAL: SEGMENTADOR RÁPIDO NATIVO
      ========================================= -->
@@ -476,24 +498,22 @@ select.input-vin {
       </div>
       <!-- Resultados de la búsqueda -->
       <div id="resultadosAgenciaRapida" class="db-results-container" style="margin-top: 10px;"></div>
-      <!-- Área del Dictamen -->
+      
+      <!-- Área del Dictamen Interactivo -->
       <div id="areaDictamenRapido" style="display: none; margin-top: 20px; border-top: 2px dashed var(--vento-gray-light); padding-top: 20px;">
         <h4 id="nombreAgenciaSeleccionada" style="margin: 0 0 10px 0; font-weight: 800; font-size: 16px;"></h4>
         <div id="badgeAgenciaSeleccionada" style="margin-bottom: 20px;"></div>
-        <div style="font-size: 14px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
-          <i class="fa-solid fa-users-gear" style="color: var(--vento-orange);"></i> Origen del Armado en VENTONET
-        </div>
-        <select id="select-armado-rapido" class="input-vin" onchange="evaluarDictamenRapido()">
-          <option value="" disabled selected>Selecciona una opción...</option>
-          <option value="CEDIS">CEDIS</option>
-          <option value="CESVE">CESVE</option>
-          <option value="AGENCIA">SIN REGISTRO EN VENTONET</option>
-        </select>
-        <div id="boxDictamenFinal" class="db-results-container" style="padding: 0; border: none; background: transparent;"></div>
+        
+        <!-- Contenedor del Asistente (Wizard) -->
+        <div id="wizardContainer" style="margin-bottom: 16px;"></div>
+        
+        <!-- Resolución Final (Inyectada por JS) -->
+        <div id="boxDictamenFinal" class="db-results-container" style="padding: 0; border: none; background: transparent; display: none;"></div>
       </div>
     </div>
   </div>
 </div>
+
 <!-- Widget fijo -->
 <aside class="widget" id="menuWidget">
   <div class="widget-header" id="widgetHeader">
@@ -558,11 +578,11 @@ select.input-vin {
 function toggleChatWidget() {
   const chatWidget = document.getElementById('chatWidgetContainer');
   chatWidget.classList.toggle('active');
-  
   if (widget && !widget.classList.contains('collapsed')) {
     collapseWidget();
   }
 }
+
 // =========================================
 // LÓGICA DEL WIDGET (Menú)
 // =========================================
@@ -585,6 +605,166 @@ function loadPage(el){
   const url = el.getAttribute('data-url');
   if(url) mainFrame.src = url;
 }
+
+// =========================================
+// ÁRBOL DE DECISIONES PARA SEGMENTADOR (WIZARD)
+// =========================================
+const wizardTree = {
+  inicio: {
+    pregunta: "¿Quién registró el Armado y Activado (AYA) en VENTONET?",
+    opciones: [
+      { texto: "CEDIS", next: "checklist" },
+      { texto: "CESVE", next: "tiempo_armado" },
+      { texto: "Desconocido (No se sabe)", next: "comparte_cl" }
+    ]
+  },
+  checklist: {
+    pregunta: "¿La unidad cuenta con Check List?",
+    opciones: [
+      { texto: "Sí tiene Check List", next: "falla" },
+      { texto: "No tiene Check List", next: "tiene_to" }
+    ]
+  },
+  tiene_to: {
+    pregunta: "¿La unidad tiene TO (Orden de Transferencia)?",
+    opciones: [
+      { texto: "Sí", next: "reporto_sin_cl" },
+      { texto: "No", resolucion: "PASA POR COTIZACIÓN", tipo: "cotizacion" }
+    ]
+  },
+  reporto_sin_cl: {
+    pregunta: "¿Se reportó que la unidad llegó sin Check List?",
+    opciones: [
+      { texto: "Sí se reportó", next: "falla" },
+      { texto: "No se reportó", resolucion: "PASA POR COTIZACIÓN", tipo: "cotizacion" }
+    ]
+  },
+  tiempo_armado: {
+    pregunta: "¿Cuándo se terminó el armado y activado?",
+    opciones: [
+      { texto: "2 días o menos", resolucion: "PASA POR GARANTÍA", tipo: "garantia" },
+      { texto: "Más de 2 días", resolucion: "PASA POR COTIZACIÓN", tipo: "cotizacion" }
+    ]
+  },
+  comparte_cl: {
+    pregunta: "Se solicitó Check List. ¿La agencia lo compartió?",
+    opciones: [
+      { texto: "Sí lo compartió (Flujo CEDIS)", next: "checklist" },
+      { texto: "No lo ha compartido", next: "llego_huacal" }
+    ]
+  },
+  llego_huacal: {
+    pregunta: "¿La agencia comenta que llegó en huacal y tiene evidencias?",
+    opciones: [
+      { texto: "Sí, tiene evidencias (Flujo CESVE)", next: "tiempo_armado" },
+      { texto: "No, debemos solicitar evidencia", next: "seguimiento_1dia" }
+    ]
+  },
+  seguimiento_1dia: {
+    pregunta: "Tras dar el tiempo de seguimiento de 1 día...",
+    opciones: [
+      { texto: "Ya compartió la evidencia", next: "tiempo_armado" },
+      { texto: "Ya pasó 1 día y NO compartió nada", resolucion: "CERRAR EL TICKET", tipo: "cierre" }
+    ]
+  },
+  falla: {
+    pregunta: "¿Qué tipo de problema o diagnóstico reporta el cliente?",
+    opciones: [
+      { texto: "Fallas mecánicas", resolucion: "PASA POR GARANTÍA", tipo: "garantia" },
+      { texto: "Fugas de gasolina", resolucion: "PASA POR GARANTÍA", tipo: "garantia" },
+      { texto: "Fallas eléctricas", resolucion: "PASA POR GARANTÍA", tipo: "garantia" },
+      { texto: "Ajustes o colocación de accesorios", resolucion: "PASA POR GARANTÍA", tipo: "garantia" },
+      { texto: "Faltantes", resolucion: "PASA POR COTIZACIÓN", tipo: "cotizacion" },
+      { texto: "Daños estéticos", resolucion: "PASA POR COTIZACIÓN", tipo: "cotizacion" },
+      { texto: "Revisión general / Terminado de activar / Sin gasolina", resolucion: "CERRAR TICKET", tipo: "cierre" }
+    ]
+  }
+};
+
+let historialWizard = [];
+
+function iniciarWizardSegmentador() {
+  historialWizard = [];
+  document.getElementById('boxDictamenFinal').style.display = 'none';
+  renderWizardStep('inicio');
+}
+
+function renderWizardStep(stepId) {
+  const container = document.getElementById('wizardContainer');
+  const step = wizardTree[stepId];
+  
+  let html = `<div style="font-size: 14px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; color: var(--vento-black);">
+                <i class="fa-solid fa-code-branch" style="color: var(--vento-orange);"></i> ${step.pregunta}
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 8px;">`;
+              
+  step.opciones.forEach(opt => {
+    const action = opt.next ? `avanzarWizard('${stepId}', '${opt.next}')` : `finalizarWizard('${opt.resolucion}', '${opt.tipo}')`;
+    html += `<button onclick="${action}" class="wizard-btn">
+               <i class="fa-solid fa-arrow-right"></i> ${opt.texto}
+             </button>`;
+  });
+  
+  html += `</div>`;
+  
+  if (historialWizard.length > 0) {
+    html += `<button onclick="retrocederWizard()" style="margin-top: 16px; background: transparent; border: none; color: var(--vento-gray-dark); font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 13px; padding: 0;">
+               <i class="fa-solid fa-rotate-left"></i> Volver a la pregunta anterior
+             </button>`;
+  }
+  
+  container.innerHTML = html;
+}
+
+function avanzarWizard(currentStep, nextStep) {
+  historialWizard.push(currentStep);
+  renderWizardStep(nextStep);
+}
+
+function retrocederWizard() {
+  if (historialWizard.length > 0) {
+    const prevStep = historialWizard.pop();
+    document.getElementById('boxDictamenFinal').style.display = 'none';
+    renderWizardStep(prevStep);
+  }
+}
+
+function finalizarWizard(resolucion, tipo) {
+  const caja = document.getElementById('boxDictamenFinal');
+  
+  let icono = '';
+  let estiloAlerta = '';
+  
+  if (tipo === 'garantia') {
+    icono = '<i class="fa-solid fa-check-circle" style="color: #10B981;"></i>';
+    estiloAlerta = 'border-left: 6px solid #10B981; background: var(--vento-white); color: var(--vento-black); border: 2px solid var(--vento-gray-light);';
+  } else if (tipo === 'cotizacion') {
+    icono = '<i class="fa-solid fa-file-invoice-dollar" style="color: var(--vento-orange);"></i>';
+    estiloAlerta = 'border-left: 6px solid var(--vento-orange); background: var(--vento-black); color: var(--vento-white); border: 2px solid var(--vento-black);';
+  } else if (tipo === 'cierre') {
+    icono = '<i class="fa-solid fa-lock" style="color: #EF4444;"></i>';
+    estiloAlerta = 'border-left: 6px solid #EF4444; background: var(--vento-white); color: var(--vento-black); border: 2px solid var(--vento-gray-light);';
+  }
+  
+  caja.style.display = 'block';
+  caja.innerHTML = `
+    <div style="font-size: 13px; font-weight: 700; margin-bottom: 10px; margin-top: 10px; display: flex; align-items: center; gap: 8px; color: var(--vento-black);">
+      <i class="fa-solid fa-gavel"></i> Dictamen Generado
+    </div>
+    <div style="padding: 16px; border-radius: 8px; ${estiloAlerta}">
+      <span style="display:block; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; font-weight: 800; opacity: 0.9;">Resolución Oficial del Ticket</span>
+      <div style="font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 10px;">
+        ${icono} ${resolucion}
+      </div>
+    </div>
+    <button onclick="retrocederWizard()" style="margin-top: 16px; background: transparent; border: none; color: var(--vento-gray-dark); font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 13px; padding: 0;">
+      <i class="fa-solid fa-rotate-left"></i> Modificar mis respuestas
+    </button>
+  `;
+  
+  document.getElementById('wizardContainer').innerHTML = '';
+}
+
 // =========================================
 // LÓGICA DEL SEGMENTADOR RÁPIDO NATIVO
 // =========================================
@@ -635,7 +815,6 @@ function cerrarModalSegmentador() {
 document.getElementById('segmentadorModalOverlay').addEventListener('click', function(e) {
   if (e.target === this) cerrarModalSegmentador();
 });
-
 function buscarAgenciaRapida() {
   const input = document.getElementById('inputAgenciaModal').value.trim().toLowerCase();
   const contenedorResultados = document.getElementById('resultadosAgenciaRapida');
@@ -657,18 +836,15 @@ function buscarAgenciaRapida() {
       <div class="db-item" style="border-color: red; flex-direction: column; align-items: flex-start;">
         <div class="db-name" style="color: red;"><i class="fa-solid fa-store-slash"></i> Agencia no localizada</div>
         <p style="margin: 8px 0; font-size: 13px; color: var(--vento-black);">Si no está registrada, evalúala asumiendo que <strong>NO</strong> cuenta con herramientas.</p>
-        <button onclick="seleccionarAgenciaParaDictamen('AGENCIA NO REGISTRADA', 'NO')" class="btn-search" style="padding: 10px; font-size: 13px; width: auto;">
+        <button onclick="seleccionarAgenciaParaDictamen('AGENCIA NO REGISTRADA', 'SI')" class="btn-search" style="padding: 10px; font-size: 13px; width: auto;">
           <i class="fa-solid fa-clipboard-list"></i> Evaluar Manualmente
         </button>
       </div>
     `;
   } else {
     coincidencias.forEach(agencia => {
-      const tieneKit = (agencia.puede === 'SI');
-      const claseBadge = tieneKit ? 'badge-black' : 'badge-orange';
-      const textoBadge = tieneKit 
-        ? '<i class="fa-solid fa-check"></i> SÍ CUENTA CON KIT' 
-        : '<i class="fa-solid fa-ban"></i> NO CUENTA CON HERRAMIENTAS';
+      const claseBadge = (agencia.puede === 'SI') ? 'badge-orange' : 'badge-black';
+      const textoBadge = (agencia.puede === 'SI') ? '<i class="fa-solid fa-ban"></i> SIN HERRAMIENTAS' : '<i class="fa-solid fa-check"></i> CON HERRAMIENTAS';
       const nombreEscapado = agencia.nombre.replace(/'/g, "\\'");
       
       contenedorResultados.innerHTML += `
@@ -687,52 +863,18 @@ function buscarAgenciaRapida() {
   }
   contenedorResultados.style.display = 'flex';
 }
-
 function seleccionarAgenciaParaDictamen(nombre, puede) {
   document.getElementById('resultadosAgenciaRapida').style.display = 'none'; 
-  
-  const tieneKit = (puede === 'SI');
-  const claseBadge = tieneKit ? 'badge-black' : 'badge-orange';
-  const textoBadge = tieneKit 
-    ? '<i class="fa-solid fa-check"></i> SÍ CUENTA CON KIT DE HERRAMIENTAS DE ACTIVACIÓN DE GARANTÍA' 
-    : '<i class="fa-solid fa-ban"></i> NO CUENTA CON HERRAMIENTAS DE ACTIVACIÓN DE UNIDAD';
+  const claseBadge = (puede === 'SI') ? 'badge-orange' : 'badge-black';
+  const textoBadge = (puede === 'SI') ? '<i class="fa-solid fa-ban"></i> NO CUENTA CON KIT DE HERRAMIENTAS' : '<i class="fa-solid fa-check"></i> SÍ CUENTA CON KIT DE HERRAMIENTAS';
   
   document.getElementById('nombreAgenciaSeleccionada').innerText = nombre;
   document.getElementById('badgeAgenciaSeleccionada').innerHTML = `<span class="badge ${claseBadge}">${textoBadge}</span>`;
-  document.getElementById('select-armado-rapido').value = '';
-  document.getElementById('boxDictamenFinal').style.display = 'none';
+  
   document.getElementById('areaDictamenRapido').style.display = 'block';
-}
-
-function evaluarDictamenRapido() {
-  const armado = document.getElementById('select-armado-rapido').value;
-  const caja = document.getElementById('boxDictamenFinal');
-  if (!armado) {
-    caja.style.display = 'none';
-    return;
-  }
   
-  let accionCalculada = '';
-  if (armado === 'CEDIS' || armado === 'AGENCIA') {
-    accionCalculada = 'SE REQUIERE CHECK LIST';
-  } else if (armado === 'CESVE') {
-    accionCalculada = 'SE PROCEDERÁ DE ACUERDO AL PROCESO DE COTIZACIÓN O GARANTÍA (COMO TIENDAS NORMALES)';
-  }
-  
-  let estiloAlerta = (armado === 'CESVE') 
-    ? 'border-left: 6px solid var(--vento-black); background: var(--vento-white); color: var(--vento-black); border-top: 2px solid var(--vento-black); border-right: 2px solid var(--vento-black); border-bottom: 2px solid var(--vento-black);' 
-    : 'border-left: 6px solid var(--vento-orange); background: var(--vento-black); color: var(--vento-white); border-top: 2px solid var(--vento-black); border-right: 2px solid var(--vento-black); border-bottom: 2px solid var(--vento-black);';
-  
-  caja.style.display = 'block';
-  caja.innerHTML = `
-    <div style="font-size: 13px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; color: var(--vento-black);">
-      <i class="fa-solid fa-screwdriver-wrench"></i> Dictamen Final
-    </div>
-    <div style="padding: 16px; border-radius: 8px; ${estiloAlerta}">
-      <span style="display:block; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; font-weight: 800; opacity: 0.9;">Resolución Oficial</span>
-      <span style="font-size: 15px; font-weight: 800; line-height: 1.3;">${accionCalculada}</span>
-    </div>
-  `;
+  // INICIAR EL WIZARD AUTOMÁTICAMENTE
+  iniciarWizardSegmentador();
 }
 
 // =========================================
@@ -934,8 +1076,9 @@ async function ejecutarBusquedaUniversal(e) {
     btnSubmit.innerHTML = '<i class="fa-solid fa-database"></i> Consultar Bases';
   }
 }
+
 // =========================================
-// LÓGICA DEL BANNER DE AVISOS DINÁMICO POR FILA (GOOGLE SHEETS - SOLO ESTATUS "ACTIVO")
+// LÓGICA DEL BANNER DE AVISOS DINÁMICO POR FILA
 // =========================================
 let avisosLista = [];
 let avisoActualIndex = 0;
@@ -948,7 +1091,6 @@ async function cargarAvisosDinamicos() {
   try {
     const res = await fetch(url);
     const texto = await res.text();
-    
     const jsonString = texto.substring(texto.indexOf('{'), texto.lastIndexOf('}') + 1);
     const data = JSON.parse(jsonString);
     const rows = data.table.rows;
@@ -963,10 +1105,7 @@ async function cargarAvisosDinamicos() {
         const estatusVal = (row.c[2] && row.c[2].v !== null) ? row.c[2].v.toString().trim() : '';
         
         if (avisoVal && estatusVal.toLowerCase() === 'activo') {
-          avisosLista.push({
-            tipo: tipoVal,
-            aviso: avisoVal
-          });
+          avisosLista.push({ tipo: tipoVal, aviso: avisoVal });
         }
       });
     }
@@ -981,7 +1120,6 @@ async function cargarAvisosDinamicos() {
         </span>`;
     }
   } catch (error) {
-    console.error("Error al cargar los avisos de Sheets:", error);
     document.getElementById('tickerContent').innerHTML = `
       <span style="color: var(--vento-orange); font-weight: 500; padding-left: 20px;">
         <i class="fa-solid fa-triangle-exclamation"></i> Error de conexión con el tablero de avisos.
@@ -990,7 +1128,6 @@ async function cargarAvisosDinamicos() {
 }
 function reproducirSiguienteAviso() {
   if (avisosLista.length === 0) return;
-  
   const item = avisosLista[avisoActualIndex];
   const badgeText = document.getElementById('badgeText');
   const badgeIcon = document.getElementById('badgeIcon');
@@ -1007,12 +1144,7 @@ function reproducirSiguienteAviso() {
   else if (tipoLower.includes('calendario') || tipoLower.includes('fecha')) icono = 'fa-calendar-days';
   
   badgeIcon.className = `fa-solid ${icono}`;
-  
-  tickerContainer.innerHTML = `
-    <div class="ticker-item">
-      <span>${item.aviso}</span>
-    </div>
-  `;
+  tickerContainer.innerHTML = `<div class="ticker-item"><span>${item.aviso}</span></div>`;
   
   const duracionSegundos = Math.max(16, Math.ceil(item.aviso.length * 0.22));
   
@@ -1021,20 +1153,16 @@ function reproducirSiguienteAviso() {
   tickerContainer.style.animation = `marquee ${duracionSegundos}s linear 1`;
   
   if (avisoTimeout) clearTimeout(avisoTimeout);
-  avisoTimeout = setTimeout(() => {
-    avanzarIndiceO_Recargar();
-  }, duracionSegundos * 1000);
+  avisoTimeout = setTimeout(() => { avanzarIndiceO_Recargar(); }, duracionSegundos * 1000);
 }
 function avanzarIndiceO_Recargar() {
   avisoActualIndex++;
-  
   if (avisoActualIndex >= avisosLista.length) {
     document.getElementById('tickerContent').innerHTML = `
       <span style="color: var(--vento-white); font-weight: 600; padding-left: 20px;">
         <i class="fa-solid fa-rotate fa-spin" style="color: var(--vento-orange); margin-right: 8px;"></i> Actualizando ciclo de avisos...
       </span>`;
     document.getElementById('tickerContent').style.animation = 'none';
-    
     cargarAvisosDinamicos();
   } else {
     reproducirSiguienteAviso();
@@ -1044,16 +1172,15 @@ function saltarAviso() {
   if (avisoTimeout) clearTimeout(avisoTimeout);
   avanzarIndiceO_Recargar();
 }
+
 // =========================================
-// LÓGICA DE ACTUALIZACIÓN SILENCIOSA POR INACTIVIDAD (15 MINUTOS)
+// LÓGICA DE ACTUALIZACIÓN SILENCIOSA POR INACTIVIDAD
 // =========================================
-const TIEMPO_INACTIVIDAD_MS = 15 * 60 * 1000; // 15 minutos en milisegundos
+const TIEMPO_INACTIVIDAD_MS = 15 * 60 * 1000;
 let timerInactividad;
 function reiniciarTimerInactividad() {
   clearTimeout(timerInactividad);
-  timerInactividad = setTimeout(() => {
-    window.location.reload();
-  }, TIEMPO_INACTIVIDAD_MS);
+  timerInactividad = setTimeout(() => { window.location.reload(); }, TIEMPO_INACTIVIDAD_MS);
 }
 ['mousemove', 'mousedown', 'keydown', 'keypress', 'scroll', 'touchstart', 'click'].forEach(evento => {
   window.addEventListener(evento, reiniciarTimerInactividad, { passive: true });
