@@ -371,7 +371,6 @@ html,body{
 .badge-orange { background-color: var(--vento-orange); color: var(--vento-white); border: 1px solid var(--vento-orange-hover); }
 .badge-black { background-color: var(--vento-black); color: var(--vento-white); border: 1px solid var(--vento-black); }
 .badge-white { background-color: var(--vento-white); color: var(--vento-black); border: 1px solid var(--vento-black); }
-
 /* ESTILOS DEL WIZARD (Asistente Segmentador) */
 .wizard-btn {
   background-color: var(--vento-white);
@@ -394,7 +393,6 @@ html,body{
   transform: translateY(-1px);
 }
 .wizard-btn i { color: var(--vento-orange); }
-
 @media (max-width:900px){
   .widget{right:16px; bottom:16px; width:90%; height:460px}
   .widget.collapsed{right:16px; bottom:16px}
@@ -428,7 +426,6 @@ html,body{
     <iframe id="mainFrame" class="frame" src="https://supervisor1atcvento-ctrl.github.io/tickets_atc/" title="Contenido principal"></iframe>
   </div>
 </div>
-
 <!-- =========================================
      BOTÓN FLOTANTE Y WIDGET DE CHATBOT (RESUÉLVELO CHAT)
      ========================================= -->
@@ -449,7 +446,6 @@ html,body{
     <iframe id="chatIframe" src="https://resuelvelo-chat.darlimco.chatgpt.site/" title="Resuélvelo Chatbot"></iframe>
   </div>
 </div>
-
 <!-- =========================================
      MODAL BÚSQUEDA UNIVERSAL DE VIN
      ========================================= -->
@@ -475,7 +471,6 @@ html,body{
     </div>
   </div>
 </div>
-
 <!-- =========================================
      MODAL: SEGMENTADOR RÁPIDO NATIVO
      ========================================= -->
@@ -513,7 +508,6 @@ html,body{
     </div>
   </div>
 </div>
-
 <!-- Widget fijo -->
 <aside class="widget" id="menuWidget">
   <div class="widget-header" id="widgetHeader">
@@ -582,7 +576,6 @@ function toggleChatWidget() {
     collapseWidget();
   }
 }
-
 // =========================================
 // LÓGICA DEL WIDGET (Menú)
 // =========================================
@@ -605,7 +598,6 @@ function loadPage(el){
   const url = el.getAttribute('data-url');
   if(url) mainFrame.src = url;
 }
-
 // =========================================
 // ÁRBOL DE DECISIONES PARA SEGMENTADOR (WIZARD)
 // =========================================
@@ -626,7 +618,7 @@ const wizardTree = {
     ]
   },
   tiene_to: {
-    pregunta: "¿La unidad tiene TO (Orden de Transporte)?",
+    pregunta: "¿La unidad tiene TO (Orden de Transferencia)?",
     opciones: [
       { texto: "Sí", next: "reporto_sin_cl" },
       { texto: "No", resolucion: "PASA POR COTIZACIÓN", tipo: "cotizacion" }
@@ -673,22 +665,19 @@ const wizardTree = {
       { texto: "Fallas mecánicas", resolucion: "PASA POR GARANTÍA", tipo: "garantia" },
       { texto: "Fugas de gasolina", resolucion: "PASA POR GARANTÍA", tipo: "garantia" },
       { texto: "Fallas eléctricas", resolucion: "PASA POR GARANTÍA", tipo: "garantia" },
+      { texto: "Ajustes o colocación de accesorios", resolucion: "PASA POR GARANTÍA", tipo: "garantia" },
       { texto: "Faltantes", resolucion: "PASA POR COTIZACIÓN", tipo: "cotizacion" },
       { texto: "Daños estéticos", resolucion: "PASA POR COTIZACIÓN", tipo: "cotizacion" },
-      { texto: "Revisión general: Ajustes o colocación de accesorios", resolucion: "PASA POR GARANTÍA", tipo: "garantia" },
-      { texto: "Revisión general: Terminado de activar / Sin gasolina", resolucion: "CERRAR TICKET", tipo: "cierre" }
+      { texto: "Revisión general / Terminado de activar / Sin gasolina", resolucion: "CERRAR TICKET", tipo: "cierre" }
     ]
   }
 };
-
 let historialWizard = [];
-
 function iniciarWizardSegmentador() {
   historialWizard = [];
   document.getElementById('boxDictamenFinal').style.display = 'none';
   renderWizardStep('inicio');
 }
-
 function renderWizardStep(stepId) {
   const container = document.getElementById('wizardContainer');
   const step = wizardTree[stepId];
@@ -715,12 +704,10 @@ function renderWizardStep(stepId) {
   
   container.innerHTML = html;
 }
-
 function avanzarWizard(currentStep, nextStep) {
   historialWizard.push(currentStep);
   renderWizardStep(nextStep);
 }
-
 function retrocederWizard() {
   if (historialWizard.length > 0) {
     const prevStep = historialWizard.pop();
@@ -728,7 +715,6 @@ function retrocederWizard() {
     renderWizardStep(prevStep);
   }
 }
-
 function finalizarWizard(resolucion, tipo) {
   const caja = document.getElementById('boxDictamenFinal');
   
@@ -764,7 +750,6 @@ function finalizarWizard(resolucion, tipo) {
   
   document.getElementById('wizardContainer').innerHTML = '';
 }
-
 // =========================================
 // LÓGICA DEL SEGMENTADOR RÁPIDO NATIVO
 // =========================================
@@ -865,6 +850,7 @@ function buscarAgenciaRapida() {
 }
 function seleccionarAgenciaParaDictamen(nombre, puede) {
   document.getElementById('resultadosAgenciaRapida').style.display = 'none'; 
+  
   const claseBadge = (puede === 'SI') ? 'badge-orange' : 'badge-black';
   const textoBadge = (puede === 'SI') ? '<i class="fa-solid fa-ban"></i> NO CUENTA CON KIT DE HERRAMIENTAS' : '<i class="fa-solid fa-check"></i> SÍ CUENTA CON KIT DE HERRAMIENTAS';
   
@@ -873,10 +859,29 @@ function seleccionarAgenciaParaDictamen(nombre, puede) {
   
   document.getElementById('areaDictamenRapido').style.display = 'block';
   
+  // --- INICIO DE LA NUEVA LÓGICA ---
+  // Se determina si tiene kit evaluando el flag (puede === 'SI' significa SIN herramientas)
+  const tieneKit = (puede !== 'SI'); 
+  
+  // Buscamos la opción específica en el árbol de fallas
+  const opcionRevisionIndex = wizardTree.falla.opciones.findIndex(opt => opt.texto === "Revisión general / Terminado de activar / Sin gasolina");
+  
+  if (opcionRevisionIndex !== -1) {
+    if (tieneKit) {
+      // Si cuenta con Kit de Herramientas
+      wizardTree.falla.opciones[opcionRevisionIndex].resolucion = "CERRAR TICKET";
+      wizardTree.falla.opciones[opcionRevisionIndex].tipo = "cierre";
+    } else {
+      // Si NO cuenta con Kit de Herramientas
+      wizardTree.falla.opciones[opcionRevisionIndex].resolucion = "PASA POR GARANTÍA";
+      wizardTree.falla.opciones[opcionRevisionIndex].tipo = "garantia";
+    }
+  }
+  // --- FIN DE LA NUEVA LÓGICA ---
+  
   // INICIAR EL WIZARD AUTOMÁTICAMENTE
   iniciarWizardSegmentador();
 }
-
 // =========================================
 // LÓGICA DE BÚSQUEDA UNIVERSAL
 // =========================================
@@ -1076,7 +1081,6 @@ async function ejecutarBusquedaUniversal(e) {
     btnSubmit.innerHTML = '<i class="fa-solid fa-database"></i> Consultar Bases';
   }
 }
-
 // =========================================
 // LÓGICA DEL BANNER DE AVISOS DINÁMICO POR FILA
 // =========================================
@@ -1172,7 +1176,6 @@ function saltarAviso() {
   if (avisoTimeout) clearTimeout(avisoTimeout);
   avanzarIndiceO_Recargar();
 }
-
 // =========================================
 // LÓGICA DE ACTUALIZACIÓN SILENCIOSA POR INACTIVIDAD
 // =========================================
