@@ -665,10 +665,10 @@ const wizardTree = {
       { texto: "Fallas mecánicas", resolucion: "PASA POR GARANTÍA", tipo: "garantia" },
       { texto: "Fugas de gasolina", resolucion: "PASA POR GARANTÍA", tipo: "garantia" },
       { texto: "Fallas eléctricas", resolucion: "PASA POR GARANTÍA", tipo: "garantia" },
-      { texto: "Ajustes o colocación de accesorios", resolucion: "PASA POR GARANTÍA", tipo: "garantia" },
       { texto: "Faltantes", resolucion: "PASA POR COTIZACIÓN", tipo: "cotizacion" },
       { texto: "Daños estéticos", resolucion: "PASA POR COTIZACIÓN", tipo: "cotizacion" },
-      { texto: "Revisión general / Terminado de activar / Sin gasolina", resolucion: "CERRAR TICKET", tipo: "cierre" }
+      { texto: "Revisión general: Ajustes o colocación de accesorios", resolucion: "PASA POR GARANTÍA", tipo: "garantia" },
+      { texto: "Revisión general: Terminado de activar / Sin gasolina", resolucion: "CERRAR TICKET", tipo: "cierre" }
     ]
   }
 };
@@ -859,12 +859,12 @@ function seleccionarAgenciaParaDictamen(nombre, puede) {
   
   document.getElementById('areaDictamenRapido').style.display = 'block';
   
-  // --- INICIO DE LA NUEVA LÓGICA ---
+  // --- LOGICA PARA REVISION GENERAL DE ACUERDO AL CHECK LIST ---
   // Se determina si tiene kit evaluando el flag (puede === 'SI' significa SIN herramientas)
   const tieneKit = (puede !== 'SI'); 
   
   // Buscamos la opción específica en el árbol de fallas
-  const opcionRevisionIndex = wizardTree.falla.opciones.findIndex(opt => opt.texto === "Revisión general / Terminado de activar / Sin gasolina");
+  const opcionRevisionIndex = wizardTree.falla.opciones.findIndex(opt => opt.texto === "Revisión general: Terminado de activar / Sin gasolina");
   
   if (opcionRevisionIndex !== -1) {
     if (tieneKit) {
@@ -877,7 +877,7 @@ function seleccionarAgenciaParaDictamen(nombre, puede) {
       wizardTree.falla.opciones[opcionRevisionIndex].tipo = "garantia";
     }
   }
-  // --- FIN DE LA NUEVA LÓGICA ---
+  // --- FIN DE LA LÓGICA ---
   
   // INICIAR EL WIZARD AUTOMÁTICAMENTE
   iniciarWizardSegmentador();
