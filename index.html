@@ -682,7 +682,17 @@ function renderWizardStep(stepId) {
   const container = document.getElementById('wizardContainer');
   const step = wizardTree[stepId];
   
-  let html = `<div style="font-size: 14px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; color: var(--vento-black);">
+  let html = '';
+  
+  // Mensaje adicional cuando es flujo CEDIS en el apartado de Check List
+  if (stepId === 'checklist') {
+    html += `<div style="background: rgba(242, 143, 23, 0.15); border: 2px solid var(--vento-orange); border-radius: 8px; padding: 12px; margin-bottom: 14px; font-size: 13px; font-weight: 600; color: var(--vento-black); display: flex; gap: 10px; align-items: flex-start;">
+               <i class="fa-solid fa-triangle-exclamation" style="color: var(--vento-orange); font-size: 16px; margin-top: 2px;"></i>
+               <div>Las unidades AYA en CEDIS siempre deben solicitar el Check List, si no lo tienes, solicítalo y ya que tengas respuesta por parte de la agencia continuas con la elexion</div>
+             </div>`;
+  }
+  
+  html += `<div style="font-size: 14px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; color: var(--vento-black);">
                 <i class="fa-solid fa-code-branch" style="color: var(--vento-orange);"></i> ${step.pregunta}
               </div>
               <div style="display: flex; flex-direction: column; gap: 8px;">`;
@@ -773,9 +783,11 @@ async function inicializarBaseAgencias() {
       }
       col.push(celda.trim());
       if(col.length > 1 && col[1]) {
+        const col14 = (col[14] || '').replace(/"/g, '').trim().toUpperCase();
+        const tieneKit = (col14 === 'SI' || col14 === 'SÍ');
         bbddAgencias.push({
           nombre: col[1].replace(/"/g, '').trim(),
-          puede: (col[14] || '').replace(/"/g, '').trim().toUpperCase()
+          tieneKit: tieneKit
         });
       }
     }
@@ -820,21 +832,21 @@ function buscarAgenciaRapida() {
     contenedorResultados.innerHTML = `
       <div class="db-item" style="border-color: red; flex-direction: column; align-items: flex-start;">
         <div class="db-name" style="color: red;"><i class="fa-solid fa-store-slash"></i> Agencia no localizada</div>
-        <p style="margin: 8px 0; font-size: 13px; color: var(--vento-black);">Si no está registrada, evalúala asumiendo que <strong>NO</strong> cuenta con herramientas.</p>
-        <button onclick="seleccionarAgenciaParaDictamen('AGENCIA NO REGISTRADA', 'SI')" class="btn-search" style="padding: 10px; font-size: 13px; width: auto;">
+        <p style="margin: 8px 0; font-size: 13px; color: var(--vento-black);">Si no está registrada, evalúala asumiendo que <strong>NO</strong> cuenta con kit de herramientas.</p>
+        <button onclick="seleccionarAgenciaParaDictamen('AGENCIA NO REGISTRADA', false)" class="btn-search" style="padding: 10px; font-size: 13px; width: auto;">
           <i class="fa-solid fa-clipboard-list"></i> Evaluar Manualmente
         </button>
       </div>
     `;
   } else {
     coincidencias.forEach(agencia => {
-      const claseBadge = (agencia.puede === 'SI') ? 'badge-orange' : 'badge-black';
-      const textoBadge = (agencia.puede === 'SI') ? '<i class="fa-solid fa-ban"></i> SIN HERRAMIENTAS' : '<i class="fa-solid fa-check"></i> CON HERRAMIENTAS';
+      const claseBadge = agencia.tieneKit ? 'badge-black' : 'badge-orange';
+      const textoBadge = agencia.tieneKit ? '<i class="fa-solid fa-check"></i> SÍ CUENTA CON KIT DE HERRAMIENTAS' : '<i class="fa-solid fa-ban"></i> NO CUENTA CON KIT DE HERRAMIENTAS';
       const nombreEscapado = agencia.nombre.replace(/'/g, "\\'");
       
       contenedorResultados.innerHTML += `
         <div class="db-item" style="cursor: pointer; transition: all 0.2s;" 
-             onclick="seleccionarAgenciaParaDictamen('${nombreEscapado}', '${agencia.puede}')" 
+             onclick="seleccionarAgenciaParaDictamen('${nombreEscapado}', ${agencia.tieneKit})" 
              onmouseover="this.style.borderColor='var(--vento-orange)'" 
              onmouseout="this.style.borderColor='var(--vento-gray-light)'">
           <div style="display: flex; flex-direction: column; gap: 8px;">
@@ -848,22 +860,18 @@ function buscarAgenciaRapida() {
   }
   contenedorResultados.style.display = 'flex';
 }
-function seleccionarAgenciaParaDictamen(nombre, puede) {
+function seleccionarAgenciaParaDictamen(nombre, tieneKit) {
   document.getElementById('resultadosAgenciaRapida').style.display = 'none'; 
   
-  const claseBadge = (puede === 'SI') ? 'badge-orange' : 'badge-black';
-  const textoBadge = (puede === 'SI') ? '<i class="fa-solid fa-ban"></i> NO CUENTA CON KIT DE HERRAMIENTAS' : '<i class="fa-solid fa-check"></i> SÍ CUENTA CON KIT DE HERRAMIENTAS';
+  const claseBadge = tieneKit ? 'badge-black' : 'badge-orange';
+  const textoBadge = tieneKit ? '<i class="fa-solid fa-check"></i> SÍ CUENTA CON KIT DE HERRAMIENTAS' : '<i class="fa-solid fa-ban"></i> NO CUENTA CON KIT DE HERRAMIENTAS';
   
   document.getElementById('nombreAgenciaSeleccionada').innerText = nombre;
   document.getElementById('badgeAgenciaSeleccionada').innerHTML = `<span class="badge ${claseBadge}">${textoBadge}</span>`;
   
   document.getElementById('areaDictamenRapido').style.display = 'block';
   
-  // --- LOGICA PARA REVISION GENERAL DE ACUERDO AL CHECK LIST ---
-  // Se determina si tiene kit evaluando el flag (puede === 'SI' significa SIN herramientas)
-  const tieneKit = (puede !== 'SI'); 
-  
-  // Buscamos la opción específica en el árbol de fallas
+  // --- LOGICA PARA REVISION GENERAL DE ACUERDO AL KIT DE HERRAMIENTAS ---
   const opcionRevisionIndex = wizardTree.falla.opciones.findIndex(opt => opt.texto === "Revisión general: Terminado de activar / Sin gasolina");
   
   if (opcionRevisionIndex !== -1) {
