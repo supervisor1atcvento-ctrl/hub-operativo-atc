@@ -691,6 +691,14 @@ function renderWizardStep(stepId) {
                <div>Para las unidades que correspondan a AYA en CEDIS, es indispensable contar con el Check List. Si no lo tienes, solicítalo a la agencia y continúa con la selección una vez que recibas su respuesta.</div>
              </div>`;
   }
+
+  // Nota adicional cuando es flujo CESVE en el apartado de tiempo de armado / validación
+  if (stepId === 'tiempo_armado') {
+    html += `<div style="background: rgba(242, 143, 23, 0.15); border: 2px solid var(--vento-orange); border-radius: 8px; padding: 12px; margin-bottom: 14px; font-size: 13px; font-weight: 600; color: var(--vento-black); display: flex; gap: 10px; align-items: flex-start;">
+               <i class="fa-solid fa-triangle-exclamation" style="color: var(--vento-orange); font-size: 16px; margin-top: 2px;"></i>
+               <div>Si el AYA lo hizo un CESVE, no pueden reportar ninguna "Revisión General" y se tiene que cerrar el ticket.</div>
+             </div>`;
+  }
   
   html += `<div style="font-size: 14px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; color: var(--vento-black);">
                 <i class="fa-solid fa-code-branch" style="color: var(--vento-orange);"></i> ${step.pregunta}
