@@ -1,0 +1,6 @@
+{
+  "name": "Vicente - Asistente Virtual RAG",
+  "description": "Asistente virtual de atención empresarial basado en RAG y fuentes autorizadas con control estricto de roles y categorías.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

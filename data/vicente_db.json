@@ -1,0 +1,544 @@
+{
+  "users": [
+    {
+      "id": "user-admin",
+      "username": "admin",
+      "passwordHash": "42f1a63c68bf9fa28319fafaf14223b07fa5be9a98bba2dce11249962063f496",
+      "name": "Ing. Carlos Mendoza (Administrador)",
+      "role": "admin",
+      "allowedCategories": [
+        "tiendas_agencias",
+        "garantias",
+        "cedis",
+        "diagnostico",
+        "informacion",
+        "cliente"
+      ],
+      "active": true,
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "user-agente",
+      "username": "agente.soporte",
+      "passwordHash": "efa9f288ebacbab11caf6d8792bac97f3d1634a9f75f9dea8af37774260b31d5",
+      "name": "Lic. Laura Rivas (Soporte Técnico & Garantías)",
+      "role": "agent",
+      "allowedCategories": [
+        "garantias",
+        "diagnostico",
+        "cliente"
+      ],
+      "active": true,
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "user-logistica",
+      "username": "logistica.cedis",
+      "passwordHash": "f37dbdf51d1d9168e3c8c914af3712acf11c082f849ce6894400161c0a486773",
+      "name": "Roberto Gómez (Operaciones Logística)",
+      "role": "user",
+      "allowedCategories": [
+        "cedis",
+        "tiendas_agencias"
+      ],
+      "active": true,
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "user-cliente",
+      "username": "cliente.consulta",
+      "passwordHash": "f7029cd249a7eddb548495c6d95458f2364892a53fac8a71ffd546b19c53b78e",
+      "name": "María Fernanda Cruz (Atención al Cliente)",
+      "role": "user",
+      "allowedCategories": [
+        "cliente",
+        "informacion"
+      ],
+      "active": true,
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    }
+  ],
+  "categories": [
+    {
+      "id": "cat-tiendas",
+      "slug": "tiendas_agencias",
+      "name": "Tiendas y Agencias",
+      "description": "Directorio nacional, sucursales, agencias autorizadas, horarios y servicios en mostrador.",
+      "icon": "Store",
+      "active": true,
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "cat-garantias",
+      "slug": "garantias",
+      "name": "Garantías",
+      "description": "Políticas oficiales, coberturas, exclusiones, tiempos de resolución y requisitos de reclamo.",
+      "icon": "ShieldCheck",
+      "active": true,
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "cat-cedis",
+      "slug": "cedis",
+      "name": "CEDIS y Logística",
+      "description": "Centros de distribución, citas de descarga, embalaje, tarimas y tiempos de entrega.",
+      "icon": "Truck",
+      "active": true,
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "cat-diagnostico",
+      "slug": "diagnostico",
+      "name": "Diagnóstico Técnico",
+      "description": "Manual de resolución de fallas, códigos de error (E01 a E08), pruebas de voltaje y componentes.",
+      "icon": "Wrench",
+      "active": true,
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "cat-informacion",
+      "slug": "informacion",
+      "name": "Información General",
+      "description": "Historia institucional, canales oficiales de atención, aviso de privacidad y conmutador.",
+      "icon": "Building2",
+      "active": true,
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "cat-cliente",
+      "slug": "cliente",
+      "name": "Atención al Cliente",
+      "description": "Emisión de facturas CFDI 4.0, devoluciones, quejas, aclaraciones y actualización de datos.",
+      "icon": "UserCheck",
+      "active": true,
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    }
+  ],
+  "documents": [
+    {
+      "id": "doc-tiendas-01",
+      "categoryId": "cat-tiendas",
+      "title": "Manual Operativo: Red de Tiendas y Agencias Autorizadas 2026",
+      "filename": "manual_red_tiendas_2026.txt",
+      "fileType": "text/plain",
+      "fileSize": 4200,
+      "createdAt": "2026-01-15T09:00:00.000Z",
+      "rawContent": "RED NACIONAL DE TIENDAS Y AGENCIAS AUTORIZADAS VICENTE CORP\nVersión Oficial Vigente: Enero 2026.\n\n1. HORARIOS GENERALES DE ATENCIÓN EN MOSTRADOR\n- Tiendas Propias Metropolitanas (CDMX, Guadalajara, Monterrey):\n  Lunes a Viernes: 08:30 a 19:30 horas (horario corrido).\n  Sábados: 09:00 a 14:30 horas.\n  Domingos y días festivos oficiales: Cerrado.\n- Agencias Autorizadas Regionales:\n  Lunes a Viernes: 09:00 a 18:00 horas.\n  Sábados: 09:00 a 13:00 horas.\n\n2. DIRECTORIO PRINCIPAL DE SUCURSALES Y AGENCIAS\n- Sucursal Centro (CDMX):\n  Dirección: Av. Insurgentes Sur #1450, Col. Actipan, Benito Juárez, CDMX.\n  Teléfono Directo: (55) 5543-8900 ext. 101 y 102.\n  Servicios: Mostrador de venta, recepción de garantías, taller de diagnóstico rápido y recolección para compras en línea (Click & Collect).\n- Sucursal Norte (Monterrey):\n  Dirección: Av. Constitución #2180 Poniente, Col. Obispado, Monterrey, N.L.\n  Teléfono Directo: (81) 8345-7720.\n  Servicios: Venta mayoreo, refacciones originales y módulo de atención a transportistas.\n- Sucursal Occidente (Guadalajara):\n  Dirección: Calzada Independencia Norte #890, Col. La Federacha, Guadalajara, Jal.\n  Teléfono Directo: (33) 3612-4411.\n  Servicios: Ventas y centro de servicio regional.\n- Agencia Autorizada Puebla (Socio Aliado TecnoSur):\n  Dirección: Blvd. Hermanos Serdán #320, Col. Las Hadas, Puebla, Pue.\n  Teléfono Directo: (222) 249-1830.\n\n3. POLÍTICA DE ATENCIÓN EN MOSTRADOR\n- El cliente debe presentar identificación oficial vigente (INE o Pasaporte) para recolectar pedidos pagados previamente.\n- En caso de recoger un tercero, se requiere carta poder simple, copia de INE del titular y copia de INE de quien recoge.\n- Todo producto entregado en tienda debe ser inspeccionado visualmente frente al cliente antes de sellar la póliza de entrega.",
+      "chunksCount": 5
+    },
+    {
+      "id": "doc-garantias-01",
+      "categoryId": "cat-garantias",
+      "title": "Póliza y Procedimiento Maestro de Garantías",
+      "filename": "poliza_maestra_garantias.txt",
+      "fileType": "text/plain",
+      "fileSize": 4950,
+      "createdAt": "2026-01-10T10:30:00.000Z",
+      "rawContent": "POLÍTICA MAESTRA DE GARANTÍAS Y REEMPLAZOS\nDocumento Normativo GTO-2026-v3.\n\n1. PLAZOS DE COBERTURA ESTÁNDAR\n- Componentes mecánicos y chasis estructural: 24 meses naturales a partir de la fecha de facturación.\n- Componentes electrónicos, tarjetas lógicas y fuentes de poder: 12 meses naturales.\n- Accesorios menores, cables, empaques y piezas de desgaste normal: 90 días naturales.\n- Baterías recargables y acumuladores: 6 meses naturales contra defecto de celda (no cubre degradación natural por ciclos de carga).\n\n2. CONDICIONES Y REQUISITOS PARA VALIDAR LA GARANTÍA\nPara tramitar un reclamo de garantía, el usuario debe presentar:\na) Factura original de compra o comprobante digital con folio fiscal (CFDI).\nb) Número de serie legible del equipo (no alterado ni removido de la etiqueta del fabricante).\nc) Equipo completo con sus accesorios originales indispensables para la prueba.\nd) Descripción detallada de la falla en el formato oficial F-GAR-01.\n\n3. EXCLUSIONES EXPRESAS (PÉRDIDA DE GARANTÍA)\nLa garantía quedará invalidada sin excepción bajo las siguientes circunstancias:\n- Sellos de seguridad violados, rotos o intervenidos por personal no certificado.\n- Daño ocasionado por descargas eléctricas, fluctuaciones de voltaje fuera de +/- 10% del nominal, o falta de tierra física adecuada.\n- Daño físico atribuible a golpes, caídas, deformaciones mecánicas o exposición a humedad/líquidos.\n- Instalación de firmware no autorizado o modificaciones al circuito original.\n- Falta de mantenimiento preventivo estipulado en el manual de usuario cada 6 meses.\n\n4. TIEMPOS DE RESPUESTA Y RESOLUCIÓN (SLA)\n- Diagnóstico inicial: máximo 48 horas hábiles a partir de la recepción en centro autorizado.\n- Reparación en taller: 3 a 5 días hábiles si se cuenta con refacción en stock nacional.\n- Reemplazo por equipo nuevo: se autoriza si la reparación supera los 15 días hábiles o si la falla es reincidente por tercera ocasión consecutiva en el mismo componente.",
+      "chunksCount": 6
+    },
+    {
+      "id": "doc-cedis-01",
+      "categoryId": "cat-cedis",
+      "title": "Manual de Operaciones Logísticas y Recepción en CEDIS",
+      "filename": "manual_operaciones_cedis_2026.txt",
+      "fileType": "text/plain",
+      "fileSize": 4600,
+      "createdAt": "2026-01-12T14:00:00.000Z",
+      "rawContent": "CENTROS DE DISTRIBUCIÓN (CEDIS) - PROTOCOLO DE RECEPCIÓN Y LOGÍSTICA\nCódigo de Procedimiento: LOG-CEDIS-04.\n\n1. UBICACIÓN DE CENTROS DE DISTRIBUCIÓN\n- CEDIS Central San Martín Obispo (Estado de México):\n  Dirección: Parque Industrial San Martín Obispo Park II, Nave 4, Cuautitlán Izcalli, Edo. Méx., C.P. 54769.\n  Capacidad: 25,000 tarimas, 32 andenes de carga y descarga.\n- CEDIS Regional Norte (Apodaca):\n  Dirección: Parque Industrial Huinalá, Carretera Apodaca-Huinalá Km 3.5, Apodaca, N.L.\n  Capacidad: 10,000 tarimas, 14 andenes.\n\n2. HORARIOS Y CITAS DE DESCARGA PARA PROVEEDORES Y TRANSPORTISTAS\n- Horario de recepción de proveedores: Lunes a Viernes de 07:00 a 14:00 horas exclusivamente.\n- No se recibe ninguna unidad sin número de cita previa gestionado mediante el portal de citas (SGL-Web) con al menos 24 horas de anticipación.\n- Tolerancia máxima de arribo a caseta: 15 minutos respecto a la hora asignada en cita. Si el transportista llega con más de 15 minutos de retraso, la cita queda cancelada y debe reprogramarse según disponibilidad de andén.\n\n3. ESPECIFICACIONES DE TARIMAS Y EMBALAJE OBLIGATORIO\n- Se requiere uso exclusivo de tarima de madera estándar tipo americana (1.00 m x 1.20 m) de 4 entradas, sin tablas rotas ni clavos expuestos.\n- Altura máxima de la estiba: 1.65 m (incluyendo la tarima).\n- Cada tarima debe estar flejada y envuelta con película plástica extensible (playo) de calibre mínimo 60, asegurando la carga desde la base de madera.\n- Cada tarima debe portar etiqueta visible en al menos dos caras con: SKU, descripción, lote, cantidad de cajas y fecha de empaque.\n\n4. TIEMPOS DE PROCESAMIENTO Y SURTIDO A CLIENTES (SLA)\n- Pedidos locales metropolitanos: Preparación en 24 horas, entrega en 48 horas hábiles.\n- Pedidos foráneos nacionales: Despacho a paquetería en 24 horas hábiles; entrega final sujeta a zona geográfica de la transportadora (3 a 5 días hábiles).",
+      "chunksCount": 6
+    },
+    {
+      "id": "doc-diagnostico-01",
+      "categoryId": "cat-diagnostico",
+      "title": "Guía de Diagnóstico Técnico de Fallas y Códigos de Error",
+      "filename": "guia_diagnostico_errores_tecnicos.txt",
+      "fileType": "text/plain",
+      "fileSize": 5100,
+      "createdAt": "2026-01-18T11:20:00.000Z",
+      "rawContent": "GUÍA MAESTRA DE DIAGNÓSTICO TÉCNICO Y CÓDIGOS DE ERROR\nSerie de Equipos Industriales y Comerciales Vicente.\n\n1. TABLA OFICIAL DE CÓDIGOS DE ERROR EN PANEL DIGITAL\n- Código E01 (Falla de Alimentación Principal):\n  Causa: Voltaje de entrada inferior a 95 VAC o superior a 135 VAC.\n  Procedimiento: Medir con multímetro calibrado entre Fase y Neutro en el tomacorriente. Verificar que exista tierra física con voltaje menor a 1.5 VAC entre Neutro y Tierra. Si el voltaje es correcto, revisar el fusible F1 de 10A en la tarjeta de potencia.\n- Código E02 (Sobrecalentamiento del Módulo de Potencia):\n  Causa: Sensor de temperatura NTC detecta más de 85°C durante 10 segundos continuos.\n  Procedimiento: Apagar el equipo, inspeccionar si las ranuras de ventilación están obstruidas por polvo. Medir resistencia del sensor NTC (valor nominal 10k Ohm a 25°C). Verificar que el ventilador de enfriamiento FAN1 gire libremente y reciba 12 VDC.\n- Código E03 (Falla en Sensor de Posición / Encoder):\n  Causa: Ausencia de pulsos de retroalimentación tras 500 ms de comando de giro.\n  Procedimiento: Revisar cableado de 4 hilos del encoder óptico. Limpiar disco codificador con alcohol isopropílico. Si el LED indicador del encoder no parpadea al girar manualmente el eje, reemplazar el ensamble del sensor.\n- Código E04 (Sobrecarga de Corriente en Motor):\n  Causa: El consumo supera los 8.5 Amperes por más de 3 segundos consecutivos.\n  Procedimiento: Inspeccionar posible atasco mecánico o baleros trabados. Desacoplar banda de transmisión y medir corriente en vacío (debe ser menor a 1.2A).\n- Código E05 (Error de Comunicación UART / Tarjeta Frontal):\n  Causa: Pérdida de sincronía serial entre tarjeta principal y panel táctil.\n  Procedimiento: Revisar cable plano flexible (ribbon cable). Comprobar que no haya pines doblados ni corrosión.\n- Código E08 (Falla Crítica de Memoria EEPROM):\n  Causa: Checksum corrupto en configuración de fábrica.\n  Procedimiento: Ejecutar reinicio de fábrica manteniendo pulsados los botones 'RESET' y 'MODO' durante 7 segundos continuos al encender. Si el código persiste, requiere flasheo de firmware con interfaz ISP autorizada.\n\n2. PROTOCOLO OBLIGATORIO DE SEGURIDAD\n- Siempre desconectar la clavija de alimentación antes de remover la cubierta del gabinete.\n- Esperar al menos 3 minutos para que los capacitores electrolíticos del circuito primario se descarguen por completo antes de manipular la placa electrónica.",
+      "chunksCount": 8
+    },
+    {
+      "id": "doc-informacion-01",
+      "categoryId": "cat-informacion",
+      "title": "Compendio Institucional, Misión y Canales Oficiales",
+      "filename": "compendio_institucional_vicente.txt",
+      "fileType": "text/plain",
+      "fileSize": 3800,
+      "createdAt": "2026-01-05T08:00:00.000Z",
+      "rawContent": "INFORMACIÓN INSTITUCIONAL Y CANALES CORPORATIVOS OFICIALES\nVicente Soluciones Industriales y Comerciales S.A. de C.V.\n\n1. MISIÓN Y PROPÓSITO\nProveer equipamiento de alta fiabilidad, repuestos originales y asesoría técnica de primer nivel para mantener la continuidad operativa de nuestros clientes y distribuidores en toda la República Mexicana.\n\n2. CANALES CORPORATIVOS DE CONTACTO\n- Conmutador Central Nacional: 800-842-3683 (800-VICENTE).\n  Horario de atención telefónica: Lunes a Viernes de 08:00 a 20:00 horas, Sábados de 09:00 a 14:00 horas.\n- Correo Electrónico Institucional: contacto@vicentesoluciones.com.mx\n- Mesa de Ayuda Técnica Especializada: soporte@vicentesoluciones.com.mx\n- Portal Web de Clientes y Distribuidores: https://portal.vicentesoluciones.com.mx\n\n3. AVISO DE PRIVACIDAD Y PROTECCIÓN DE DATOS\nVicente Soluciones trata los datos personales de conformidad con la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP). Los datos recabados en chats, llamadas y formularios se utilizan exclusivamente con fines de facturación, cumplimiento de garantías y soporte técnico. No comercializamos ni transferimos bases de datos a terceros sin consentimiento expreso. Para ejercer derechos ARCO (Acceso, Rectificación, Cancelación y Oposición), escribir a: privacidad@vicentesoluciones.com.mx.",
+      "chunksCount": 4
+    },
+    {
+      "id": "doc-cliente-01",
+      "categoryId": "cat-cliente",
+      "title": "Manual de Políticas de Atención al Cliente, Facturación y Reembolsos",
+      "filename": "politicas_atencion_facturacion_cliente.txt",
+      "fileType": "text/plain",
+      "fileSize": 4500,
+      "createdAt": "2026-01-08T12:00:00.000Z",
+      "rawContent": "MANUAL DE ATENCIÓN AL CLIENTE, EMISIÓN DE FACTURAS Y REEMBOLSOS\nCódigo: SAC-POL-2026.\n\n1. POLÍTICA DE FACTURACIÓN ELECTRÓNICA (CFDI 4.0)\n- Plazo máximo para solicitar factura: El cliente dispone del mes en curso y hasta 72 horas naturales del mes posterior a su compra para emitir su factura a través del portal de autofacturación o enviando su ticket a facturacion@vicentesoluciones.com.mx.\n- Requisitos fiscales indispensables según Anexo 20 del SAT:\n  * RFC completo con homoclave.\n  * Nombre o Razón Social exacta tal como figura en la Constancia de Situación Fiscal (sin régimen de capital como S.A. de C.V.).\n  * Código Postal del domicilio fiscal del receptor.\n  * Régimen fiscal del receptor.\n  * Uso de CFDI correspondiente (por ejemplo: G01 Adquisición de mercancías, G03 Gastos en general).\n- Las solicitudes de corrección de factura deben realizarse dentro del mismo mes de emisión.\n\n2. POLÍTICA DE DEVOLUCIONES Y REEMBOLSOS COMERCIALES\n- Plazo de devolución por arrepentimiento de compra: hasta 7 días naturales posteriores a la entrega del producto.\n- Requisitos:\n  * Empaque original sin roturas, manuales intactos y sellos de accesorios sin despegar.\n  * El producto no debe haber sido encendido, energizado ni instalado.\n  * Aplica un cargo administrativo por re-almacenamiento del 10% sobre el valor del producto si la devolución no obedece a un defecto atribuible a la empresa.\n- Reembolsos:\n  * Pagos con tarjeta de débito/crédito: la reversa se refleja en un plazo de 5 a 15 días hábiles bancarios.\n  * Pagos por transferencia SPEI: reembolso en cuenta CLABE dentro de 72 horas hábiles tras la aprobación física del producto devuelto.\n\n3. ATENCIÓN A QUEJAS Y ESCALAMIENTOS\n- Nivel 1 (Atención Telefónica y Chat Vicente): Resolución inmediata o canalización con ticket de seguimiento (SLA de 24 horas).\n- Nivel 2 (Jefatura de Calidad y Servicio al Cliente): Casos que involucren reclamaciones formales o discrepancias de facturación (SLA de 48 horas hábiles).",
+      "chunksCount": 6
+    },
+    {
+      "id": "doc-1792808878776-5aro",
+      "categoryId": "cat-cliente",
+      "title": "Tiempos de Devolución Excel",
+      "filename": "tiempos_cliente.xlsx",
+      "fileType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "fileSize": 16149,
+      "rawContent": "DOCUMENTO EXCEL: tiempos_cliente.xlsx\n\n--- HOJA: Devoluciones ---\nProcedimiento,Tiempo_Respuesta\nValidacion de ticket fiscal CFDI,24 horas maximo\nReversa bancaria por devolucion,5 a 15 dias habiles",
+      "chunksCount": 1,
+      "createdAt": "2026-10-24T02:27:58.776Z"
+    }
+  ],
+  "chunks": [
+    {
+      "id": "chk-doc-tiendas-01-0",
+      "documentId": "doc-tiendas-01",
+      "categoryId": "cat-tiendas",
+      "chunkIndex": 0,
+      "content": "RED NACIONAL DE TIENDAS Y AGENCIAS AUTORIZADAS VICENTE CORP\nVersión Oficial Vigente: Enero 2026.\n\n1. HORARIOS GENERALES DE ATENCIÓN EN MOSTRADOR\n- Tiendas Propias Metropolitanas (CDMX, Guadalajara, Monterrey):\n  Lunes a Viernes: 08:30 a 19:30 horas (horario corrido).\n  Sábados: 09:00 a 14:30 horas.\n  Domingos y días festivos oficiales: Cerrado.\n- Agencias Autorizadas Regionales:\n  Lunes a Viernes: 09:00 a 18:00 horas.\n  Sábados: 09:00 a 13:00 horas.",
+      "tokensCount": 114,
+      "createdAt": "2026-01-15T09:00:00.000Z"
+    },
+    {
+      "id": "chk-doc-tiendas-01-1",
+      "documentId": "doc-tiendas-01",
+      "categoryId": "cat-tiendas",
+      "chunkIndex": 1,
+      "content": "ias Autorizadas Regionales:\n  Lunes a Viernes: 09:00 a 18:00 horas.\n  Sábados: 09:00 a 13:00 horas.\n\n2. DIRECTORIO PRINCIPAL DE SUCURSALES Y AGENCIAS\n- Sucursal Centro (CDMX):\n  Dirección: Av. Insurgentes Sur #1450, Col. Actipan, Benito Juárez, CDMX.\n  Teléfono Directo: (55) 5543-8900 ext. 101 y 102.\n  Servicios: Mostrador de venta, recepción de garantías, taller de diagnóstico rápido y recolección para compras en línea (Click & Collect).\n- Sucursal Norte (Monterrey):",
+      "tokensCount": 118,
+      "createdAt": "2026-01-15T09:00:00.000Z"
+    },
+    {
+      "id": "chk-doc-tiendas-01-2",
+      "documentId": "doc-tiendas-01",
+      "categoryId": "cat-tiendas",
+      "chunkIndex": 2,
+      "content": "gnóstico rápido y recolección para compras en línea (Click & Collect).\n- Sucursal Norte (Monterrey):\n  Dirección: Av. Constitución #2180 Poniente, Col. Obispado, Monterrey, N.L.\n  Teléfono Directo: (81) 8345-7720.\n  Servicios: Venta mayoreo, refacciones originales y módulo de atención a transportistas.\n- Sucursal Occidente (Guadalajara):\n  Dirección: Calzada Independencia Norte #890, Col. La Federacha, Guadalajara, Jal.\n  Teléfono Directo: (33) 3612-4411.",
+      "tokensCount": 115,
+      "createdAt": "2026-01-15T09:00:00.000Z"
+    },
+    {
+      "id": "chk-doc-tiendas-01-3",
+      "documentId": "doc-tiendas-01",
+      "categoryId": "cat-tiendas",
+      "chunkIndex": 3,
+      "content": "a Independencia Norte #890, Col. La Federacha, Guadalajara, Jal.\n  Teléfono Directo: (33) 3612-4411.\n  Servicios: Ventas y centro de servicio regional.\n- Agencia Autorizada Puebla (Socio Aliado TecnoSur):\n  Dirección: Blvd. Hermanos Serdán #320, Col. Las Hadas, Puebla, Pue.\n  Teléfono Directo: (222) 249-1830.\n\n3. POLÍTICA DE ATENCIÓN EN MOSTRADOR\n- El cliente debe presentar identificación oficial vigente (INE o Pasaporte) para recolectar pedidos pagados previamente.",
+      "tokensCount": 118,
+      "createdAt": "2026-01-15T09:00:00.000Z"
+    },
+    {
+      "id": "chk-doc-tiendas-01-4",
+      "documentId": "doc-tiendas-01",
+      "categoryId": "cat-tiendas",
+      "chunkIndex": 4,
+      "content": "sentar identificación oficial vigente (INE o Pasaporte) para recolectar pedidos pagados previamente.\n- En caso de recoger un tercero, se requiere carta poder simple, copia de INE del titular y copia de INE de quien recoge.\n- Todo producto entregado en tienda debe ser inspeccionado visualmente frente al cliente antes de sellar la póliza de entrega.",
+      "tokensCount": 88,
+      "createdAt": "2026-01-15T09:00:00.000Z"
+    },
+    {
+      "id": "chk-doc-garantias-01-0",
+      "documentId": "doc-garantias-01",
+      "categoryId": "cat-garantias",
+      "chunkIndex": 0,
+      "content": "POLÍTICA MAESTRA DE GARANTÍAS Y REEMPLAZOS\nDocumento Normativo GTO-2026-v3.\n\n1. PLAZOS DE COBERTURA ESTÁNDAR\n- Componentes mecánicos y chasis estructural: 24 meses naturales a partir de la fecha de facturación.\n- Componentes electrónicos, tarjetas lógicas y fuentes de poder: 12 meses naturales.\n- Accesorios menores, cables, empaques y piezas de desgaste normal: 90 días naturales.",
+      "tokensCount": 96,
+      "createdAt": "2026-01-10T10:30:00.000Z"
+    },
+    {
+      "id": "chk-doc-garantias-01-1",
+      "documentId": "doc-garantias-01",
+      "categoryId": "cat-garantias",
+      "chunkIndex": 1,
+      "content": "es naturales.\n- Accesorios menores, cables, empaques y piezas de desgaste normal: 90 días naturales.\n- Baterías recargables y acumuladores: 6 meses naturales contra defecto de celda (no cubre degradación natural por ciclos de carga).\n\n2. CONDICIONES Y REQUISITOS PARA VALIDAR LA GARANTÍA\nPara tramitar un reclamo de garantía, el usuario debe presentar:\na) Factura original de compra o comprobante digital con folio fiscal (CFDI).",
+      "tokensCount": 108,
+      "createdAt": "2026-01-10T10:30:00.000Z"
+    },
+    {
+      "id": "chk-doc-garantias-01-2",
+      "documentId": "doc-garantias-01",
+      "categoryId": "cat-garantias",
+      "chunkIndex": 2,
+      "content": "usuario debe presentar:\na) Factura original de compra o comprobante digital con folio fiscal (CFDI).\nb) Número de serie legible del equipo (no alterado ni removido de la etiqueta del fabricante).\nc) Equipo completo con sus accesorios originales indispensables para la prueba.\nd) Descripción detallada de la falla en el formato oficial F-GAR-01.\n\n3. EXCLUSIONES EXPRESAS (PÉRDIDA DE GARANTÍA)\nLa garantía quedará invalidada sin excepción bajo las siguientes circunstancias:",
+      "tokensCount": 118,
+      "createdAt": "2026-01-10T10:30:00.000Z"
+    },
+    {
+      "id": "chk-doc-garantias-01-3",
+      "documentId": "doc-garantias-01",
+      "categoryId": "cat-garantias",
+      "chunkIndex": 3,
+      "content": "ÉRDIDA DE GARANTÍA)\nLa garantía quedará invalidada sin excepción bajo las siguientes circunstancias:\n- Sellos de seguridad violados, rotos o intervenidos por personal no certificado.\n- Daño ocasionado por descargas eléctricas, fluctuaciones de voltaje fuera de +/- 10% del nominal, o falta de tierra física adecuada.\n- Daño físico atribuible a golpes, caídas, deformaciones mecánicas o exposición a humedad/líquidos.\n- Instalación de firmware no autorizado o modificaciones al circuito original.",
+      "tokensCount": 124,
+      "createdAt": "2026-01-10T10:30:00.000Z"
+    },
+    {
+      "id": "chk-doc-garantias-01-4",
+      "documentId": "doc-garantias-01",
+      "categoryId": "cat-garantias",
+      "chunkIndex": 4,
+      "content": "n a humedad/líquidos.\n- Instalación de firmware no autorizado o modificaciones al circuito original.\n- Falta de mantenimiento preventivo estipulado en el manual de usuario cada 6 meses.\n\n4. TIEMPOS DE RESPUESTA Y RESOLUCIÓN (SLA)\n- Diagnóstico inicial: máximo 48 horas hábiles a partir de la recepción en centro autorizado.\n- Reparación en taller: 3 a 5 días hábiles si se cuenta con refacción en stock nacional.",
+      "tokensCount": 103,
+      "createdAt": "2026-01-10T10:30:00.000Z"
+    },
+    {
+      "id": "chk-doc-garantias-01-5",
+      "documentId": "doc-garantias-01",
+      "categoryId": "cat-garantias",
+      "chunkIndex": 5,
+      "content": "autorizado.\n- Reparación en taller: 3 a 5 días hábiles si se cuenta con refacción en stock nacional.\n- Reemplazo por equipo nuevo: se autoriza si la reparación supera los 15 días hábiles o si la falla es reincidente por tercera ocasión consecutiva en el mismo componente.",
+      "tokensCount": 68,
+      "createdAt": "2026-01-10T10:30:00.000Z"
+    },
+    {
+      "id": "chk-doc-cedis-01-0",
+      "documentId": "doc-cedis-01",
+      "categoryId": "cat-cedis",
+      "chunkIndex": 0,
+      "content": "CENTROS DE DISTRIBUCIÓN (CEDIS) - PROTOCOLO DE RECEPCIÓN Y LOGÍSTICA\nCódigo de Procedimiento: LOG-CEDIS-04.\n\n1. UBICACIÓN DE CENTROS DE DISTRIBUCIÓN\n- CEDIS Central San Martín Obispo (Estado de México):\n  Dirección: Parque Industrial San Martín Obispo Park II, Nave 4, Cuautitlán Izcalli, Edo. Méx., C.P. 54769.\n  Capacidad: 25,000 tarimas, 32 andenes de carga y descarga.\n- CEDIS Regional Norte (Apodaca):\n  Dirección: Parque Industrial Huinalá, Carretera Apodaca-Huinalá Km 3.5, Apodaca, N.L.",
+      "tokensCount": 124,
+      "createdAt": "2026-01-12T14:00:00.000Z"
+    },
+    {
+      "id": "chk-doc-cedis-01-1",
+      "documentId": "doc-cedis-01",
+      "categoryId": "cat-cedis",
+      "chunkIndex": 1,
+      "content": "e (Apodaca):\n  Dirección: Parque Industrial Huinalá, Carretera Apodaca-Huinalá Km 3.5, Apodaca, N.L.\n  Capacidad: 10,000 tarimas, 14 andenes.\n\n2. HORARIOS Y CITAS DE DESCARGA PARA PROVEEDORES Y TRANSPORTISTAS\n- Horario de recepción de proveedores: Lunes a Viernes de 07:00 a 14:00 horas exclusivamente.\n- No se recibe ninguna unidad sin número de cita previa gestionado mediante el portal de citas (SGL-Web) con al menos 24 horas de anticipación.",
+      "tokensCount": 112,
+      "createdAt": "2026-01-12T14:00:00.000Z"
+    },
+    {
+      "id": "chk-doc-cedis-01-2",
+      "documentId": "doc-cedis-01",
+      "categoryId": "cat-cedis",
+      "chunkIndex": 2,
+      "content": "cita previa gestionado mediante el portal de citas (SGL-Web) con al menos 24 horas de anticipación.\n- Tolerancia máxima de arribo a caseta: 15 minutos respecto a la hora asignada en cita. Si el transportista llega con más de 15 minutos de retraso, la cita queda cancelada y debe reprogramarse según disponibilidad de andén.\n\n3. ESPECIFICACIONES DE TARIMAS Y EMBALAJE OBLIGATORIO",
+      "tokensCount": 95,
+      "createdAt": "2026-01-12T14:00:00.000Z"
+    },
+    {
+      "id": "chk-doc-cedis-01-3",
+      "documentId": "doc-cedis-01",
+      "categoryId": "cat-cedis",
+      "chunkIndex": 3,
+      "content": "reprogramarse según disponibilidad de andén.\n\n3. ESPECIFICACIONES DE TARIMAS Y EMBALAJE OBLIGATORIO\n- Se requiere uso exclusivo de tarima de madera estándar tipo americana (1.00 m x 1.20 m) de 4 entradas, sin tablas rotas ni clavos expuestos.\n- Altura máxima de la estiba: 1.65 m (incluyendo la tarima).\n- Cada tarima debe estar flejada y envuelta con película plástica extensible (playo) de calibre mínimo 60, asegurando la carga desde la base de madera.",
+      "tokensCount": 114,
+      "createdAt": "2026-01-12T14:00:00.000Z"
+    },
+    {
+      "id": "chk-doc-cedis-01-4",
+      "documentId": "doc-cedis-01",
+      "categoryId": "cat-cedis",
+      "chunkIndex": 4,
+      "content": "ícula plástica extensible (playo) de calibre mínimo 60, asegurando la carga desde la base de madera.\n- Cada tarima debe portar etiqueta visible en al menos dos caras con: SKU, descripción, lote, cantidad de cajas y fecha de empaque.\n\n4. TIEMPOS DE PROCESAMIENTO Y SURTIDO A CLIENTES (SLA)\n- Pedidos locales metropolitanos: Preparación en 24 horas, entrega en 48 horas hábiles.",
+      "tokensCount": 94,
+      "createdAt": "2026-01-12T14:00:00.000Z"
+    },
+    {
+      "id": "chk-doc-cedis-01-5",
+      "documentId": "doc-cedis-01",
+      "categoryId": "cat-cedis",
+      "chunkIndex": 5,
+      "content": "IENTES (SLA)\n- Pedidos locales metropolitanos: Preparación en 24 horas, entrega en 48 horas hábiles.\n- Pedidos foráneos nacionales: Despacho a paquetería en 24 horas hábiles; entrega final sujeta a zona geográfica de la transportadora (3 a 5 días hábiles).",
+      "tokensCount": 64,
+      "createdAt": "2026-01-12T14:00:00.000Z"
+    },
+    {
+      "id": "chk-doc-diagnostico-01-0",
+      "documentId": "doc-diagnostico-01",
+      "categoryId": "cat-diagnostico",
+      "chunkIndex": 0,
+      "content": "GUÍA MAESTRA DE DIAGNÓSTICO TÉCNICO Y CÓDIGOS DE ERROR\nSerie de Equipos Industriales y Comerciales Vicente.\n\n1. TABLA OFICIAL DE CÓDIGOS DE ERROR EN PANEL DIGITAL\n- Código E01 (Falla de Alimentación Principal):\n  Causa: Voltaje de entrada inferior a 95 VAC o superior a 135 VAC.",
+      "tokensCount": 70,
+      "createdAt": "2026-01-18T11:20:00.000Z"
+    },
+    {
+      "id": "chk-doc-diagnostico-01-1",
+      "documentId": "doc-diagnostico-01",
+      "categoryId": "cat-diagnostico",
+      "chunkIndex": 1,
+      "content": "alla de Alimentación Principal):\n  Causa: Voltaje de entrada inferior a 95 VAC o superior a 135 VAC.\n  Procedimiento: Medir con multímetro calibrado entre Fase y Neutro en el tomacorriente. Verificar que exista tierra física con voltaje menor a 1.5 VAC entre Neutro y Tierra. Si el voltaje es correcto, revisar el fusible F1 de 10A en la tarjeta de potencia.\n- Código E02 (Sobrecalentamiento del Módulo de Potencia):",
+      "tokensCount": 104,
+      "createdAt": "2026-01-18T11:20:00.000Z"
+    },
+    {
+      "id": "chk-doc-diagnostico-01-2",
+      "documentId": "doc-diagnostico-01",
+      "categoryId": "cat-diagnostico",
+      "chunkIndex": 2,
+      "content": "sible F1 de 10A en la tarjeta de potencia.\n- Código E02 (Sobrecalentamiento del Módulo de Potencia):\n  Causa: Sensor de temperatura NTC detecta más de 85°C durante 10 segundos continuos.\n  Procedimiento: Apagar el equipo, inspeccionar si las ranuras de ventilación están obstruidas por polvo. Medir resistencia del sensor NTC (valor nominal 10k Ohm a 25°C). Verificar que el ventilador de enfriamiento FAN1 gire libremente y reciba 12 VDC.\n- Código E03 (Falla en Sensor de Posición / Encoder):",
+      "tokensCount": 124,
+      "createdAt": "2026-01-18T11:20:00.000Z"
+    },
+    {
+      "id": "chk-doc-diagnostico-01-3",
+      "documentId": "doc-diagnostico-01",
+      "categoryId": "cat-diagnostico",
+      "chunkIndex": 3,
+      "content": "iamiento FAN1 gire libremente y reciba 12 VDC.\n- Código E03 (Falla en Sensor de Posición / Encoder):\n  Causa: Ausencia de pulsos de retroalimentación tras 500 ms de comando de giro.\n  Procedimiento: Revisar cableado de 4 hilos del encoder óptico. Limpiar disco codificador con alcohol isopropílico. Si el LED indicador del encoder no parpadea al girar manualmente el eje, reemplazar el ensamble del sensor.\n- Código E04 (Sobrecarga de Corriente en Motor):",
+      "tokensCount": 114,
+      "createdAt": "2026-01-18T11:20:00.000Z"
+    },
+    {
+      "id": "chk-doc-diagnostico-01-4",
+      "documentId": "doc-diagnostico-01",
+      "categoryId": "cat-diagnostico",
+      "chunkIndex": 4,
+      "content": "ualmente el eje, reemplazar el ensamble del sensor.\n- Código E04 (Sobrecarga de Corriente en Motor):\n  Causa: El consumo supera los 8.5 Amperes por más de 3 segundos consecutivos.\n  Procedimiento: Inspeccionar posible atasco mecánico o baleros trabados. Desacoplar banda de transmisión y medir corriente en vacío (debe ser menor a 1.2A).\n- Código E05 (Error de Comunicación UART / Tarjeta Frontal):\n  Causa: Pérdida de sincronía serial entre tarjeta principal y panel táctil.",
+      "tokensCount": 119,
+      "createdAt": "2026-01-18T11:20:00.000Z"
+    },
+    {
+      "id": "chk-doc-diagnostico-01-5",
+      "documentId": "doc-diagnostico-01",
+      "categoryId": "cat-diagnostico",
+      "chunkIndex": 5,
+      "content": "ART / Tarjeta Frontal):\n  Causa: Pérdida de sincronía serial entre tarjeta principal y panel táctil.\n  Procedimiento: Revisar cable plano flexible (ribbon cable). Comprobar que no haya pines doblados ni corrosión.\n- Código E08 (Falla Crítica de Memoria EEPROM):\n  Causa: Checksum corrupto en configuración de fábrica.",
+      "tokensCount": 80,
+      "createdAt": "2026-01-18T11:20:00.000Z"
+    },
+    {
+      "id": "chk-doc-diagnostico-01-6",
+      "documentId": "doc-diagnostico-01",
+      "categoryId": "cat-diagnostico",
+      "chunkIndex": 6,
+      "content": "ódigo E08 (Falla Crítica de Memoria EEPROM):\n  Causa: Checksum corrupto en configuración de fábrica.\n  Procedimiento: Ejecutar reinicio de fábrica manteniendo pulsados los botones 'RESET' y 'MODO' durante 7 segundos continuos al encender. Si el código persiste, requiere flasheo de firmware con interfaz ISP autorizada.\n\n2. PROTOCOLO OBLIGATORIO DE SEGURIDAD\n- Siempre desconectar la clavija de alimentación antes de remover la cubierta del gabinete.",
+      "tokensCount": 113,
+      "createdAt": "2026-01-18T11:20:00.000Z"
+    },
+    {
+      "id": "chk-doc-diagnostico-01-7",
+      "documentId": "doc-diagnostico-01",
+      "categoryId": "cat-diagnostico",
+      "chunkIndex": 7,
+      "content": "EGURIDAD\n- Siempre desconectar la clavija de alimentación antes de remover la cubierta del gabinete.\n- Esperar al menos 3 minutos para que los capacitores electrolíticos del circuito primario se descarguen por completo antes de manipular la placa electrónica.",
+      "tokensCount": 65,
+      "createdAt": "2026-01-18T11:20:00.000Z"
+    },
+    {
+      "id": "chk-doc-informacion-01-0",
+      "documentId": "doc-informacion-01",
+      "categoryId": "cat-informacion",
+      "chunkIndex": 0,
+      "content": "INFORMACIÓN INSTITUCIONAL Y CANALES CORPORATIVOS OFICIALES\nVicente Soluciones Industriales y Comerciales S.A. de C.V.\n\n1. MISIÓN Y PROPÓSITO\nProveer equipamiento de alta fiabilidad, repuestos originales y asesoría técnica de primer nivel para mantener la continuidad operativa de nuestros clientes y distribuidores en toda la República Mexicana.\n\n2. CANALES CORPORATIVOS DE CONTACTO\n- Conmutador Central Nacional: 800-842-3683 (800-VICENTE).",
+      "tokensCount": 111,
+      "createdAt": "2026-01-05T08:00:00.000Z"
+    },
+    {
+      "id": "chk-doc-informacion-01-1",
+      "documentId": "doc-informacion-01",
+      "categoryId": "cat-informacion",
+      "chunkIndex": 1,
+      "content": "ana.\n\n2. CANALES CORPORATIVOS DE CONTACTO\n- Conmutador Central Nacional: 800-842-3683 (800-VICENTE).\n  Horario de atención telefónica: Lunes a Viernes de 08:00 a 20:00 horas, Sábados de 09:00 a 14:00 horas.\n- Correo Electrónico Institucional: contacto@vicentesoluciones.com.mx\n- Mesa de Ayuda Técnica Especializada: soporte@vicentesoluciones.com.mx\n- Portal Web de Clientes y Distribuidores: https://portal.vicentesoluciones.com.mx\n\n3. AVISO DE PRIVACIDAD Y PROTECCIÓN DE DATOS",
+      "tokensCount": 120,
+      "createdAt": "2026-01-05T08:00:00.000Z"
+    },
+    {
+      "id": "chk-doc-informacion-01-2",
+      "documentId": "doc-informacion-01",
+      "categoryId": "cat-informacion",
+      "chunkIndex": 2,
+      "content": "istribuidores: https://portal.vicentesoluciones.com.mx\n\n3. AVISO DE PRIVACIDAD Y PROTECCIÓN DE DATOS\nVicente Soluciones trata los datos personales de conformidad con la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP). Los datos recabados en chats, llamadas y formularios se utilizan exclusivamente con fines de facturación, cumplimiento de garantías y soporte técnico. No comercializamos ni transferimos bases de datos a terceros sin consentimiento expreso.",
+      "tokensCount": 125,
+      "createdAt": "2026-01-05T08:00:00.000Z"
+    },
+    {
+      "id": "chk-doc-informacion-01-3",
+      "documentId": "doc-informacion-01",
+      "categoryId": "cat-informacion",
+      "chunkIndex": 3,
+      "content": "te técnico. No comercializamos ni transferimos bases de datos a terceros sin consentimiento expreso. Para ejercer derechos ARCO (Acceso, Rectificación, Cancelación y Oposición), escribir a: privacidad@vicentesoluciones.com.mx.",
+      "tokensCount": 57,
+      "createdAt": "2026-01-05T08:00:00.000Z"
+    },
+    {
+      "id": "chk-doc-cliente-01-0",
+      "documentId": "doc-cliente-01",
+      "categoryId": "cat-cliente",
+      "chunkIndex": 0,
+      "content": "MANUAL DE ATENCIÓN AL CLIENTE, EMISIÓN DE FACTURAS Y REEMBOLSOS\nCódigo: SAC-POL-2026.\n\n1. POLÍTICA DE FACTURACIÓN ELECTRÓNICA (CFDI 4.0)\n- Plazo máximo para solicitar factura: El cliente dispone del mes en curso y hasta 72 horas naturales del mes posterior a su compra para emitir su factura a través del portal de autofacturación o enviando su ticket a facturacion@vicentesoluciones.com.mx.\n- Requisitos fiscales indispensables según Anexo 20 del SAT:\n  * RFC completo con homoclave.",
+      "tokensCount": 121,
+      "createdAt": "2026-01-08T12:00:00.000Z"
+    },
+    {
+      "id": "chk-doc-cliente-01-1",
+      "documentId": "doc-cliente-01",
+      "categoryId": "cat-cliente",
+      "chunkIndex": 1,
+      "content": "com.mx.\n- Requisitos fiscales indispensables según Anexo 20 del SAT:\n  * RFC completo con homoclave.\n  * Nombre o Razón Social exacta tal como figura en la Constancia de Situación Fiscal (sin régimen de capital como S.A. de C.V.).\n  * Código Postal del domicilio fiscal del receptor.\n  * Régimen fiscal del receptor.\n  * Uso de CFDI correspondiente (por ejemplo: G01 Adquisición de mercancías, G03 Gastos en general).",
+      "tokensCount": 105,
+      "createdAt": "2026-01-08T12:00:00.000Z"
+    },
+    {
+      "id": "chk-doc-cliente-01-2",
+      "documentId": "doc-cliente-01",
+      "categoryId": "cat-cliente",
+      "chunkIndex": 2,
+      "content": "* Uso de CFDI correspondiente (por ejemplo: G01 Adquisición de mercancías, G03 Gastos en general).\n- Las solicitudes de corrección de factura deben realizarse dentro del mismo mes de emisión.\n\n2. POLÍTICA DE DEVOLUCIONES Y REEMBOLSOS COMERCIALES\n- Plazo de devolución por arrepentimiento de compra: hasta 7 días naturales posteriores a la entrega del producto.\n- Requisitos:\n  * Empaque original sin roturas, manuales intactos y sellos de accesorios sin despegar.",
+      "tokensCount": 116,
+      "createdAt": "2026-01-08T12:00:00.000Z"
+    },
+    {
+      "id": "chk-doc-cliente-01-3",
+      "documentId": "doc-cliente-01",
+      "categoryId": "cat-cliente",
+      "chunkIndex": 3,
+      "content": "Requisitos:\n  * Empaque original sin roturas, manuales intactos y sellos de accesorios sin despegar.\n  * El producto no debe haber sido encendido, energizado ni instalado.\n  * Aplica un cargo administrativo por re-almacenamiento del 10% sobre el valor del producto si la devolución no obedece a un defecto atribuible a la empresa.\n- Reembolsos:\n  * Pagos con tarjeta de débito/crédito: la reversa se refleja en un plazo de 5 a 15 días hábiles bancarios.",
+      "tokensCount": 114,
+      "createdAt": "2026-01-08T12:00:00.000Z"
+    },
+    {
+      "id": "chk-doc-cliente-01-4",
+      "documentId": "doc-cliente-01",
+      "categoryId": "cat-cliente",
+      "chunkIndex": 4,
+      "content": "s con tarjeta de débito/crédito: la reversa se refleja en un plazo de 5 a 15 días hábiles bancarios.\n  * Pagos por transferencia SPEI: reembolso en cuenta CLABE dentro de 72 horas hábiles tras la aprobación física del producto devuelto.\n\n3. ATENCIÓN A QUEJAS Y ESCALAMIENTOS\n- Nivel 1 (Atención Telefónica y Chat Vicente): Resolución inmediata o canalización con ticket de seguimiento (SLA de 24 horas).",
+      "tokensCount": 101,
+      "createdAt": "2026-01-08T12:00:00.000Z"
+    },
+    {
+      "id": "chk-doc-cliente-01-5",
+      "documentId": "doc-cliente-01",
+      "categoryId": "cat-cliente",
+      "chunkIndex": 5,
+      "content": "ca y Chat Vicente): Resolución inmediata o canalización con ticket de seguimiento (SLA de 24 horas).\n- Nivel 2 (Jefatura de Calidad y Servicio al Cliente): Casos que involucren reclamaciones formales o discrepancias de facturación (SLA de 48 horas hábiles).",
+      "tokensCount": 65,
+      "createdAt": "2026-01-08T12:00:00.000Z"
+    },
+    {
+      "id": "chk-doc-1792808878776-5aro-0",
+      "documentId": "doc-1792808878776-5aro",
+      "categoryId": "cat-cliente",
+      "chunkIndex": 0,
+      "content": "DOCUMENTO EXCEL: tiempos_cliente.xlsx\n\n--- HOJA: Devoluciones ---\nProcedimiento,Tiempo_Respuesta\nValidacion de ticket fiscal CFDI,24 horas maximo\nReversa bancaria por devolucion,5 a 15 dias habiles",
+      "tokensCount": 50,
+      "createdAt": "2026-10-24T02:27:58.776Z"
+    }
+  ],
+  "conversations": [],
+  "messages": [],
+  "auditLogs": [
+    {
+      "id": "log-seed-1",
+      "timestamp": "2026-10-24T02:27:58.769Z",
+      "userId": "system",
+      "username": "sistema",
+      "action": "DATABASE_INITIALIZATION",
+      "status": "SUCCESS",
+      "ip": "127.0.0.1",
+      "details": "Base de conocimiento Vicente y usuarios predeterminados inicializados exitosamente."
+    }
+  ],
+  "systemConfig": {
+    "assistantName": "Vicente",
+    "emptyResultMessage": "No encontré esa respuesta en las fuentes internas. Para mantenerme dentro de los documentos, no voy a improvisar.",
+    "maxRequestsPerMinute": 60,
+    "strictRAGMode": true,
+    "retentionDays": 90,
+    "updatedAt": "2026-01-01T00:00:00.000Z"
+  }
+}
