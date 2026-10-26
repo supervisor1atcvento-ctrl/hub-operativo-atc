@@ -18,8 +18,7 @@ interface Props {
   selectedCategory: string;
   onSelectCategory: (slug: string) => void;
   onOpenAdmin: () => void;
-  onOpenLogin: () => void;
-  onLogout: () => void;
+  onResetSession?: () => void;
   onToggleSidebar: () => void;
 }
 
@@ -29,12 +28,9 @@ export const Header: React.FC<Props> = ({
   selectedCategory,
   onSelectCategory,
   onOpenAdmin,
-  onOpenLogin,
-  onLogout,
+  onResetSession,
   onToggleSidebar
 }) => {
-  const currentCategory = categories.find((c) => c.slug === selectedCategory);
-
   return (
     <header className="h-16 px-4 sm:px-6 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between sticky top-0 z-30 shadow-xs">
       {/* Left: Mobile Menu & Brand */}
@@ -58,11 +54,11 @@ export const Header: React.FC<Props> = ({
               </span>
               <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10.5px] font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                RAG Verificado
+                Base de Datos • Sin IA
               </span>
             </div>
             <p className="text-[11px] text-slate-500 dark:text-slate-400 hidden sm:block">
-              Atención basada exclusivamente en fuentes autorizadas
+              Atención determinista basada en fuentes internas autorizadas
             </p>
           </div>
         </div>
@@ -73,12 +69,15 @@ export const Header: React.FC<Props> = ({
         <div className="relative">
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
             <Layers className="w-3.5 h-3.5 text-blue-500 shrink-0" />
-            <span className="text-slate-500 dark:text-slate-400 hidden md:inline">Categoría activa:</span>
+            <span className="text-slate-500 dark:text-slate-400 hidden md:inline">Alcance de búsqueda:</span>
             <select
               value={selectedCategory}
               onChange={(e) => onSelectCategory(e.target.value)}
               className="bg-transparent font-semibold text-slate-900 dark:text-white focus:outline-hidden cursor-pointer"
             >
+              <option value="all" className="text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-900">
+                🌐 Todas las categorías (Global)
+              </option>
               {categories.map((cat) => (
                 <option key={cat.slug} value={cat.slug} className="text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-900">
                   {cat.name}
@@ -89,59 +88,30 @@ export const Header: React.FC<Props> = ({
         </div>
       </div>
 
-      {/* Right: User / Roles & Admin Panel */}
+      {/* Right: Actions & Admin Panel */}
       <div className="flex items-center gap-2">
-        {user ? (
-          <div className="flex items-center gap-2">
-            {user.role === 'admin' && (
-              <button
-                onClick={onOpenAdmin}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800 hover:bg-purple-100 dark:hover:bg-purple-900/40 transition-colors shadow-xs"
-                title="Administración de RAG, Documentos y Usuarios"
-              >
-                <Settings className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Panel Admin</span>
-              </button>
-            )}
-
-            <div className="flex items-center gap-2 pl-2 border-l border-slate-200 dark:border-slate-800">
-              <button
-                onClick={onOpenLogin}
-                className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-left"
-                title="Cambiar perfil / Probar otro rol"
-              >
-                <div className="w-7 h-7 rounded-xl bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 flex items-center justify-center font-bold text-xs">
-                  {user.name.charAt(0)}
-                </div>
-                <div className="hidden lg:block text-left">
-                  <div className="text-xs font-semibold text-slate-900 dark:text-slate-100 truncate max-w-[120px]">
-                    {user.name}
-                  </div>
-                  <div className="text-[10px] text-slate-400 capitalize">
-                    {user.role === 'admin' ? 'Administrador' : user.role === 'agent' ? 'Agente' : 'Usuario'}
-                  </div>
-                </div>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
-              </button>
-
-              <button
-                onClick={onLogout}
-                className="p-2 text-slate-400 hover:text-red-600 dark:hover:text-red-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                title="Cerrar sesión"
-              >
-                <LogOut className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        ) : (
+        {user?.role === 'admin' && (
           <button
-            onClick={onOpenLogin}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl shadow-sm transition-all"
+            onClick={onOpenAdmin}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800 hover:bg-purple-100 dark:hover:bg-purple-900/40 transition-colors shadow-xs"
+            title="Administración de RAG, Documentos y Usuarios"
           >
-            <UserIcon className="w-3.5 h-3.5" />
-            <span>Ingresar</span>
+            <Settings className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Panel Documentos</span>
           </button>
         )}
+
+        <div className="flex items-center gap-2 pl-2 border-l border-slate-200 dark:border-slate-800">
+          <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 text-xs">
+            <div className="w-6 h-6 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-xs">
+              V
+            </div>
+            <div className="hidden md:block text-left">
+              <span className="font-semibold text-slate-800 dark:text-slate-200 text-xs">Acceso Público</span>
+              <span className="block text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">Búsqueda Abierta</span>
+            </div>
+          </div>
+        </div>
       </div>
     </header>
   );

@@ -6,12 +6,19 @@ import { Sidebar } from './components/Sidebar.tsx';
 import { ChatView } from './components/ChatView.tsx';
 import { CitationModal } from './components/CitationModal.tsx';
 import { AdminPanel } from './components/AdminPanel.tsx';
-import { LoginModal } from './components/LoginModal.tsx';
 
 export default function App() {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>({
+    id: 'user-default',
+    username: 'usuario',
+    name: 'Usuario Vicente',
+    role: 'admin',
+    allowedCategories: ['*'],
+    active: true,
+    createdAt: new Date().toISOString()
+  });
   const [categories, setCategories] = useState<Category[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>('tiendas_agencias');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -22,7 +29,6 @@ export default function App() {
   // Modals & Panels
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const [isAdminOpen, setIsAdminOpen] = useState<boolean>(false);
-  const [isLoginOpen, setIsLoginOpen] = useState<boolean>(false);
   const [selectedCitation, setSelectedCitation] = useState<Citation | null>(null);
 
   // Initialize Auth & Categories
@@ -39,20 +45,24 @@ export default function App() {
         try {
           currentUser = await api.getMe();
         } catch {
-          // Token expired or invalid
           api.logout();
         }
       }
 
-      // If no valid session, auto-authenticate with default admin demo user for instant evaluation
       if (!currentUser) {
         try {
           const loginRes = await api.login('admin', 'admin123');
           currentUser = loginRes.user;
-        } catch (e) {
-          console.error('Could not auto-login demo user:', e);
-          setIsLoginOpen(true);
-          return;
+        } catch {
+          currentUser = {
+            id: 'guest',
+            username: 'usuario',
+            name: 'Usuario Vicente',
+            role: 'admin',
+            allowedCategories: ['*'],
+            active: true,
+            createdAt: new Date().toISOString()
+          };
         }
       }
 
@@ -60,30 +70,21 @@ export default function App() {
       await loadUserData(currentUser);
     } catch (err: any) {
       console.error('Initialization error:', err);
-      setError(err.message || 'Error al inicializar la aplicación.');
+      // Even if offline, keep guest user active
     }
   };
 
   const loadUserData = async (currentUser: User) => {
     try {
-      // 1. Fetch strictly authorized categories for this user
+      // 1. Fetch authorized categories
       const cats = await api.getAuthorizedCategories();
       setCategories(cats);
-
-      // Select first authorized category
-      if (cats.length > 0) {
-        const hasCurrent = cats.some((c) => c.slug === selectedCategory);
-        if (!hasCurrent) {
-          setSelectedCategory(cats[0].slug);
-        }
-      }
 
       // 2. Fetch conversations
       const convs = await api.getConversations();
       setConversations(convs);
     } catch (err: any) {
       console.error('Failed to load user data:', err);
-      setError(err.message || 'Error al cargar datos de usuario.');
     }
   };
 
@@ -217,24 +218,11 @@ export default function App() {
     }
   };
 
-  // Handle Login Success
-  const handleLoginSuccess = async (loggedInUser: User) => {
-    setUser(loggedInUser);
-    setIsLoginOpen(false);
+  // Reset session
+  const handleResetSession = () => {
     setActiveConversationId(null);
     setMessages([]);
-    setError(null);
-    await loadUserData(loggedInUser);
-  };
-
-  // Logout
-  const handleLogout = () => {
-    api.logout();
-    setUser(null);
-    setConversations([]);
-    setMessages([]);
-    setActiveConversationId(null);
-    setIsLoginOpen(true);
+    setAkinatorAnswers({});
   };
 
   const currentCategory = categories.find((c) => c.slug === selectedCategory);
@@ -248,8 +236,7 @@ export default function App() {
         selectedCategory={selectedCategory}
         onSelectCategory={handleSelectCategory}
         onOpenAdmin={() => setIsAdminOpen(true)}
-        onOpenLogin={() => setIsLoginOpen(true)}
-        onLogout={handleLogout}
+        onResetSession={handleResetSession}
         onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
       />
 
@@ -295,13 +282,6 @@ export default function App() {
         onClose={() => setIsAdminOpen(false)}
         categories={categories}
         onRefreshCategories={() => user && loadUserData(user)}
-      />
-
-      {/* Login & Demo Switcher Modal */}
-      <LoginModal
-        isOpen={isLoginOpen}
-        onSuccess={handleLoginSuccess}
-        onClose={() => user && setIsLoginOpen(false)}
       />
     </div>
   );

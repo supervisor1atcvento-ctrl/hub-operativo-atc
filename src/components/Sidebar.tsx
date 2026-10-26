@@ -79,6 +79,22 @@ export const Sidebar: React.FC<Props> = ({
             </div>
 
             <div className="space-y-1">
+              {/* Option: Todas las categorías (Búsqueda Global) */}
+              <button
+                onClick={() => onSelectCategory('all')}
+                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all text-left ${
+                  selectedCategory === 'all'
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-900'
+                }`}
+              >
+                <div className="flex items-center gap-2.5 truncate">
+                  <Sparkles className={`w-3.5 h-3.5 shrink-0 ${selectedCategory === 'all' ? 'text-white' : 'text-amber-500'}`} />
+                  <span className="truncate font-semibold">Todas las categorías</span>
+                </div>
+                {selectedCategory === 'all' && <ChevronRight className="w-3.5 h-3.5 shrink-0 opacity-80" />}
+              </button>
+
               {categories.map((cat) => {
                 const isSelected = cat.slug === selectedCategory;
                 return (

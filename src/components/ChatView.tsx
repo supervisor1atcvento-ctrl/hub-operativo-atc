@@ -30,6 +30,12 @@ interface Props {
 }
 
 const SAMPLE_QUESTIONS_BY_CATEGORY: Record<string, string[]> = {
+  all: [
+    '¿Cuáles son los horarios de atención en sucursal Centro (CDMX)?',
+    '¿Cuál es el plazo de garantía para componentes electrónicos y chasis?',
+    '¿Qué significa el código de error E01 y cuál es el procedimiento de revisión?',
+    '¿Dónde se ubica el CEDIS Central y cuáles son los requisitos de descarga?'
+  ],
   tiendas_agencias: [
     '¿Cuáles son los horarios de atención en sucursal Centro (CDMX)?',
     '¿Qué requisitos debe presentar un tercero para recoger un pedido en mostrador?',
@@ -124,7 +130,7 @@ export const ChatView: React.FC<Props> = ({
 
   const sampleQuestions = currentCategory
     ? SAMPLE_QUESTIONS_BY_CATEGORY[currentCategory.slug] || []
-    : [];
+    : SAMPLE_QUESTIONS_BY_CATEGORY['all'] || [];
 
   return (
     <div className="flex-1 flex flex-col h-full bg-slate-50/50 dark:bg-slate-900/40 overflow-hidden relative">
@@ -141,18 +147,19 @@ export const ChatView: React.FC<Props> = ({
               Hola, soy Vicente
             </h1>
             <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 mt-2 max-w-lg mx-auto">
-              Asistente corporativo de atención. Respondo consultas basándome estrictamente en manuales, pólizas y documentos oficiales autorizados.
+              Asistente corporativo de atención determinista. Busco en toda la base de datos interna y, si existen coincidencias, te apoyo paso a paso para darte el procedimiento oficial exacto.
             </p>
 
-            {currentCategory && (
-              <div className="mt-5 inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 text-xs font-medium">
-                <BookOpen className="w-4 h-4 text-blue-500" />
-                <span>
-                  Consultando base de conocimiento:{' '}
-                  <strong className="font-semibold">{currentCategory.name}</strong>
-                </span>
-              </div>
-            )}
+            <div className="mt-5 inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 text-xs font-medium">
+              <BookOpen className="w-4 h-4 text-blue-500" />
+              <span>
+                {currentCategory ? (
+                  <>Consultando base de conocimiento: <strong className="font-semibold">{currentCategory.name}</strong></>
+                ) : (
+                  <>Búsqueda Global activa: <strong className="font-semibold">Todas las categorías autorizadas</strong></>
+                )}
+              </span>
+            </div>
 
             {/* Quick Sample Questions */}
             {sampleQuestions.length > 0 && (
@@ -449,7 +456,11 @@ export const ChatView: React.FC<Props> = ({
                   value={input}
                   onChange={handleTextareaInput}
                   onKeyDown={handleKeyDown}
-                  placeholder={`Escribe tu pregunta sobre ${currentCategory?.name || 'este tema'}... (Enter para enviar)`}
+                  placeholder={
+                    currentCategory
+                      ? `Escribe tu pregunta sobre ${currentCategory.name}... (Enter para enviar)`
+                      : 'Escribe tu pregunta sobre cualquier categoría (tiendas, garantías, fallas, CEDIS...)'
+                  }
                   rows={1}
                   className="w-full max-h-40 resize-none bg-transparent px-2 py-1.5 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-hidden"
                   disabled={isLoading}

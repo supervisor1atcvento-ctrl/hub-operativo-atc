@@ -327,7 +327,7 @@ export const KNOWLEDGE_TARGETS: KnowledgeTarget[] = [
       shipment_type: 'general',
       cedis_location: 'cuautitlan_apodaca'
     },
-    keywords: ['ubicacion', 'direccion', 'san martin obispo', 'cuautitlan', 'izcalli', 'apodaca', 'monterrey', 'nave']
+    keywords: ['ubicacion', 'direccion', 'san martin obispo', 'cuautitlan', 'izcalli', 'apodaca', 'monterrey', 'nave industrial', 'nave 4']
   },
 
   // TIENDAS Y AGENCIAS
@@ -524,7 +524,8 @@ const STOPWORDS = new Set([
   'con', 'no', 'una', 'su', 'al', 'lo', 'como', 'mas', 'pero', 'sus', 'le', 'ya', 'o',
   'este', 'si', 'porque', 'esta', 'son', 'entre', 'cuando', 'muy', 'sin', 'sobre', 'ser',
   'tiene', 'tambien', 'me', 'hasta', 'hay', 'donde', 'quien', 'desde', 'todo', 'nos',
-  'durante', 'uno', 'les', 'ni', 'contra', 'otros', 'cual', 'cuales', 'es', 'unos', 'unas'
+  'durante', 'uno', 'les', 'ni', 'contra', 'otros', 'cual', 'cuales', 'es', 'unos', 'unas',
+  'hacia', 'segun', 'ante', 'bajo', 'tras', 'mediante', 'cada', 'algun', 'alguna', 'hacer'
 ]);
 
 // Helper to normalize strings for exact and fuzzy matching
@@ -550,8 +551,17 @@ export function executeAkinatorSearch(
   const config = db.getConfig();
   const emptyMessage = config.emptyResultMessage;
 
-  // 1. Filtrar objetivos autorizados estrictamente por la categoría solicitada
-  const categoryTargets = KNOWLEDGE_TARGETS.filter((t) => t.categorySlug === categorySlug);
+  const isAll = !categorySlug || categorySlug === 'all';
+
+  // 1. Filtrar objetivos autorizados (por categoría solicitada o búsqueda global)
+  const categoryTargets = KNOWLEDGE_TARGETS.filter((t) => {
+    if (isAll) {
+      if (user.role === 'admin' || user.allowedCategories.includes('*')) return true;
+      return user.allowedCategories.includes(t.categorySlug);
+    }
+    return t.categorySlug === categorySlug;
+  });
+
   if (categoryTargets.length === 0) {
     return {
       certainty: 0,
@@ -567,43 +577,6 @@ export function executeAkinatorSearch(
     .split(' ')
     .filter((w) => w.length > 2 && !STOPWORDS.has(w));
 
-  // Si no hay respuestas previas de Akinator y la pregunta no guarda relación con ningún documento de la categoría
-  if (Object.keys(answersHistory).length === 0 && queryWords.length > 0) {
-    let hasRelevantKeywords = false;
-    for (const target of categoryTargets) {
-      for (const kw of target.keywords) {
-        const kwNorm = clean(kw);
-        const kwRegex = new RegExp(`(^|\\s)${kwNorm}(\\s|$)`);
-        if (kwRegex.test(queryNorm)) {
-          hasRelevantKeywords = true;
-          break;
-        }
-      }
-      if (hasRelevantKeywords) break;
-
-      const targetTokens = new Set(
-        clean(`${target.title} ${target.summary} ${target.fullProcedure}`).split(' ')
-      );
-      for (const word of queryWords) {
-        if (targetTokens.has(word)) {
-          hasRelevantKeywords = true;
-          break;
-        }
-      }
-      if (hasRelevantKeywords) break;
-    }
-
-    if (!hasRelevantKeywords) {
-      return {
-        certainty: 0,
-        status: 'NOT_FOUND',
-        answerText: emptyMessage,
-        citations: [],
-        candidatesCount: 0
-      };
-    }
-  }
-
   // 2. Puntuar candidatos según respuestas de Akinator e input del usuario
   interface ScoredTarget {
     target: KnowledgeTarget;
@@ -618,9 +591,16 @@ export function executeAkinatorSearch(
     // Coincidencia con respuestas dadas en el árbol Akinator
     let matchesAnswers = true;
     for (const [attrKey, expectedVal] of Object.entries(answersHistory)) {
-      if (target.attributes[attrKey]) {
+      if (attrKey === 'global_category') {
+        if (target.categorySlug !== expectedVal) {
+          matchesAnswers = false;
+          break;
+        } else {
+          score += 15.0;
+        }
+      } else if (target.attributes[attrKey]) {
         if (target.attributes[attrKey] === expectedVal) {
-          score += 10.0;
+          score += 12.0;
         } else {
           matchesAnswers = false;
           break;
@@ -633,37 +613,53 @@ export function executeAkinatorSearch(
     }
 
     // Coincidencia con palabras clave del objetivo (con límites de palabra)
+    let keywordScore = 0;
     for (const kw of target.keywords) {
       const kwNorm = clean(kw);
       const kwRegex = new RegExp(`(^|\\s)${kwNorm}(\\s|$)`);
       if (kwRegex.test(queryNorm)) {
-        score += 6.0;
+        keywordScore += 6.0;
       }
     }
+    score += keywordScore;
 
     // Coincidencia exacta de tokens por palabra completa
     const titleTokens = new Set(clean(target.title).split(' '));
     const summaryTokens = new Set(clean(target.summary).split(' '));
     const procedureTokens = new Set(clean(target.fullProcedure).split(' '));
 
+    let titleSummaryScore = 0;
     for (const word of queryWords) {
       if (titleTokens.has(word)) {
-        score += 4.0;
+        titleSummaryScore += 4.0;
       }
       if (summaryTokens.has(word)) {
-        score += 2.5;
+        titleSummaryScore += 2.5;
       }
       if (procedureTokens.has(word)) {
         score += 1.5;
       }
     }
+    score += titleSummaryScore;
 
-    scoredTargets.push({ target, score });
+    // REGLA CRÍTICA DE COINCIDENCIA TEMÁTICA:
+    // Para considerarse coincidencia válida en la base de datos, la consulta debe coincidir con:
+    // palabras clave curadas (keywordScore > 0), título o resumen (titleSummaryScore > 0),
+    // o haber sido respondida explícitamente en el árbol Akinator.
+    const hasGenuineTopicMatch =
+      keywordScore > 0 ||
+      titleSummaryScore > 0 ||
+      Object.keys(answersHistory).length > 0;
+
+    if (hasGenuineTopicMatch && score >= 3.5) {
+      scoredTargets.push({ target, score });
+    }
   }
 
   // Ordenar de mayor a menor puntuación
   scoredTargets.sort((a, b) => b.score - a.score);
 
+  // Si no existen coincidencias documentales en la base de datos
   if (scoredTargets.length === 0) {
     return {
       certainty: 0,
@@ -676,18 +672,19 @@ export function executeAkinatorSearch(
 
   const bestMatch = scoredTargets[0];
   const candidatesCount = scoredTargets.length;
+  const hasUserAnswers = Object.keys(answersHistory).length > 0;
 
   // 3. Evaluar certeza matemática:
-  // Si tenemos un claro ganador con puntaje alto o sólo queda 1 candidato
+  // Si tenemos un claro ganador con puntaje muy alto y amplia ventaja, o si ya se respondieron preguntas del árbol
   const isDecisive =
-    candidatesCount === 1 ||
-    (bestMatch && bestMatch.score >= 12.0) ||
-    (scoredTargets.length > 1 && bestMatch.score - scoredTargets[1].score >= 8.0) ||
+    (candidatesCount === 1 && (bestMatch.score >= 10.0 || hasUserAnswers)) ||
+    (bestMatch && bestMatch.score >= 18.0 && (scoredTargets.length === 1 || bestMatch.score - (scoredTargets[1]?.score || 0) >= 12.0)) ||
     Object.keys(answersHistory).length >= 2;
 
   if (isDecisive && bestMatch && bestMatch.score > 0) {
     const t = bestMatch.target;
-    const certaintyPct = Math.min(100, Math.max(88, Math.round((bestMatch.score / (bestMatch.score + (scoredTargets[1]?.score || 0))) * 100)));
+    const secondScore = scoredTargets[1]?.score || 0;
+    const certaintyPct = Math.min(100, Math.max(90, Math.round((bestMatch.score / (bestMatch.score + secondScore + 0.1)) * 100)));
 
     const citation: Citation = {
       documentId: t.id,
@@ -717,20 +714,60 @@ export function executeAkinatorSearch(
   }
 
   // 4. Si aún no hay certeza suficiente, elegir la siguiente mejor pregunta discriminatoria (Akinator)
-  const categoryQuestions = AKINATOR_QUESTIONS.filter((q) => q.categorySlug === categorySlug);
-  const unansweredQuestions = categoryQuestions.filter((q) => answersHistory[q.attributeKey] === undefined);
+  const candidateCategories = Array.from(new Set(scoredTargets.map((s) => s.target.categorySlug)));
 
-  if (unansweredQuestions.length > 0) {
-    const nextQ = unansweredQuestions[0];
-    const initialCertainty = Math.min(65, Math.max(30, scoredTargets.length > 0 ? 50 : 25));
+  let nextQ: AkinatorQuestion | undefined;
+
+  // Si los candidatos pertenecen a múltiples categorías diferentes, preguntar primero el área
+  if (candidateCategories.length > 1 && !answersHistory['global_category']) {
+    const CATEGORY_LABELS: Record<string, string> = {
+      tiendas_agencias: 'Tiendas y Sucursales',
+      garantias: 'Garantías y Políticas',
+      cedis: 'CEDIS y Logística',
+      diagnostico: 'Diagnóstico Técnico y Errores',
+      cliente: 'Atención al Cliente y Facturación',
+      informacion: 'Información Institucional'
+    };
+
+    nextQ = {
+      id: 'q-global-category',
+      categorySlug: 'all',
+      text: '¿A cuál de las siguientes áreas o procesos corresponde tu consulta?',
+      attributeKey: 'global_category',
+      options: candidateCategories.map((slug) => ({
+        label: CATEGORY_LABELS[slug] || slug,
+        value: slug
+      }))
+    };
+  } else {
+    // Si los candidatos están dentro de una misma categoría o ya se seleccionó categoría
+    const targetCat = candidateCategories[0] || categorySlug;
+    const categoryQuestions = AKINATOR_QUESTIONS.filter(
+      (q) => q.categorySlug === targetCat || (isAll && candidateCategories.includes(q.categorySlug))
+    );
+    const unansweredQuestions = categoryQuestions.filter(
+      (q) => answersHistory[q.attributeKey] === undefined
+    );
+
+    if (unansweredQuestions.length > 0) {
+      // Elegir pregunta que discrimine los candidatos actuales
+      nextQ =
+        unansweredQuestions.find((q) =>
+          scoredTargets.some((s) => s.target.attributes[q.attributeKey] !== undefined)
+        ) || unansweredQuestions[0];
+    }
+  }
+
+  if (nextQ) {
+    const initialCertainty = Math.min(75, Math.max(35, Math.round(100 / Math.max(candidatesCount, 2))));
 
     return {
       certainty: initialCertainty,
       status: 'QUESTIONING',
       nextQuestion: nextQ,
       answerText:
-        `Vicente está analizando las opciones disponibles en la base de datos (${scoredTargets.length} posibilidades encontradas).\n\n` +
-        `Para llegar a la respuesta exacta y validar tu consulta:\n\n` +
+        `Vicente ha identificado **${scoredTargets.length} posibilidades** coincidentes en la base de datos documental.\n\n` +
+        `Para guiarte a la respuesta exacta y validar el procedimiento oficial correspondiente:\n\n` +
         `👉 **${nextQ.text}**`,
       citations: bestMatch
         ? [
@@ -752,7 +789,7 @@ export function executeAkinatorSearch(
   if (bestMatch) {
     const t = bestMatch.target;
     return {
-      certainty: 85,
+      certainty: 88,
       status: 'SOLVED',
       solvedTarget: t,
       answerText:

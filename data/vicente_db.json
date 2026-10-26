@@ -180,17 +180,6 @@
       "createdAt": "2026-01-08T12:00:00.000Z",
       "rawContent": "MANUAL DE ATENCIÓN AL CLIENTE, EMISIÓN DE FACTURAS Y REEMBOLSOS\nCódigo: SAC-POL-2026.\n\n1. POLÍTICA DE FACTURACIÓN ELECTRÓNICA (CFDI 4.0)\n- Plazo máximo para solicitar factura: El cliente dispone del mes en curso y hasta 72 horas naturales del mes posterior a su compra para emitir su factura a través del portal de autofacturación o enviando su ticket a facturacion@vicentesoluciones.com.mx.\n- Requisitos fiscales indispensables según Anexo 20 del SAT:\n  * RFC completo con homoclave.\n  * Nombre o Razón Social exacta tal como figura en la Constancia de Situación Fiscal (sin régimen de capital como S.A. de C.V.).\n  * Código Postal del domicilio fiscal del receptor.\n  * Régimen fiscal del receptor.\n  * Uso de CFDI correspondiente (por ejemplo: G01 Adquisición de mercancías, G03 Gastos en general).\n- Las solicitudes de corrección de factura deben realizarse dentro del mismo mes de emisión.\n\n2. POLÍTICA DE DEVOLUCIONES Y REEMBOLSOS COMERCIALES\n- Plazo de devolución por arrepentimiento de compra: hasta 7 días naturales posteriores a la entrega del producto.\n- Requisitos:\n  * Empaque original sin roturas, manuales intactos y sellos de accesorios sin despegar.\n  * El producto no debe haber sido encendido, energizado ni instalado.\n  * Aplica un cargo administrativo por re-almacenamiento del 10% sobre el valor del producto si la devolución no obedece a un defecto atribuible a la empresa.\n- Reembolsos:\n  * Pagos con tarjeta de débito/crédito: la reversa se refleja en un plazo de 5 a 15 días hábiles bancarios.\n  * Pagos por transferencia SPEI: reembolso en cuenta CLABE dentro de 72 horas hábiles tras la aprobación física del producto devuelto.\n\n3. ATENCIÓN A QUEJAS Y ESCALAMIENTOS\n- Nivel 1 (Atención Telefónica y Chat Vicente): Resolución inmediata o canalización con ticket de seguimiento (SLA de 24 horas).\n- Nivel 2 (Jefatura de Calidad y Servicio al Cliente): Casos que involucren reclamaciones formales o discrepancias de facturación (SLA de 48 horas hábiles).",
       "chunksCount": 6
-    },
-    {
-      "id": "doc-1793038280886-ecsr",
-      "categoryId": "cat-cliente",
-      "title": "Tiempos de Devolución Excel",
-      "filename": "tiempos_cliente.xlsx",
-      "fileType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      "fileSize": 16149,
-      "rawContent": "DOCUMENTO EXCEL: tiempos_cliente.xlsx\n\n--- HOJA: Devoluciones ---\nProcedimiento,Tiempo_Respuesta\nValidacion de ticket fiscal CFDI,24 horas maximo\nReversa bancaria por devolucion,5 a 15 dias habiles",
-      "chunksCount": 1,
-      "createdAt": "2026-10-26T18:11:20.886Z"
     }
   ],
   "chunks": [
@@ -508,23 +497,142 @@
       "content": "ca y Chat Vicente): Resolución inmediata o canalización con ticket de seguimiento (SLA de 24 horas).\n- Nivel 2 (Jefatura de Calidad y Servicio al Cliente): Casos que involucren reclamaciones formales o discrepancias de facturación (SLA de 48 horas hábiles).",
       "tokensCount": 65,
       "createdAt": "2026-01-08T12:00:00.000Z"
-    },
-    {
-      "id": "chk-doc-1793038280886-ecsr-0",
-      "documentId": "doc-1793038280886-ecsr",
-      "categoryId": "cat-cliente",
-      "chunkIndex": 0,
-      "content": "DOCUMENTO EXCEL: tiempos_cliente.xlsx\n\n--- HOJA: Devoluciones ---\nProcedimiento,Tiempo_Respuesta\nValidacion de ticket fiscal CFDI,24 horas maximo\nReversa bancaria por devolucion,5 a 15 dias habiles",
-      "tokensCount": 50,
-      "createdAt": "2026-10-26T18:11:20.886Z"
     }
   ],
-  "conversations": [],
-  "messages": [],
+  "conversations": [
+    {
+      "id": "conv-1793039567228-qym1y",
+      "userId": "user-admin",
+      "categorySlug": "all",
+      "title": "¿Cómo preparar una pasta a la boloñesa?",
+      "createdAt": "2026-10-26T18:32:47.228Z",
+      "updatedAt": "2026-10-26T18:32:47.237Z"
+    },
+    {
+      "id": "conv-1793039558289-23ds7",
+      "userId": "user-admin",
+      "categorySlug": "all",
+      "title": "Tiendas y Sucursales",
+      "createdAt": "2026-10-26T18:32:38.289Z",
+      "updatedAt": "2026-10-26T18:32:38.290Z"
+    },
+    {
+      "id": "conv-1793039553883-xoetm",
+      "userId": "user-admin",
+      "categorySlug": "all",
+      "title": "¿Cuáles son los horarios de atención en sucur...",
+      "createdAt": "2026-10-26T18:32:33.883Z",
+      "updatedAt": "2026-10-26T18:32:33.892Z"
+    }
+  ],
+  "messages": [
+    {
+      "conversationId": "conv-1793039553883-xoetm",
+      "role": "user",
+      "content": "¿Cuáles son los horarios de atención en sucursal Centro?",
+      "categorySlug": "all",
+      "id": "msg-1793039553892-nxiz5",
+      "createdAt": "2026-10-26T18:32:33.892Z"
+    },
+    {
+      "conversationId": "conv-1793039553883-xoetm",
+      "role": "assistant",
+      "content": "Vicente ha identificado **2 posibilidades** coincidentes en la base de datos documental.\n\nPara guiarte a la respuesta exacta y validar el procedimiento oficial correspondiente:\n\n👉 **¿A cuál de las siguientes áreas o procesos corresponde tu consulta?**",
+      "categorySlug": "all",
+      "citations": [
+        {
+          "documentId": "tiendas-horarios",
+          "documentTitle": "Manual Operativo: Red de Tiendas y Agencias Autorizadas 2026",
+          "categorySlug": "tiendas_agencias",
+          "chunkId": "chunk-tiendas-horarios-0",
+          "excerpt": "Lunes a Viernes 08:30 a 19:30, Sábados 09:00 a 14:30. INE requerida para entrega.",
+          "relevanceScore": 5
+        }
+      ],
+      "id": "msg-1793039553892-crc8u",
+      "createdAt": "2026-10-26T18:32:33.892Z"
+    },
+    {
+      "conversationId": "conv-1793039558289-23ds7",
+      "role": "user",
+      "content": "Tiendas y Sucursales",
+      "categorySlug": "all",
+      "id": "msg-1793039558290-jkczq",
+      "createdAt": "2026-10-26T18:32:38.290Z"
+    },
+    {
+      "conversationId": "conv-1793039558289-23ds7",
+      "role": "assistant",
+      "content": "🎯 **Resultado Validado en Base de Datos (Certeza: 90%):**\n\n### Directorio y Teléfonos de Sucursales y Agencias Autorizadas\n*Fuente Oficial: Manual Operativo: Red de Tiendas y Agencias Autorizadas 2026 (manual_red_tiendas_2026.txt)*\n\nDIRECTORIO NACIONAL DE SUCURSALES:\n• Sucursal Centro (CDMX): Av. Insurgentes Sur #1450, Col. Actipan, Benito Juárez. Tel: (55) 5543-8900 ext. 101/102. Cuenta con taller de diagnóstico y Click & Collect.\n• Sucursal Norte (Monterrey): Av. Constitución #2180 Poniente, Col. Obispado. Tel: (81) 8345-7720.\n• Sucursal Occidente (Guadalajara): Calzada Independencia Norte #890, Col. La Federacha. Tel: (33) 3612-4411.\n• Agencia Autorizada Puebla (TecnoSur): Blvd. Hermanos Serdán #320, Col. Las Hadas. Tel: (222) 249-1830.\n\n---\n✅ *Respuesta calculada mediante motor de decisión determinista en base de datos (Sin alucinación ni uso de IA externa).*",
+      "categorySlug": "all",
+      "citations": [
+        {
+          "documentId": "tiendas-directorio",
+          "documentTitle": "Manual Operativo: Red de Tiendas y Agencias Autorizadas 2026",
+          "categorySlug": "tiendas_agencias",
+          "chunkId": "chunk-tiendas-directorio-0",
+          "excerpt": "Sucursales en CDMX (Insurgentes Sur), Monterrey (Constitución), Guadalajara y Puebla.",
+          "relevanceScore": 35
+        }
+      ],
+      "id": "msg-1793039558290-0r80w",
+      "createdAt": "2026-10-26T18:32:38.290Z"
+    },
+    {
+      "conversationId": "conv-1793039567228-qym1y",
+      "role": "user",
+      "content": "¿Cómo preparar una pasta a la boloñesa?",
+      "categorySlug": "all",
+      "id": "msg-1793039567237-9frwz",
+      "createdAt": "2026-10-26T18:32:47.237Z"
+    },
+    {
+      "conversationId": "conv-1793039567228-qym1y",
+      "role": "assistant",
+      "content": "No encontré esa respuesta en las fuentes internas. Para mantenerme dentro de los documentos, no voy a improvisar.",
+      "categorySlug": "all",
+      "citations": [],
+      "id": "msg-1793039567237-dsmlg",
+      "createdAt": "2026-10-26T18:32:47.237Z"
+    }
+  ],
   "auditLogs": [
     {
+      "userId": "user-admin",
+      "username": "admin",
+      "action": "CHAT_QUERY_SUCCESS",
+      "categorySlug": "all",
+      "status": "SUCCESS",
+      "ip": "127.0.0.1",
+      "details": "Búsqueda Akinator en \"all\". Certeza: 100%",
+      "id": "log-1793039567237-ommri",
+      "timestamp": "2026-10-26T18:32:47.237Z"
+    },
+    {
+      "userId": "user-admin",
+      "username": "admin",
+      "action": "CHAT_QUERY_SUCCESS",
+      "categorySlug": "all",
+      "status": "SUCCESS",
+      "ip": "127.0.0.1",
+      "details": "Búsqueda Akinator en \"all\". Certeza: 90%",
+      "id": "log-1793039558291-d3cvr",
+      "timestamp": "2026-10-26T18:32:38.291Z"
+    },
+    {
+      "userId": "user-admin",
+      "username": "admin",
+      "action": "CHAT_QUERY_SUCCESS",
+      "categorySlug": "all",
+      "status": "SUCCESS",
+      "ip": "127.0.0.1",
+      "details": "Búsqueda Akinator en \"all\". Certeza: 50%",
+      "id": "log-1793039553893-actdi",
+      "timestamp": "2026-10-26T18:32:33.893Z"
+    },
+    {
       "id": "log-seed-1",
-      "timestamp": "2026-10-26T18:11:20.877Z",
+      "timestamp": "2026-10-26T18:32:20.219Z",
       "userId": "system",
       "username": "sistema",
       "action": "DATABASE_INITIALIZATION",

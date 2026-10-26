@@ -103,48 +103,79 @@ export function retrieveAuthorizedChunks(
   query: string,
   topK = 4
 ): RetrievedChunk[] {
-  // 1. Verify user permission for requested category
-  const isAuthorized =
-    user.role === 'admin' || user.allowedCategories.includes(requestedCategorySlug);
-  if (!isAuthorized) {
-    return [];
-  }
+  const isAll = requestedCategorySlug === 'all';
 
-  // 2. Resolve category ID
-  const category = db.getCategoryBySlug(requestedCategorySlug);
-  if (!category || !category.active) {
-    return [];
-  }
-
-  // 3. Retrieve chunks strictly belonging to this category
-  const categoryChunks = db.getChunksForCategory(category.id);
-  if (categoryChunks.length === 0) {
-    return [];
-  }
-
-  // 4. Tokenize query
-  const queryTokens = tokenize(query);
-  if (queryTokens.length === 0) {
-    return [];
-  }
-
-  // 5. Score only authorized chunks
-  const scoredChunks: RetrievedChunk[] = [];
-
-  for (const chunk of categoryChunks) {
-    const doc = db.getDocumentById(chunk.documentId);
-    if (!doc) continue;
-
-    const score = calculateRelevance(queryTokens, query, chunk.content, doc.title);
-    if (score > 1.2) {
-      scoredChunks.push({ chunk, document: doc, score });
+  if (!isAll) {
+    // 1. Verify user permission for requested category
+    const isAuthorized =
+      user.role === 'admin' || user.allowedCategories.includes('*') || user.allowedCategories.includes(requestedCategorySlug);
+    if (!isAuthorized) {
+      return [];
     }
-  }
 
-  // Sort descending by score
-  scoredChunks.sort((a, b) => b.score - a.score);
-  return scoredChunks.slice(0, topK);
+    // 2. Resolve category ID
+    const category = db.getCategoryBySlug(requestedCategorySlug);
+    if (!category || !category.active) {
+      return [];
+    }
+
+    // 3. Retrieve chunks strictly belonging to this category
+    const categoryChunks = db.getChunksForCategory(category.id);
+    if (categoryChunks.length === 0) {
+      return [];
+    }
+
+    // 4. Tokenize query
+    const queryTokens = tokenize(query);
+    if (queryTokens.length === 0) {
+      return [];
+    }
+
+    // 5. Score only authorized chunks
+    const scoredChunks: RetrievedChunk[] = [];
+
+    for (const chunk of categoryChunks) {
+      const doc = db.getDocumentById(chunk.documentId);
+      if (!doc) continue;
+
+      const score = calculateRelevance(queryTokens, query, chunk.content, doc.title);
+      if (score > 1.2) {
+        scoredChunks.push({ chunk, document: doc, score });
+      }
+    }
+
+    // Sort descending by score
+    scoredChunks.sort((a, b) => b.score - a.score);
+    return scoredChunks.slice(0, topK);
+  } else {
+    // Global search across all authorized categories
+    const allCategories = db.listCategories().filter((c) => c.active);
+    const authorizedCategories = allCategories.filter((c) =>
+      user.role === 'admin' || user.allowedCategories.includes('*') || user.allowedCategories.includes(c.slug)
+    );
+
+    const queryTokens = tokenize(query);
+    if (queryTokens.length === 0) return [];
+
+    const scoredChunks: RetrievedChunk[] = [];
+    for (const cat of authorizedCategories) {
+      const catChunks = db.getChunksForCategory(cat.id);
+      for (const chunk of catChunks) {
+        const doc = db.getDocumentById(chunk.documentId);
+        if (!doc) continue;
+
+        const score = calculateRelevance(queryTokens, query, chunk.content, doc.title);
+        if (score > 1.2) {
+          scoredChunks.push({ chunk, document: doc, score });
+        }
+      }
+    }
+
+    scoredChunks.sort((a, b) => b.score - a.score);
+    return scoredChunks.slice(0, topK);
+  }
 }
+
 
 /**
  * Fallback deterministic synthesis when Gemini API key is not present or offline.
@@ -204,14 +235,17 @@ export async function executeVicenteRAG(
   const config = db.getConfig();
   const emptyMessage = config.emptyResultMessage;
 
+  const isAll = categorySlug === 'all';
   // 1. Verificación obligatoria de autorización por categoría en backend
-  const isAuthorized =
-    user.role === 'admin' || user.allowedCategories.includes(categorySlug);
-  if (!isAuthorized) {
-    return {
-      answer: emptyMessage,
-      citations: []
-    };
+  if (!isAll) {
+    const isAuthorized =
+      user.role === 'admin' || user.allowedCategories.includes('*') || user.allowedCategories.includes(categorySlug);
+    if (!isAuthorized) {
+      return {
+        answer: emptyMessage,
+        citations: []
+      };
+    }
   }
 
   // 2. Ejecutar motor Akinator en la base de datos

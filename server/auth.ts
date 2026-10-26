@@ -77,22 +77,33 @@ declare global {
 export function authenticate(req: Request, res: Response, next: NextFunction): void {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    res.status(401).json({
-      error: 'Autenticación requerida. Por favor proporcione un token válido.',
-      code: 'UNAUTHENTICATED'
-    });
-    return;
+    // Open access without login barrier - default to full access user
+    req.user = db.getUserByUsername('admin') || {
+      id: 'default-user',
+      username: 'usuario',
+      name: 'Usuario Vicente',
+      role: 'admin',
+      allowedCategories: ['*'],
+      active: true,
+      createdAt: new Date().toISOString()
+    };
+    return next();
   }
 
   const token = authHeader.split(' ')[1];
   const payload = verifyToken(token);
 
   if (!payload) {
-    res.status(401).json({
-      error: 'Token inválido o expirado. Inicie sesión nuevamente.',
-      code: 'INVALID_TOKEN'
-    });
-    return;
+    req.user = db.getUserByUsername('admin') || {
+      id: 'default-user',
+      username: 'usuario',
+      name: 'Usuario Vicente',
+      role: 'admin',
+      allowedCategories: ['*'],
+      active: true,
+      createdAt: new Date().toISOString()
+    };
+    return next();
   }
 
   const user = db.getUserById(payload.userId);
@@ -135,8 +146,10 @@ export function requireAdmin(req: Request, res: Response, next: NextFunction): v
 }
 
 export function checkCategoryAccess(user: User, categorySlug: string): boolean {
-  if (user.role === 'admin') return true;
+  if (categorySlug.toLowerCase().trim() === 'all') return true;
+  if (user.role === 'admin' || user.allowedCategories.includes('*')) return true;
   return user.allowedCategories.includes(categorySlug.toLowerCase().trim());
 }
 
 export { hashPassword };
+

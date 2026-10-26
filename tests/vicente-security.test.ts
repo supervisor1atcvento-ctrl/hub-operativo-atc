@@ -274,4 +274,70 @@ describe('Vicente RAG & Security Validation Suite', () => {
     expect(chunks.length).toBeGreaterThan(0);
     expect(chunks[0].chunk.content).toContain('Reversa bancaria');
   });
+
+  // TEST 16: Búsqueda global para cualquier categoría ('all')
+  it('16. Debe permitir búsqueda global ("all") en toda la base de datos documental', async () => {
+    // Consulta de garantía en modo global
+    const resGarantia = await executeVicenteRAG(
+      adminUser,
+      'all',
+      '¿Cuál es el plazo de garantía para componentes electrónicos y chasis?'
+    );
+    expect(resGarantia.answer).toBeDefined();
+    expect(resGarantia.citations.length).toBeGreaterThan(0);
+    expect(resGarantia.citations[0].categorySlug).toBe('garantias');
+
+    // Consulta de tiendas en modo global
+    const resTienda = await executeVicenteRAG(
+      adminUser,
+      'all',
+      '¿Cuáles son los horarios de atención en sucursal Centro CDMX?'
+    );
+    expect(resTienda.answer).toBeDefined();
+    expect(resTienda.citations.length).toBeGreaterThan(0);
+    expect(resTienda.citations[0].categorySlug).toBe('tiendas_agencias');
+  });
+
+  // TEST 17: Sin coincidencias no improvisa ni activa preguntas
+  it('17. Si no existen coincidencias documentales en ninguna categoría, responde estrictamente sin improvisar ni preguntar', async () => {
+    const resSinCoincidencia = await executeVicenteRAG(
+      adminUser,
+      'all',
+      '¿Cómo programar una nave espacial hacia Saturno con reactores de fusión nuclear?'
+    );
+    expect(resSinCoincidencia.answer).toBe(
+      'No encontré esa respuesta en las fuentes internas. Para mantenerme dentro de los documentos, no voy a improvisar.'
+    );
+    expect(resSinCoincidencia.akinator?.status).toBe('NOT_FOUND');
+    expect(resSinCoincidencia.akinator?.nextQuestion).toBeUndefined();
+  });
+
+  // TEST 18: Coincidencias existentes apoyan al usuario paso a paso (Akinator)
+  it('18. Si existen coincidencias múltiples, apoya al usuario con preguntas y opciones interactivas', async () => {
+    // Consulta amplia sobre códigos de error en diagnóstico
+    const resFalla = await executeVicenteRAG(
+      adminUser,
+      'diagnostico',
+      'Tengo un código de error en la pantalla de mi equipo'
+    );
+
+    // Debe guiar al usuario
+    expect(resFalla.akinator).toBeDefined();
+    expect(resFalla.akinator?.status).toBe('QUESTIONING');
+    expect(resFalla.akinator?.nextQuestion).toBeDefined();
+    expect(resFalla.akinator?.nextQuestion?.options.length).toBeGreaterThan(1);
+
+    // Responder al cuestionamiento con E01
+    const resResuelto = await executeVicenteRAG(
+      adminUser,
+      'diagnostico',
+      'E01 (Alimentación / Voltaje)',
+      [],
+      { error_code_type: 'e01_voltaje' }
+    );
+    expect(resResuelto.akinator?.status).toBe('SOLVED');
+    expect(resResuelto.akinator?.certainty).toBeGreaterThanOrEqual(90);
+    expect(resResuelto.answer).toContain('E01');
+  });
 });
+

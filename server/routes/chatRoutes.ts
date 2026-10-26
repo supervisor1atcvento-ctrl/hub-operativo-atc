@@ -130,13 +130,15 @@ router.post('/chat', authenticate, rateLimitMiddleware, async (req, res) => {
   }
 
   const categorySlug = category.toLowerCase().trim();
-  const catRecord = db.getCategoryBySlug(categorySlug);
-  if (!catRecord || !catRecord.active) {
-    res.status(400).json({
-      error: 'La categoría especificada no existe o no se encuentra activa.',
-      code: 'INVALID_CATEGORY'
-    });
-    return;
+  if (categorySlug !== 'all') {
+    const catRecord = db.getCategoryBySlug(categorySlug);
+    if (!catRecord || !catRecord.active) {
+      res.status(400).json({
+        error: 'La categoría especificada no existe o no se encuentra activa.',
+        code: 'INVALID_CATEGORY'
+      });
+      return;
+    }
   }
 
   // 3. Strict Backend Authorization: Check user's category permissions
